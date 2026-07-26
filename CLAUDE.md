@@ -142,8 +142,6 @@ Lead with **privacy** (data never leaves the machine), **offline**, **no rate li
 > which loses a skeptical beginner in the first minute. "No censorship / no content
 > filtering" survives as **one bullet among several**, not the thesis.
 
-Close with a one-line promise of what they'll have working by the end.
-
 ### 1. First win — hands-on (20 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
