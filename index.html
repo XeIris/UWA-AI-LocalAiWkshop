@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, Unplugged</title>
+<style>
+/* ============================================================
+   AI, UNPLUGGED — workshop deck
+   Theme: "hardware blueprint"
+   Palette rule: cyan owns all chrome/structure.
+   The ENTIRE warm range (green/amber/red) is reserved for
+   semantics — fit indicators, quality cliffs, warnings.
+   If something is amber on a slide, it MEANS something.
+   ============================================================ */
+
+:root {
+  --bg:        #05080b;
+  --bg-panel:  #0a1015;
+  --bg-raise:  #0e161d;
+  --grid-line: rgba(53, 214, 232, 0.052);
+  --rule:      rgba(53, 214, 232, 0.16);
+  --rule-soft: rgba(53, 214, 232, 0.09);
+
+  --ink:       #e6f1f5;
+  --ink-mid:   #a4b8c1;
+  --ink-dim:   #6c828d;
+
+  --accent:    #35d6e8;
+  --accent-lo: #14818f;
+  --accent-glow: rgba(53, 214, 232, 0.30);
+
+  /* semantic only — never decorative */
+  --ok:   #4ade80;
+  --warn: #fbbf24;
+  --bad:  #f87171;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+          "Cascadia Mono", "Roboto Mono", monospace;
+
+  --fade: 260ms;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  /* Scales the whole deck off the smaller of width/height so it stays
+     readable projected at 1080p and on a 13" laptop alike. */
+  font-size: clamp(13px, min(1.16vw, 2.02vh), 26px);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- blueprint substrate ------------------------------------ */
+.substrate {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 3.2rem 3.2rem;
+  mask-image: radial-gradient(ellipse 120% 95% at 50% 42%, #000 35%, transparent 100%);
+}
+.vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, rgba(53,214,232,0.045), transparent 70%);
+}
+
+/* --- slide plumbing ----------------------------------------- */
+.deck { position: relative; height: 100vh; z-index: 1; }
+
+.slide {
+  position: absolute;
+  inset: 0 0 4.6rem 0;          /* leave room for the rail */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3.2rem 5rem 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade) ease;
+}
+.slide.active { opacity: 1; visibility: visible; }
+
+.slide-inner { width: 100%; max-width: 74rem; margin: 0 auto; }
+
+/* --- typography --------------------------------------------- */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.1rem;
+  display: flex; align-items: center; gap: 0.9rem;
+}
+.eyebrow::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--rule), transparent);
+}
+
+h1 { font-size: 4.6rem; line-height: 1.02; letter-spacing: -0.035em; margin: 0; font-weight: 650; }
+h2 { font-size: 2.7rem; line-height: 1.1;  letter-spacing: -0.025em; margin: 0 0 1.6rem; font-weight: 640; }
+h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -0.008em; }
+
+.lede { font-size: 1.5rem; color: var(--ink-mid); max-width: 46rem; margin: 1.4rem 0 0; }
+.note { font-size: 0.95rem; color: var(--ink-dim); }
+.mono { font-family: var(--mono); }
+
+/* --- cover -------------------------------------------------- */
+#cover .slide-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 4.5rem;
+  align-items: center;
+  max-width: 82rem;
+}
+.wordmark { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; }
+.wordmark .unplugged {
+  color: var(--accent);
+  text-shadow: 0 0 2.5rem var(--accent-glow);
+}
+.cover-sub {
+  font-size: 1.42rem; color: var(--ink-mid);
+  margin: 1.5rem 0 0; max-width: 26rem;
+}
+.cover-meta {
+  margin-top: 2.6rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.86rem;
+  color: var(--ink-dim); letter-spacing: 0.06em;
+  display: flex; gap: 1.6rem; flex-wrap: wrap;
+}
+
+.cover-art { position: relative; }
+.cover-art canvas {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--rule-soft);
+  background: #060a0e;
+}
+.art-readout {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; margin-top: 0.9rem;
+  font-family: var(--mono); font-size: 0.88rem; letter-spacing: 0.05em;
+}
+.art-readout .cfg { color: var(--accent); }
+.art-readout .gb  { color: var(--ink-mid); }
+.footprint {
+  margin-top: 0.55rem; height: 0.42rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  position: relative; overflow: hidden;
+}
+.footprint::after {
+  content: ""; position: absolute; inset: 0 0 0 0;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent));
+  opacity: 0.85;
+}
+.footprint-cap {
+  margin-top: 0.5rem; font-family: var(--mono);
+  font-size: 0.74rem; color: var(--ink-dim); letter-spacing: 0.05em;
+}
+
+/* --- section title cards ------------------------------------ */
+.section-card .num {
+  font-family: var(--mono);
+  font-size: 7.5rem; line-height: 0.85;
+  color: var(--accent); opacity: 0.22;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.6rem;
+}
+.budget {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  margin-top: 2rem; padding: 0.4rem 0.85rem;
+  border: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 0.84rem;
+  color: var(--accent); letter-spacing: 0.08em;
+}
+.stub {
+  margin-top: 1.8rem; font-family: var(--mono);
+  font-size: 0.82rem; color: var(--ink-dim);
+  letter-spacing: 0.06em;
+}
+
+/* --- card grid ---------------------------------------------- */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-left: 2px solid var(--accent-lo);
+  padding: 1.35rem 1.4rem;
+}
+.card p { margin: 0; font-size: 1rem; color: var(--ink-mid); }
+.card .tag {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); opacity: 0.75; display: block; margin-bottom: 0.6rem;
+}
+
+/* --- formula ------------------------------------------------ */
+.formula {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  padding: 2.4rem 2rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 2.25rem;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+.formula .op  { color: var(--accent); }
+.formula .lbl {
+  display: block; font-family: var(--mono);
+  font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink-dim); margin-top: 1.2rem;
+}
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.4rem; }
+.metric {
+  border: 1px solid var(--rule-soft); background: var(--bg-panel);
+  padding: 1.1rem 1.2rem;
+}
+.metric .k {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.metric .v {
+  font-family: var(--mono); font-size: 2rem; color: var(--accent);
+  margin-top: 0.3rem; letter-spacing: -0.02em;
+}
+.metric .v small { font-size: 0.95rem; color: var(--ink-dim); letter-spacing: 0; }
+.caveat {
+  margin-top: 1.5rem; padding-left: 1rem;
+  border-left: 2px solid var(--warn);
+  font-size: 0.98rem; color: var(--ink-mid);
+}
+
+/* --- section rail ------------------------------------------- */
+.rail {
+  position: fixed; left: 0; right: 0; bottom: 0; height: 4.6rem;
+  display: flex; align-items: stretch;
+  border-top: 1px solid var(--rule-soft);
+  background: linear-gradient(180deg, rgba(5,8,11,0.4), rgba(5,8,11,0.95));
+  backdrop-filter: blur(6px);
+  z-index: 5;
+  padding: 0 1.2rem;
+}
+.rail-item {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  gap: 0.35rem; padding: 0 0.75rem; cursor: pointer;
+  border: none; background: none; text-align: left;
+  font-family: var(--sans); color: var(--ink-dim);
+  transition: color 180ms ease;
+}
+.rail-item:hover { color: var(--ink-mid); }
+.rail-item .bar {
+  height: 2px; background: var(--rule-soft);
+  transition: background 180ms ease;
+}
+.rail-item .txt {
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.11em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rail-item.seen .bar { background: var(--accent-lo); }
+.rail-item.current { color: var(--accent); }
+.rail-item.current .bar { background: var(--accent); box-shadow: 0 0 0.6rem var(--accent-glow); }
+
+.counter {
+  position: fixed; right: 1.6rem; top: 1.5rem; z-index: 5;
+  font-family: var(--mono); font-size: 0.8rem;
+  color: var(--ink-dim); letter-spacing: 0.1em;
+}
+.hint {
+  position: fixed; left: 1.9rem; bottom: 5.4rem; z-index: 5;
+  font-family: var(--mono); font-size: 0.72rem;
+  color: var(--ink-dim); letter-spacing: 0.12em;
+  opacity: 0.75;
+}
+
+@media (max-width: 900px) {
+  .slide { padding: 2rem 1.6rem 1rem; }
+  #cover .slide-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .cards, .metrics { grid-template-columns: 1fr; }
+  .rail-item .txt { display: none; }
+  .rail { height: 2.6rem; }
+  .slide { inset: 0 0 2.6rem 0; }
+  h1 { font-size: 3.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="substrate"></div>
+<div class="vignette"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ============ COVER ============ -->
+  <section class="slide" id="cover" data-section="0">
+    <div class="slide-inner">
+      <div>
+        <div class="eyebrow">Local LLM Workshop &middot; 2 hours</div>
+        <h1 class="wordmark"><span>AI,</span><span class="unplugged">Unplugged</span></h1>
+        <p class="cover-sub">Real language models, running on the hardware you already own.</p>
+        <div class="cover-meta">
+          <span>NO CLOUD</span><span>NO SUBSCRIPTION</span><span>NO WI&#8209;FI REQUIRED</span>
+        </div>
+      </div>
+      <div class="cover-art">
+        <canvas id="art" width="760" height="470"></canvas>
+        <div class="art-readout">
+          <span class="cfg" id="artCfg">7.5B &middot; 16-bit</span>
+          <span class="gb" id="artGb">15.0 GB</span>
+        </div>
+        <div class="footprint"></div>
+        <div class="footprint-cap">MEMORY FOOTPRINT &mdash; HELD CONSTANT</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §0 ============ -->
+  <section class="slide section-card" data-section="0">
+    <div class="slide-inner">
+      <div class="num">00</div>
+      <div class="eyebrow">Section 00</div>
+      <h2>Why bother?</h2>
+      <p class="lede">Cloud AI is good, cheap and everywhere. So why run a model on your
+        own machine at all? Five honest answers.</p>
+      <div class="budget">&#9679; 10 MIN</div>
+    </div>
+  </section>
+
+  <section class="slide" data-section="0">
+    <div class="slide-inner">
+      <div class="eyebrow">00 &mdash; Why bother?</div>
+      <h2>Five reasons that survive scrutiny</h2>
+      <div class="cards">
+        <div class="card">
+          <span class="tag">Privacy</span>
+          <h3>It never leaves the room</h3>
+          <p>Your notes, your clients&rsquo; data, your medical questions. No request is
+             made, so there is nothing to log, leak or subpoena.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Offline</span>
+          <h3>Works on a plane</h3>
+          <p>No network, no outage, no &ldquo;service is at capacity.&rdquo; The model is a
+             file on your disk.</p>
+        </div>
+        <div class="card">
+          <span class="tag">No limits</span>
+          <h3>No rate limits, no meter</h3>
+          <p>Run it all night on ten thousand documents. The only cost is electricity
+             and your patience.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Control</span>
+          <h3>Swap the brain out</h3>
+          <p>Pick a different model for a different job. Fine&#8209;tune one. Keep a version
+             that will never be deprecated out from under you.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Unfiltered</span>
+          <h3>No content filtering</h3>
+          <p>Useful for fiction, security research and medicine, where hosted models
+             often refuse legitimate work.</p>
+        </div>
+        <div class="card" style="border-left-color: var(--accent);">
+          <span class="tag">The promise</span>
+          <h3>By 9pm tonight</h3>
+          <p>A model running on your laptop, and a mental model of exactly why it is
+             as fast &mdash; or as slow &mdash; as it is.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §1 ============ -->
+  <section class="slide section-card" data-section="1">
+    <div class="slide-inner">
+      <div class="num">01</div>
+      <div class="eyebrow">Section 01 &middot; Hands on</div>
+      <h2>First win</h2>
+      <p class="lede">Install LM Studio, download one small model, send one message.
+        Dopamine before theory.</p>
+      <div class="budget">&#9679; 20 MIN &mdash; PROTECT THIS BUFFER</div>
+      <div class="stub">TO BUILD &mdash; install checklist, model pick, sampling aside</div>
+    </div>
+  </section>
+
+  <!-- ============ §2 ============ -->
+  <section class="slide section-card" data-section="2">
+    <div class="slide-inner">
+      <div class="num">02</div>
+      <div class="eyebrow">Section 02</div>
+      <h2>What just happened</h2>
+      <p class="lede">Hugging Face, GGUF, who publishes quants &mdash; and the chat template
+        gotcha that fails silently.</p>
+      <div class="budget">&#9679; 15 MIN</div>
+      <div class="stub">TO BUILD &mdash; template gotcha demo</div>
+    </div>
+  </section>
+
+  <!-- ============ §3 ============ -->
+  <section class="slide section-card" data-section="3">
+    <div class="slide-inner">
+      <div class="num">03</div>
+      <div class="eyebrow">Section 03</div>
+      <h2>Hardware &amp; the one formula</h2>
+      <p class="lede">DRAM versus VRAM. Discrete GPU versus unified memory. And the single
+        equation that explains every speed you will ever see.</p>
+      <div class="budget">&#9679; 20 MIN</div>
+    </div>
+  </section>
+
+  <section class="slide" data-section="3">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; The one formula</div>
+      <h2>Generation speed is a memory problem</h2>
+      <div class="formula">
+        tokens/sec <span class="op">&asymp;</span> memory bandwidth <span class="op">&divide;</span> model size
+        <span class="lbl">The through-line of this entire workshop</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="k">DDR5 system RAM</div>
+          <div class="v">~5 <small>tok/s</small></div>
+        </div>
+        <div class="metric">
+          <div class="k">M-series unified</div>
+          <div class="v">~27 <small>tok/s</small></div>
+        </div>
+        <div class="metric">
+          <div class="k">Discrete GPU VRAM</div>
+          <div class="v">~60 <small>tok/s</small></div>
+        </div>
+      </div>
+      <p class="caveat">Estimates for a 15&nbsp;GB model, teaching aids rather than benchmarks.
+        Every one of these is optimistic &mdash; real output lands meaningfully lower.</p>
+      <p class="note" style="margin-top:1rem">
+        TO BUILD &mdash; live estimator: bandwidth slider drives the actual streaming speed
+        of the sample text on this slide.</p>
+    </div>
+  </section>
+
+  <!-- ============ §4 ============ -->
+  <section class="slide section-card" data-section="4">
+    <div class="slide-inner">
+      <div class="num">04</div>
+      <div class="eyebrow">Section 04</div>
+      <h2>Quantization &amp; napkin math</h2>
+      <p class="lede">30B at 4&#8209;bit, 15B at 8&#8209;bit, 7.5B at 16&#8209;bit. All roughly 15&nbsp;GB.
+        Only one of them is the right choice.</p>
+      <div class="budget">&#9679; 20 MIN</div>
+      <div class="stub">TO BUILD &mdash; memory calculator, fit indicator, quality cliff</div>
+    </div>
+  </section>
+
+  <!-- ============ §5 ============ -->
+  <section class="slide section-card" data-section="5">
+    <div class="slide-inner">
+      <div class="num">05</div>
+      <div class="eyebrow">Section 05</div>
+      <h2>Context &amp; the KV cache</h2>
+      <p class="lede">Weights are fixed. The cache is not. Why a long conversation can
+        run you out of memory that a short one never touched.</p>
+      <div class="budget">&#9679; 15 MIN</div>
+      <div class="stub">TO BUILD &mdash; KV growth chart, GQA toggle</div>
+    </div>
+  </section>
+
+  <!-- ============ §6 ============ -->
+  <section class="slide section-card" data-section="6">
+    <div class="slide-inner">
+      <div class="num">06</div>
+      <div class="eyebrow">Section 06</div>
+      <h2>Good at / bad at</h2>
+      <p class="lede">Expectation management. Nobody should leave disappointed that their
+        7B is not a frontier model.</p>
+      <div class="budget">&#9679; 10 MIN</div>
+      <div class="stub">TO BUILD</div>
+    </div>
+  </section>
+
+  <!-- ============ §7 ============ -->
+  <section class="slide section-card" data-section="7">
+    <div class="slide-inner">
+      <div class="num">07</div>
+      <div class="eyebrow">Section 07</div>
+      <h2>The horizon</h2>
+      <p class="lede">Everything you just learned about bytes&#8209;per&#8209;parameter is already
+        being rewritten. Neither of tonight&rsquo;s examples will load in LM Studio &mdash;
+        that is the point.</p>
+      <div class="budget">&#9679; 10 MIN</div>
+      <div class="stub">TO BUILD &mdash; verify figures before presenting</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="counter" id="counter">01 / 11</div>
+<div class="hint">&larr; &rarr; NAVIGATE &nbsp;&middot;&nbsp; 0&ndash;7 JUMP TO SECTION</div>
+<nav class="rail" id="rail"></nav>
+
+<script>
+(function () {
+  'use strict';
+
+  var SECTIONS = [
+    ['00', 'Why bother?'],
+    ['01', 'First win'],
+    ['02', 'Under the hood'],
+    ['03', 'Hardware + formula'],
+    ['04', 'Quantization'],
+    ['05', 'Context / KV'],
+    ['06', 'Good at / bad at'],
+    ['07', 'Horizon']
+  ];
+
+  var slides  = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var rail    = document.getElementById('rail');
+  var counter = document.getElementById('counter');
+  var index   = 0;
+
+  /* ---- section rail ---- */
+  SECTIONS.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.className = 'rail-item';
+    b.innerHTML = '<span class="bar"></span><span class="txt">' + s[0] + ' &nbsp;' + s[1] + '</span>';
+    b.addEventListener('click', function () { goToSection(i); });
+    rail.appendChild(b);
+  });
+  var railItems = Array.prototype.slice.call(rail.children);
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  function render() {
+    slides.forEach(function (s, i) { s.classList.toggle('active', i === index); });
+
+    var sec = parseInt(slides[index].dataset.section, 10);
+    railItems.forEach(function (it, i) {
+      it.classList.toggle('current', i === sec);
+      it.classList.toggle('seen', i <= sec);
+    });
+
+    counter.textContent = pad(index + 1) + ' / ' + pad(slides.length);
+    if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  }
+
+  function goTo(i) {
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    render();
+  }
+
+  function goToSection(n) {
+    for (var i = 0; i < slides.length; i++) {
+      if (parseInt(slides[i].dataset.section, 10) === n) { goTo(i); return; }
+    }
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      goTo(index + 1); e.preventDefault();
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      goTo(index - 1); e.preventDefault();
+    } else if (k === 'Home') { goTo(0); e.preventDefault(); }
+    else if (k === 'End')    { goTo(slides.length - 1); e.preventDefault(); }
+    else if (k >= '0' && k <= '7') { goToSection(parseInt(k, 10)); e.preventDefault(); }
+    else if (k === 'f') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    }
+  });
+
+  var start = parseInt((location.hash || '').replace('#', ''), 10);
+  goTo(isNaN(start) ? 0 : start - 1);
+
+  /* ==========================================================
+     COVER ART
+     The three configurations of the flagship example. As
+     parameter count rises the weight grid gets denser; as
+     precision falls it gets coarser; the footprint bar below
+     never moves. That invariance IS the lesson.
+     ========================================================== */
+  var CONFIGS = [
+    { label: '7.5B · 16-bit', gb: '15.0 GB', params: 7.5,  shades: 26 },
+    { label: '15B · 8-bit',   gb: '15.0 GB', params: 15,   shades: 11 },
+    { label: '30B · 4-bit',   gb: '15.0 GB', params: 30,   shades: 5  }
+  ];
+
+  var cv  = document.getElementById('art');
+  var ctx = cv.getContext('2d');
+  var cfgEl = document.getElementById('artCfg');
+  var gbEl  = document.getElementById('artGb');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W = cv.width, H = cv.height;
+  var ci = 0, t0 = performance.now(), fade = 1, swapped = false;
+  var HOLD = 3400, XFADE = 620;
+
+  function field(wx, wy, t) {
+    var v = Math.sin(wx * 1.9 + t * 0.45)
+          + Math.sin(wy * 2.3 - t * 0.31)
+          + Math.sin((wx + wy) * 1.25 + t * 0.19)
+          + 0.6 * Math.sin((wx - wy * 1.4) * 3.1 - t * 0.24);
+    return (v / 3.6 + 1) / 2;                       /* -> 0..1 */
+  }
+
+  function draw(now) {
+    var elapsed = now - t0;
+    if (elapsed > HOLD + XFADE) { t0 = now; elapsed = 0; swapped = false; }
+
+    /* crossfade near the end of the hold; swap the config at the darkest point */
+    if (elapsed > HOLD) {
+      var p = (elapsed - HOLD) / XFADE;
+      fade = Math.abs(p - 0.5) * 2;                 /* 1 -> 0 -> 1 */
+      if (p >= 0.5 && !swapped) {
+        swapped = true;
+        ci = (ci + 1) % CONFIGS.length;
+        cfgEl.textContent = CONFIGS[ci].label;
+        gbEl.textContent  = CONFIGS[ci].gb;
+      }
+    } else { fade = 1; }
+
+    var cfg  = CONFIGS[ci];
+    var cell = 74 / Math.sqrt(cfg.params);          /* denser as params grow */
+    var cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
+    var t    = reduced ? 0 : now / 1000;
+
+    ctx.fillStyle = '#060a0e';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 0.15 + 0.85 * fade;
+
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var wx = (x * cell) / W, wy = (y * cell) / H;
+        var v  = field(wx * 6, wy * 6, t);
+        /* posterize to the configuration's shade count */
+        var q  = Math.round(v * (cfg.shades - 1)) / (cfg.shades - 1);
+        var l  = 6 + q * 52;
+        ctx.fillStyle = 'hsl(187, ' + (46 + q * 30) + '%, ' + l + '%)';
+        ctx.fillRect(x * cell, y * cell, cell - 1, cell - 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

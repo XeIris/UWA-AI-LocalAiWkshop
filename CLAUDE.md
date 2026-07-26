@@ -13,9 +13,44 @@ Macs). Assume no prior knowledge of quantization, VRAM, or inference engines.
 with a working local model on their own machine and a correct mental model of *why* it
 performs the way it does.
 
+## Identity & visual design (decided 2026-07-26)
+
+**Title:** **AI, Unplugged** — subtitle *"Real language models, running on the hardware
+you already own."* Cover strapline: NO CLOUD / NO SUBSCRIPTION / NO WI-FI REQUIRED.
+
+**Theme:** *hardware blueprint*. Near-black base (`#05080b`), faint cyan measurement grid,
+thin rules, panels rather than cards-with-shadows. Everything reads as a schematic.
+
+**The palette rule — this is load-bearing, do not break it.** Cyan (`--accent: #35d6e8`)
+owns *all* chrome and structure. The **entire warm range is reserved for semantics**:
+`--ok` green, `--warn` amber, `--bad` red exist only for the fit indicator, the
+quantization cliff, and genuine warnings. If something is amber on a slide, it *means*
+something. Never use warm colors decoratively.
+
+**Type:** system font stack (no CDN, no embedded webfont). Sans for prose, monospace for
+every number, formula, label and eyebrow. Root font-size scales off `min(vw, vh)` so the
+deck is legible both projected at 1080p and on an attendee's 13" laptop.
+
+**Motion:** slide-to-slide is a pure ~260ms opacity fade, nothing else. Within a slide,
+**an animation must encode a variable, never decorate one** — if it moves, it is showing
+a quantity changing. Respect `prefers-reduced-motion`.
+
+**Cover art:** canvas grid of weights cycling the flagship trio (7.5B@16 → 15B@8 →
+30B@4). As parameters rise the grid gets denser; as precision falls it gets coarser; the
+footprint bar underneath never moves. The invariance *is* the thesis, stated before a
+word is spoken.
+
+## Build order
+
+1. ~~Shell + theme spike~~ — done: nav, rail, fades, cover, §0 content, §3 formula slide.
+2. **§3 vertical slice** — decode-speed estimator, the pattern all other interactives copy.
+3. Content section by section, written against slides we can see.
+4. Cover art polish and the remaining interactives.
+
 ## Tech constraints
 
-- **Single-file HTML.** Vanilla JS + CSS. No React, no bundler, no npm, no build step.
+- **Single-file HTML** (`index.html`). Vanilla JS + CSS. No React, no bundler, no npm,
+  no build step.
 - Must work **offline** (the workshop may have bad wifi, and it's thematically on-brand).
   No CDN dependencies — inline everything.
 - Works when opened as a `file://` URL.
@@ -112,6 +147,11 @@ Close with a one-line promise of what they'll have working by the end.
 ### 1. First win — hands-on (20 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
+
+**Confirmed: every attendee brings their own laptop.** So §1 is a real hands-on exercise,
+not a demo — which makes the pre-workshop install message **mandatory, not optional**, and
+makes bandwidth the top live risk (N people downloading a multi-GB model over club wifi
+simultaneously will not work; plan for USB sticks or a local mirror).
 
 **This is where 80% of live failures happen.** Budget the buffer here and never cut it.
 Include a slide with a pre-workshop "install this beforehand" checklist that can be sent
@@ -211,9 +251,7 @@ deep sampling internals, runtime internals beyond the one-sentence llama.cpp/MLX
 
 ## Open questions not yet resolved
 
-- Audience size, and whether attendees bring their own laptops. This decides whether §1
-  is a 20-minute exercise or a scheduling hazard, and whether a pre-workshop install
-  message is mandatory.
+- Audience **size** (headcount). Every attendee brings a laptop — see below.
 - Which specific model to standardize on for the §1 hands-on download.
 - Whether the presenter is solo or co-teaching with someone whose hardware covers the
   other of dGPU / SoC.
