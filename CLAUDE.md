@@ -35,6 +35,30 @@ deck is legible both projected at 1080p and on an attendee's 13" laptop.
 **an animation must encode a variable, never decorate one** — if it moves, it is showing
 a quantity changing. Respect `prefers-reduced-motion`.
 
+**Corner radius is a single dial.** `--r-scale` in `:root` drives every rounded corner
+in the deck (`--r-sm` / `--r-md` / `--r-lg` / `--r-pill` all derive from it). `1` is the
+current app-like rounding; `0` returns the whole deck to the original hard-edged
+draughting look. Do not hardcode a `border-radius` anywhere — derive it, or the dial
+stops working.
+
+Note the tension this creates: rounded corners pull *away* from "technical drawing".
+What keeps the blueprint identity is the measurement grid, the thin rules, the mono
+labels and the numeric readouts — not the corners. The corner-bracket panel treatment
+was removed when rounding came in because the two fight each other.
+
+**Brand assets.** All logos are inlined as `<symbol>` elements in a hidden `<svg>` at the
+top of `<body>`, used via `<use href="#lg-…">`. Nothing is fetched at runtime — the
+offline rule applies to logos too. Most come from **lobehub/lobe-icons**, which matters
+because every icon there is a 1:1 24×24 glyph; mixing official brand assets would mean
+mixing wildly different aspect ratios. Exceptions: llama.cpp uses the official
+`ggml-org/llama.brand` 600×600 icon, MLX is Apple's square PNG base64'd (it has no
+dark-background square mark, so it fills its chip as an app icon), and GPT4All has no
+logo at all and gets a typographic chip.
+
+When adding a logo, namespace any `id` inside it — brand gradients collide otherwise.
+If a mark relied on `fill="currentColor"` on its root `<svg>`, that attribute is lost in
+the lift to `<symbol>`; `.chip svg { fill: currentColor }` restores it.
+
 **Cover art:** canvas grid of weights cycling the flagship trio (7.5B@16 → 15B@8 →
 30B@4). As parameters rise the grid gets denser; as precision falls it gets coarser; the
 footprint bar underneath never moves. The invariance *is* the thesis, stated before a
@@ -42,10 +66,12 @@ word is spoken.
 
 ## Build order
 
-1. ~~Shell + theme spike~~ — done: nav, rail, fades, cover, §0 content, §3 formula slide.
-2. **§3 vertical slice** — decode-speed estimator, the pattern all other interactives copy.
-3. Content section by section, written against slides we can see.
-4. Cover art polish and the remaining interactives.
+1. ~~Shell + theme spike~~ — nav, rail, fades, cover, §0 content, §3 formula slide.
+2. ~~§1 model picker + sampling interactives, §2 provenance/engines/alternatives~~ —
+   brand chip system and the rounded-corner dial landed with these.
+3. **§3 decode-speed estimator** — bandwidth slider driving real streaming text.
+4. §4 memory calculator + fit indicator + quality cliff; §5 KV cache chart.
+5. §6 / §7 content, cover art polish.
 
 ## Tech constraints
 
@@ -250,6 +276,9 @@ deep sampling internals, runtime internals beyond the one-sentence llama.cpp/MLX
 ## Open questions not yet resolved
 
 - Audience **size** (headcount). Every attendee brings a laptop — see below.
-- Which specific model to standardize on for the §1 hands-on download.
+- **Which model is the standard §1 download.** The deck currently flags **Qwen3 4B**
+  as "START HERE" (matches the "4B or 7B at Q4" default), with three alternatives on
+  the same slide. Not yet confirmed by the presenter. If the room skews to 8GB
+  machines, one of the 1B-class models is the safer call.
 - Whether the presenter is solo or co-teaching with someone whose hardware covers the
   other of dGPU / SoC.

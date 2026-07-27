@@ -69,17 +69,65 @@ moment. This does not work. Mitigate before the day:
 Assume some fraction turn up with nothing installed. Have a plan for them that does not
 stall the other 90% of the room.
 
-Sampling gets roughly two minutes here: where temperature lives, what it does, leave it
-at the default. Nothing deeper.
+### The four models on the picker slide
+
+All figures are the published 4-bit builds, pulled from the Hugging Face API. Re-check
+before the workshop — quant repos get re-uploaded.
+
+| Model | Params | MLX 4-bit | GGUF Q4 | Comfortable in |
+|---|---|---|---|---|
+| Gemma 3 (Google) | 1B | 730 MB | 720 MB (Q4_0, QAT) | ~1.5 GB |
+| LFM2.5 (Liquid AI) | 1.2B | 660 MB | 730 MB | ~1.5 GB |
+| **Qwen3 (default pick)** | 4B | 2.3 GB | 2.5 GB | ~4 GB |
+| Qwen3.5 | 9B | 6.0 GB | 5.6 GB | ~8 GB |
+
+**Say out loud that MLX is Apple-silicon only.** It is the single most common confusion
+on this slide — a Windows attendee will otherwise download an MLX build and wonder why
+nothing loads.
+
+"Comfortable in" is weights plus room for context, not the raw file size. It is
+deliberately more generous than LM Studio's own "minimum system memory" figure, which
+for Qwen3-4B reads 2 GB — *below* the 2.5 GB file it is describing. Do not quote LM
+Studio's number; it assumes a tiny context and will strand people.
+
+Gemma 3 1B is quantization-aware trained, which is a nice forward reference to §4: it
+was trained expecting to be squeezed, so it holds up at 4-bit better than a model
+quantized after the fact.
+
+### Sampling — two slides, roughly two minutes
+
+Do not teach the maths. Drive the sliders and narrate what moves.
+
+- **Temperature.** Drag to 0.15: one bar eats everything, "the model will say *orange*
+  every single time." Drag to 2.0: the field levels out, "now *blue* gets a turn, and
+  that is where nonsense comes from." Land on ~1.0 and move on.
+- **Top-p vs min-p.** The lesson is the contrast, not either mechanism. Top-p counts
+  area from the left; min-p sets a height floor relative to the best token. Then hit
+  the Confident/Torn toggle — min-p keeps 1 candidate when the model is sure and 8 when
+  it is torn, while top-p cannot tell the difference. That adaptivity is the whole
+  reason min-p exists.
+
+The numbers on both slides are real softmax over hand-picked scores, so they are
+internally consistent if someone checks your arithmetic. The *scenario* is invented.
+
+If short on time, cut the top-p/min-p slide entirely and leave temperature. Tell them
+where the sliders live in LM Studio and that the defaults are fine.
 
 ## Section 2 — What just happened
 
-- Hugging Face is the source; GGUF is the format; people like bartowski publish the
-  quants. Beginners get stuck at exactly this step.
-- One sentence: LM Studio wraps llama.cpp (and MLX on Mac). The tool is not magic and
-  alternatives exist — Ollama, Open WebUI, GPT4All.
+Three slides: provenance, engines, alternatives.
+
+- **Provenance.** Hugging Face is the source, GGUF is the format, and community
+  packagers (bartowski, lmstudio-community, mlx-community) publish the quants — model
+  authors usually do not. The point beginners miss: one model name produces dozens of
+  files, and choosing among them is the actual skill.
+- **Engines.** LM Studio is a face on top of llama.cpp, or MLX on a Mac. Worth one
+  sentence so nobody thinks the app is the magic. It also sets up §3 — MLX exists
+  because unified memory behaves differently, which is the whole hardware section.
+- **Alternatives.** Ollama, Open WebUI, GPT4All. Emphasise that all of them load the
+  same GGUF files, so switching costs nothing but a re-download they have already done.
 - **Chat template gotcha.** Wrong template produces garbage, and nothing errors. The
-  failure is invisible, which is what makes it worth the minute.
+  failure is invisible, which is what makes it worth the minute. *Still to build.*
 
 ## Section 3 — Hardware + the one formula
 
