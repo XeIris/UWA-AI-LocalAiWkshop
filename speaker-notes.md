@@ -74,12 +74,21 @@ stall the other 90% of the room.
 All figures are the published 4-bit builds, pulled from the Hugging Face API. Re-check
 before the workshop — quant repos get re-uploaded.
 
-| Model | Params | MLX 4-bit | GGUF Q4 | Comfortable in |
-|---|---|---|---|---|
-| Gemma 3 (Google) | 1B | 730 MB | 720 MB (Q4_0, QAT) | ~1.5 GB |
-| LFM2.5 (Liquid AI) | 1.2B | 660 MB | 730 MB | ~1.5 GB |
-| **Qwen3 (default pick)** | 4B | 2.3 GB | 2.5 GB | ~4 GB |
-| Qwen3.5 | 9B | 6.0 GB | 5.6 GB | ~8 GB |
+| Model | Params | MLX 4-bit | GGUF Q4 | Comfortable in | Role |
+|---|---|---|---|---|---|
+| Gemma 3 (Google) | 1B | 730 MB | 720 MB (Q4_0, QAT) | ~1.5 GB | **attendees download** |
+| LFM2.5 (Liquid AI) | 1.2B | 660 MB | 730 MB | ~1.5 GB | **attendees download** |
+| Qwen3 | 4B | 2.3 GB | 2.5 GB | ~4 GB | take home |
+| Qwen3.5 | 9B | 6.0 GB | 5.6 GB | ~8 GB | **presenter demo only** |
+
+**Everyone in the room takes a 1B.** Both are under 750 MB, which is the difference
+between §1 finishing on time and the wifi collapsing. Say plainly that these are small
+models and they will feel it — that is the honest setup for §6.
+
+**You demo Qwen3.5 9B yourself.** This is the whole point of having it on the slide:
+the room gets to see what another 8 GB of weights buys without thirty laptops pulling
+5.6 GB simultaneously. Run the same prompt on your 9B and on someone's 1B side by side
+if you can — it is a better argument for §4 than any chart.
 
 **Say out loud that MLX is Apple-silicon only.** It is the single most common confusion
 on this slide — a Windows attendee will otherwise download an MLX build and wonder why

@@ -345,13 +345,19 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   position: relative;
 }
 .model.pick { border-color: var(--accent); background: rgba(53, 214, 232, 0.045); }
+/* The demo card is a different CATEGORY, not a stronger recommendation.
+   Filled white rather than a new hue: violet would have been the obvious
+   pick but Qwen's own mark is #6336E7 and sits directly under the badge. */
+.model.demo { border-color: rgba(230, 241, 245, 0.32); background: rgba(230, 241, 245, 0.035); }
 .model .flag {
   position: absolute; top: -0.62rem; left: 1.2rem;
   background: var(--accent); color: #04262b;
   font-family: var(--mono); font-size: 0.62rem;
   letter-spacing: 0.16em; padding: 0.17rem 0.55rem;
   border-radius: var(--r-pill);
+  white-space: nowrap;
 }
+.model.demo .flag { background: var(--ink); color: #06101a; }
 .model .top { display: flex; align-items: center; gap: 0.8rem; }
 .model .nm { font-size: 1.06rem; line-height: 1.2; letter-spacing: -0.01em; }
 .model .by { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-dim); letter-spacing: 0.1em; }
@@ -457,21 +463,43 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 1.05rem; color: var(--accent);
   min-width: 3.2rem; text-align: right;
 }
-input[type=range] {
-  -webkit-appearance: none; appearance: none;
-  flex: 1; height: 0.36rem; border-radius: var(--r-pill);
-  background: var(--bg-raise); border: 1px solid var(--rule-soft);
-  outline: none; cursor: pointer;
+/* --- tick sliders ------------------------------------------- */
+/* A measurement scale rather than a generic track. Ticks nearest the
+   grip swell and the ones behind it light up, so the control reads as
+   something physical being dialled. The native range input is still
+   there, stretched invisibly on top, which keeps pointer dragging,
+   arrow-key stepping and screen-reader support for free. */
+.tickslider {
+  position: relative; flex: 1;
+  height: 2.3rem; display: flex; align-items: center;
 }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 1.05rem; height: 1.05rem; border-radius: 50%;
-  background: var(--accent); border: none; cursor: pointer;
+.ticks {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; height: 100%; pointer-events: none;
+}
+.tick {
+  width: 2px; height: 22%;
+  border-radius: var(--r-pill);
+  background: var(--ink-dim); opacity: 0.3;
+  transition: height 140ms cubic-bezier(0.22, 0.9, 0.28, 1),
+              opacity 140ms ease, background 140ms ease;
+}
+.tick.on   { background: var(--accent); opacity: 0.75; }
+.tick.grip {
+  background: var(--accent); opacity: 1; width: 3px;
   box-shadow: 0 0 0.7rem var(--accent-glow);
 }
-input[type=range]::-moz-range-thumb {
-  width: 1.05rem; height: 1.05rem; border-radius: 50%;
-  background: var(--accent); border: none; cursor: pointer;
+.tickslider input[type=range] {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; margin: 0;
+  opacity: 0; cursor: ew-resize;
+}
+.tickslider:focus-within .ticks {
+  outline: 1px solid var(--rule);
+  outline-offset: 6px; border-radius: var(--r-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tick { transition: none; }
 }
 .seg { display: flex; gap: 0.4rem; }
 .seg button {
@@ -688,10 +716,11 @@ input[type=range]::-moz-range-thumb {
   <section class="slide" data-section="1">
     <div class="slide-inner">
       <div class="eyebrow">01 &mdash; First win</div>
-      <h2>Pick one model. Bigger is not automatically better.</h2>
+      <h2>Download one of the first two. Bigger is not automatically better.</h2>
       <div class="models">
 
-        <div class="model">
+        <div class="model pick">
+          <span class="flag">RECOMMENDED</span>
           <div class="top">
             <span class="chip"><svg><use href="#lg-gemma"/></svg></span>
             <span><span class="nm">Gemma 3</span><br><span class="by">GOOGLE &middot; 1B</span></span>
@@ -708,7 +737,8 @@ input[type=range]::-moz-range-thumb {
           <p class="use">Quantization-aware trained, so it survives 4&#8209;bit better than most. Runs on nearly anything.</p>
         </div>
 
-        <div class="model">
+        <div class="model pick">
+          <span class="flag">RECOMMENDED</span>
           <div class="top">
             <span class="chip"><svg><use href="#lg-liquid"/></svg></span>
             <span><span class="nm">LFM2.5</span><br><span class="by">LIQUID AI &middot; 1.2B</span></span>
@@ -725,8 +755,7 @@ input[type=range]::-moz-range-thumb {
           <p class="use">Designed for edge hardware from the start rather than shrunk down to fit it.</p>
         </div>
 
-        <div class="model pick">
-          <span class="flag">START HERE</span>
+        <div class="model">
           <div class="top">
             <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
             <span><span class="nm">Qwen3</span><br><span class="by">QWEN &middot; 4B</span></span>
@@ -740,10 +769,11 @@ input[type=range]::-moz-range-thumb {
             <span class="sv">~4 GB free</span>
           </div>
           <div class="tag-row"><span class="tag">REASONING</span><span class="tag">100+ LANGS</span></div>
-          <p class="use">The safe default. Big enough to be genuinely useful, small enough for an 8&nbsp;GB laptop.</p>
+          <p class="use">Noticeably sharper than the 1B pair, and still fits an 8&nbsp;GB laptop. Worth grabbing at home.</p>
         </div>
 
-        <div class="model">
+        <div class="model demo">
+          <span class="flag">PRESENTER DEMO</span>
           <div class="top">
             <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
             <span><span class="nm">Qwen3.5</span><br><span class="by">QWEN &middot; 9B</span></span>
@@ -761,9 +791,11 @@ input[type=range]::-moz-range-thumb {
         </div>
 
       </div>
-      <p class="caveat"><strong>MLX is Apple&nbsp;silicon only.</strong> Everyone else takes the GGUF.
-        Sizes are the 4&#8209;bit builds as published today; &ldquo;comfortable in&rdquo; leaves room for
-        the context window on top of the weights.</p>
+      <p class="caveat"><strong>Take a 1B tonight.</strong> Under 750&nbsp;MB downloads in
+        minutes on shared wifi and leaves your laptop responsive; 2.5&nbsp;GB times thirty
+        people does not. The larger two are here so you can see the trade&#8209;off, and to
+        take home afterwards.
+        <strong>MLX is Apple&nbsp;silicon only</strong> &mdash; everyone else takes the GGUF.</p>
     </div>
   </section>
 
@@ -1313,6 +1345,54 @@ input[type=range]::-moz-range-thumb {
     window.addEventListener('resize', drawCuts);
     document.addEventListener('deck:slide', drawCuts);
   }
+
+  /* ==========================================================
+     TICK SLIDERS
+     Wraps every range input in a scale of ticks. The bulge is a
+     gaussian falloff around the grip position, so the swell is smooth
+     rather than a hard neighbourhood.
+     ========================================================== */
+  var TICKS = 44, SPREAD = 3.2;
+
+  Array.prototype.forEach.call(
+    document.querySelectorAll('input[type=range]'),
+    function (input) {
+      var wrap = document.createElement('div');
+      wrap.className = 'tickslider';
+      var scale = document.createElement('div');
+      scale.className = 'ticks';
+      scale.setAttribute('aria-hidden', 'true');
+
+      var marks = [];
+      for (var i = 0; i < TICKS; i++) {
+        var m = document.createElement('span');
+        m.className = 'tick';
+        scale.appendChild(m);
+        marks.push(m);
+      }
+
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(scale);
+      wrap.appendChild(input);
+
+      function paint() {
+        var min = parseFloat(input.min) || 0;
+        var max = parseFloat(input.max);
+        var pos = ((input.value - min) / (max - min)) * (TICKS - 1);
+        var grip = Math.round(pos);
+        for (var i = 0; i < TICKS; i++) {
+          var d = i - pos;
+          var swell = Math.exp(-(d * d) / (2 * SPREAD * SPREAD));
+          marks[i].style.height = (22 + 62 * swell) + '%';
+          marks[i].className =
+            'tick' + (i === grip ? ' grip' : (i < grip ? ' on' : ''));
+        }
+      }
+
+      input.addEventListener('input', paint);
+      paint();
+    }
+  );
 
   /* ==========================================================
      COVER ART

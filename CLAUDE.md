@@ -27,6 +27,12 @@ owns *all* chrome and structure. The **entire warm range is reserved for semanti
 quantization cliff, and genuine warnings. If something is amber on a slide, it *means*
 something. Never use warm colors decoratively.
 
+**Third state — filled white.** Where something needs to read as a *different category*
+rather than a stronger recommendation (the "PRESENTER DEMO" badge on the model picker),
+use filled `--ink` with dark text, mirroring the filled-cyan badge. Violet was the
+obvious choice and is wrong: Qwen's own mark is `#6336E7` and sits directly under that
+badge. Do not add a fourth hue without a reason this specific.
+
 **Type:** system font stack (no CDN, no embedded webfont). Sans for prose, monospace for
 every number, formula, label and eyebrow. Root font-size scales off `min(vw, vh)` so the
 deck is legible both projected at 1080p and on an attendee's 13" laptop.
@@ -276,9 +282,13 @@ deep sampling internals, runtime internals beyond the one-sentence llama.cpp/MLX
 ## Open questions not yet resolved
 
 - Audience **size** (headcount). Every attendee brings a laptop — see below.
-- **Which model is the standard §1 download.** The deck currently flags **Qwen3 4B**
-  as "START HERE" (matches the "4B or 7B at Q4" default), with three alternatives on
-  the same slide. Not yet confirmed by the presenter. If the room skews to 8GB
-  machines, one of the 1B-class models is the safer call.
+
+**Resolved — the §1 download.** Attendees take a **1B-class model**: Gemma 3 1B or
+LFM2.5 1.2B, both flagged RECOMMENDED. Both are under 750MB, which downloads in minutes
+over shared wifi and leaves the laptop responsive. **Qwen3.5 9B is presenter-demo only**
+and badged as such, so the room sees what a bigger model buys without thirty people
+trying to pull 5.6GB at once. Qwen3 4B stays on the slide as an unbadged middle option
+to take home. This overrides the older "safe default: a 4B or 7B at Q4" note — bandwidth
+in the room beat model quality.
 - Whether the presenter is solo or co-teaching with someone whose hardware covers the
   other of dGPU / SoC.
