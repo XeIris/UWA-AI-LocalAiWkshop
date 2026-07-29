@@ -68,15 +68,47 @@ def expand(text, depth=0):
 
 
 def slim_css(css):
-    """Strip comments, then collapse every whitespace run to ONE space.
+    """Strip comments and collapse whitespace runs to ONE space — outside
+    string literals only.
 
     A single space is legal wherever whitespace was legal, so this cannot
     break `calc(7px * var(--r-scale))` the way punctuation-aware squeezing
-    can. Caveat: a `/*` inside a CSS string literal would confuse the
-    comment regex. There are none today; if you add one, check the output.
+    can. Quoted values are copied through untouched, so `content: "  "`, a
+    data: URI, or a font name keeps its exact bytes, and a `/*` appearing
+    inside a string can no longer be mistaken for a comment.
     """
-    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
-    return re.sub(r"\s+", " ", css).strip()
+    out, i, n = [], 0, len(css)
+
+    def space():
+        if out and out[-1] != " ":
+            out.append(" ")
+
+    while i < n:
+        c = css[i]
+        if c in "\"'":                                   # string: verbatim
+            q, j = c, i + 1
+            while j < n:
+                if css[j] == "\\":
+                    j += 2
+                    continue
+                if css[j] == q:
+                    j += 1
+                    break
+                j += 1
+            out.append(css[i:j])
+            i = j
+        elif css.startswith("/*", i):                    # comment -> separator
+            j = css.find("*/", i + 2)
+            i = n if j < 0 else j + 2
+            space()
+        elif c in " \t\r\n\f":
+            while i < n and css[i] in " \t\r\n\f":
+                i += 1
+            space()
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out).strip()
 
 
 def release(html):

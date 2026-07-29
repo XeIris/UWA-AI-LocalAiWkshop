@@ -72,7 +72,9 @@
 .lg-item { display: flex; align-items: center; gap: 0.45rem; }
 .lg-item.mono { margin-left: auto; text-transform: none; letter-spacing: 0.05em; }
 .sw {
-  width: 0.72rem; height: 0.72rem; border-radius: 2px;
+  /* Derived, not hardcoded: --r-scale: 0 must return the whole deck to
+     hard edges, and a stray 2px here would stay rounded. */
+  width: 0.72rem; height: 0.72rem; border-radius: calc(var(--r-sm) * 0.3);
   border: 1px solid var(--rule-soft);
 }
 .sw-fast { background: var(--accent); border-color: var(--accent); }
@@ -87,4 +89,8 @@
   .mach-rate .r-num { font-size: 1.7rem; }
   .mx-legend { gap: 0.7rem; }
   .lg-item.mono { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mach-rate .r-num { transition: none; }
 }

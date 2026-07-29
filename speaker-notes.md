@@ -133,8 +133,10 @@ Three slides: provenance, engines, alternatives.
 - **Engines.** LM Studio is a face on top of llama.cpp, or MLX on a Mac. Worth one
   sentence so nobody thinks the app is the magic. It also sets up §3 — MLX exists
   because unified memory behaves differently, which is the whole hardware section.
-- **Alternatives.** Ollama, Open WebUI, GPT4All. Emphasise that all of them load the
-  same GGUF files, so switching costs nothing but a re-download they have already done.
+- **Alternatives.** Ollama, Open WebUI, GPT4All. They share the GGUF format, so the
+  download is not wasted — but do not say switching is free. Open WebUI is a front end
+  and needs Ollama (or another server) behind it, and Ollama imports a local GGUF via a
+  `Modelfile` rather than opening the file directly.
 - **Chat template gotcha.** Wrong template produces garbage, and nothing errors. The
   failure is invisible, which is what makes it worth the minute. *Still to build.*
 

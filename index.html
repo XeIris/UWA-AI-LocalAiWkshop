@@ -541,11 +541,15 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   opacity: 0; cursor: ew-resize;
 }
 .tickslider:focus-within .ticks {
-  outline: 1px solid var(--rule);
+  /* The range input itself is opacity:0, so this outline is the ONLY
+     keyboard focus cue on the slider. --rule is a hairline meant for
+     structure and disappears against the panel; focus has to be obvious. */
+  outline: 2px solid var(--accent);
   outline-offset: 6px; border-radius: var(--r-sm);
 }
 @media (prefers-reduced-motion: reduce) {
   .tick { transition: none; }
+  .seg button { transition: none; }
 }
 .seg { display: flex; gap: 0.4rem; }
 .seg button {
@@ -608,6 +612,11 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 @media (max-width: 900px) {
   .rail-item .txt { display: none; }
   .rail { height: 2.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-item, .rail-item .bar { transition: none; }
+  .hint { transition: none; }
 }
 /* --- prefill / decode contrast ------------------------------- */
 /* Two panels rather than a table: the asymmetry is the content, and a
@@ -818,7 +827,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .lg-item { display: flex; align-items: center; gap: 0.45rem; }
 .lg-item.mono { margin-left: auto; text-transform: none; letter-spacing: 0.05em; }
 .sw {
-  width: 0.72rem; height: 0.72rem; border-radius: 2px;
+  /* Derived, not hardcoded: --r-scale: 0 must return the whole deck to
+     hard edges, and a stray 2px here would stay rounded. */
+  width: 0.72rem; height: 0.72rem; border-radius: calc(var(--r-sm) * 0.3);
   border: 1px solid var(--rule-soft);
 }
 .sw-fast { background: var(--accent); border-color: var(--accent); }
@@ -833,6 +844,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .mach-rate .r-num { font-size: 1.7rem; }
   .mx-legend { gap: 0.7rem; }
   .lg-item.mono { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mach-rate .r-num { transition: none; }
 }
 </style>
 </head>
@@ -952,7 +967,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <div class="eyebrow">Section 01 &middot; Hands on</div>
       <h2>First win</h2>
       <p class="lede">Install LM Studio, download one small model, send one message.</p>
-      <div class="stub">TO BUILD &mdash; install checklist</div>
+      <!-- TO BUILD: install checklist -->
     </div>
   </section>
 
@@ -1115,7 +1130,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>What just happened</h2>
       <p class="lede">Hugging Face, GGUF, who publishes quants &mdash; and the chat template
         gotcha that fails silently.</p>
-      <div class="stub">TO BUILD &mdash; template gotcha demo</div>
+      <!-- TO BUILD: template gotcha demo -->
     </div>
   </section>
 
@@ -1137,7 +1152,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <span class="chip lg text-mark">GGUF</span>
           <div class="body">
             <h3>The GGUF file</h3>
-            <p>One self-contained file: weights, tokenizer and chat template together. This is what you download.</p>
+            <p>One self-contained file: the weights plus tokenizer, and <em>usually</em> the chat
+               template. This is what you download.</p>
             <span class="mono-note">MLX USES ITS OWN FORMAT</span>
           </div>
         </div>
@@ -1222,8 +1238,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         </div>
       </div>
       <p class="note" style="margin-top:1.3rem">
-        All four load the same GGUF files. Moving between them costs you nothing but
-        the download you already have.</p>
+        Same GGUF files underneath, so the model you just downloaded is not wasted
+        &mdash; but moving is not quite free. Open WebUI is a front end and needs
+        Ollama (or another server) behind it, and Ollama imports a local GGUF through
+        a <span class="mono">Modelfile</span> rather than opening it directly.</p>
     </div>
   </section>
   <!-- ============ §3 ============ -->
@@ -1241,7 +1259,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   <section class="slide" data-section="3">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; The one formula</div>
-      <h2>Generation speed is a memory problem</h2>
+      <h2>Decode speed is a memory problem</h2>
 
       <div class="equation">
         <span class="eq-lhs">tokens/sec</span>
@@ -1315,7 +1333,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 
           <div class="dk-readout">
             <div class="dk-num" id="dkRate">41</div>
-            <div class="dk-unit">tokens / sec<span id="dkNote">M5 Max unified memory, 40&#8209;core GPU</span></div>
+            <div class="dk-unit">estimated tokens / sec<span id="dkNote">M5 Max unified memory, 40&#8209;core GPU</span></div>
             <div class="dk-verdict" id="dkVerdict">Comfortably faster than you read</div>
           </div>
         </div>
@@ -1407,7 +1425,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>Quantization &amp; napkin math</h2>
       <p class="lede">30B at 4&#8209;bit, 15B at 8&#8209;bit, 7.5B at 16&#8209;bit. All roughly 15&nbsp;GB.
         Only one of them is the right choice.</p>
-      <div class="stub">TO BUILD &mdash; memory calculator, fit indicator, quality cliff</div>
+      <!-- TO BUILD: memory calculator, fit indicator, quality cliff -->
     </div>
   </section>
   <!-- ============ §5 ============ -->
@@ -1418,7 +1436,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>Context &amp; the KV cache</h2>
       <p class="lede">Weights are fixed. The cache is not. Why a long conversation can
         run you out of memory that a short one never touched.</p>
-      <div class="stub">TO BUILD &mdash; KV growth chart, GQA toggle</div>
+      <!-- TO BUILD: KV growth chart, GQA toggle -->
     </div>
   </section>
   <!-- ============ §6 ============ -->
@@ -1429,7 +1447,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>Good at / bad at</h2>
       <p class="lede">Expectation management. Nobody should leave disappointed that their
         7B is not a frontier model.</p>
-      <div class="stub">TO BUILD</div>
+      <!-- TO BUILD: section content -->
     </div>
   </section>
   <!-- ============ §7 ============ -->
@@ -1441,7 +1459,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <p class="lede">Everything you just learned about bytes&#8209;per&#8209;parameter is already
         being rewritten. Neither of tonight&rsquo;s examples will load in LM Studio &mdash;
         that is the point.</p>
-      <div class="stub">TO BUILD &mdash; verify figures before presenting</div>
+      <!-- TO BUILD: verify figures before presenting -->
     </div>
   </section>
 </div>
@@ -1482,6 +1500,16 @@ SECTIONS.forEach(function (s, i) {
 });
 var railItems = Array.prototype.slice.call(rail.children);
 
+/* A clicked button keeps focus, and the keydown guard below then hands it
+   the arrow keys — so after clicking the rail (or any segmented control)
+   the deck stopped responding to arrows until you clicked elsewhere.
+   Drop focus for pointer clicks only: keyboard activation reports
+   detail 0 and must keep focus so tab order still works. */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('button');
+  if (b && e.detail > 0) b.blur();
+});
+
 function pad(n) { return (n < 10 ? '0' : '') + n; }
 
 function render() {
@@ -1494,7 +1522,13 @@ function render() {
   });
 
   counter.textContent = pad(index + 1) + ' / ' + pad(slides.length);
-  if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  /* Some browsers throw SecurityError on replaceState from a file:// URL,
+     and the deck has to run from file://. An uncaught throw here would
+     abort render() before the dispatch below, leaving every canvas and
+     bar interactive un-measured — so the deep link is best-effort only. */
+  try {
+    if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  } catch (e) { /* deep linking unavailable; navigation still works */ }
   /* Interactives that measure their own geometry need to re-measure
      once their slide is actually laid out. */
   document.dispatchEvent(new CustomEvent('deck:slide'));
@@ -1868,7 +1902,7 @@ if (dkSlide) {
     dkRate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
     dkVerdict.innerHTML = verdict(r);
     var wpm = Math.round(r * WORDS_PER_TOKEN * 60);
-    dkWpm.innerHTML = '&asymp; ' + wpm.toLocaleString() + ' words/min &middot; ' +
+    dkWpm.innerHTML = 'est. &asymp; ' + wpm.toLocaleString() + ' words/min &middot; ' +
       (wpm / READING_WPM).toFixed(1) + '&times; reading speed';
   }
 
@@ -1895,7 +1929,15 @@ if (dkSlide) {
   });
 
   [bwSlider, szSlider].forEach(function (el) {
-    el.addEventListener('input', function () { draw(); syncPresets(); restart(); });
+    el.addEventListener('input', function () {
+      draw(); syncPresets();
+      /* Under reduced motion no tick() loop runs, so restart() would zero
+         `shown` with nothing left to re-render — blanking the passage for
+         the rest of the session the first time anyone drags a slider.
+         Show the whole passage instead; the readout still carries the lesson. */
+      if (reducedMo) { shown = PASSAGE.length; render(); }
+      else restart();
+    });
   });
 
   /* ---- streaming text ---- */
@@ -2053,9 +2095,14 @@ if (mxSlide) {
     var dpr = window.devicePixelRatio || 1;
     var w = v.cv.clientWidth, h = v.cv.clientHeight;
     if (!w || !h) return false;
-    if (v.cv.width !== Math.round(w * dpr)) {
-      v.cv.width = Math.round(w * dpr);
-      v.cv.height = Math.round(h * dpr);
+    /* Both axes must be checked. The canvas is sized in rem and the root
+       font size scales off min(1.16vw, 2.02vh), so a purely vertical
+       resize changes clientHeight while clientWidth stays put — testing
+       width alone left a stale backing store and a stretched drawing. */
+    var cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+    if (v.cv.width !== cw || v.cv.height !== ch) {
+      v.cv.width = cw;
+      v.cv.height = ch;
     }
     v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     v.W = w; v.H = h;

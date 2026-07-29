@@ -46,7 +46,7 @@ if (dkSlide) {
     dkRate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
     dkVerdict.innerHTML = verdict(r);
     var wpm = Math.round(r * WORDS_PER_TOKEN * 60);
-    dkWpm.innerHTML = '&asymp; ' + wpm.toLocaleString() + ' words/min &middot; ' +
+    dkWpm.innerHTML = 'est. &asymp; ' + wpm.toLocaleString() + ' words/min &middot; ' +
       (wpm / READING_WPM).toFixed(1) + '&times; reading speed';
   }
 
@@ -73,7 +73,15 @@ if (dkSlide) {
   });
 
   [bwSlider, szSlider].forEach(function (el) {
-    el.addEventListener('input', function () { draw(); syncPresets(); restart(); });
+    el.addEventListener('input', function () {
+      draw(); syncPresets();
+      /* Under reduced motion no tick() loop runs, so restart() would zero
+         `shown` with nothing left to re-render — blanking the passage for
+         the rest of the session the first time anyone drags a slider.
+         Show the whole passage instead; the readout still carries the lesson. */
+      if (reducedMo) { shown = PASSAGE.length; render(); }
+      else restart();
+    });
   });
 
   /* ---- streaming text ---- */

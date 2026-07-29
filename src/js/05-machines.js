@@ -111,9 +111,14 @@ if (mxSlide) {
     var dpr = window.devicePixelRatio || 1;
     var w = v.cv.clientWidth, h = v.cv.clientHeight;
     if (!w || !h) return false;
-    if (v.cv.width !== Math.round(w * dpr)) {
-      v.cv.width = Math.round(w * dpr);
-      v.cv.height = Math.round(h * dpr);
+    /* Both axes must be checked. The canvas is sized in rem and the root
+       font size scales off min(1.16vw, 2.02vh), so a purely vertical
+       resize changes clientHeight while clientWidth stays put — testing
+       width alone left a stale backing store and a stretched drawing. */
+    var cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+    if (v.cv.width !== cw || v.cv.height !== ch) {
+      v.cv.width = cw;
+      v.cv.height = ch;
     }
     v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     v.W = w; v.H = h;

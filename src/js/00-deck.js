@@ -24,6 +24,16 @@ SECTIONS.forEach(function (s, i) {
 });
 var railItems = Array.prototype.slice.call(rail.children);
 
+/* A clicked button keeps focus, and the keydown guard below then hands it
+   the arrow keys — so after clicking the rail (or any segmented control)
+   the deck stopped responding to arrows until you clicked elsewhere.
+   Drop focus for pointer clicks only: keyboard activation reports
+   detail 0 and must keep focus so tab order still works. */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('button');
+  if (b && e.detail > 0) b.blur();
+});
+
 function pad(n) { return (n < 10 ? '0' : '') + n; }
 
 function render() {
@@ -36,7 +46,13 @@ function render() {
   });
 
   counter.textContent = pad(index + 1) + ' / ' + pad(slides.length);
-  if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  /* Some browsers throw SecurityError on replaceState from a file:// URL,
+     and the deck has to run from file://. An uncaught throw here would
+     abort render() before the dispatch below, leaving every canvas and
+     bar interactive un-measured — so the deep link is best-effort only. */
+  try {
+    if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  } catch (e) { /* deep linking unavailable; navigation still works */ }
   /* Interactives that measure their own geometry need to re-measure
      once their slide is actually laid out. */
   document.dispatchEvent(new CustomEvent('deck:slide'));

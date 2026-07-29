@@ -101,7 +101,7 @@ word is spoken.
 
 ## Source layout & build
 
-```
+```text
 src/index.html          shell; everything else is spliced into it
 src/css/NN-name.css     one file per component
 src/js/NN-name.js       one file per feature

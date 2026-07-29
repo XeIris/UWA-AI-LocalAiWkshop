@@ -49,3 +49,8 @@
   .rail-item .txt { display: none; }
   .rail { height: 2.6rem; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-item, .rail-item .bar { transition: none; }
+  .hint { transition: none; }
+}

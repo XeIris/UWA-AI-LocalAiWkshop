@@ -41,11 +41,15 @@
   opacity: 0; cursor: ew-resize;
 }
 .tickslider:focus-within .ticks {
-  outline: 1px solid var(--rule);
+  /* The range input itself is opacity:0, so this outline is the ONLY
+     keyboard focus cue on the slider. --rule is a hairline meant for
+     structure and disappears against the panel; focus has to be obvious. */
+  outline: 2px solid var(--accent);
   outline-offset: 6px; border-radius: var(--r-sm);
 }
 @media (prefers-reduced-motion: reduce) {
   .tick { transition: none; }
+  .seg button { transition: none; }
 }
 .seg { display: flex; gap: 0.4rem; }
 .seg button {
