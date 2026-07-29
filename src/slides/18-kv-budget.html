@@ -1,0 +1,73 @@
+  <!-- ---- 5 · the ceiling, and what a million tokens actually costs ---- -->
+  <!-- Drag straight to 1M and stop talking for a second. The bar bursting
+       past the capacity marker does the whole job. -->
+  <section class="slide" data-section="5" id="s-budget">
+    <div class="slide-inner">
+      <div class="eyebrow">05 &mdash; The ceiling</div>
+      <h2>A 32&nbsp;GB model in a 64&nbsp;GB machine. Now make it remember.</h2>
+
+      <div class="bg-controls">
+        <div class="ctrl">
+          <label for="bgMem">Machine</label>
+          <input type="range" id="bgMem" min="8" max="192" step="8" value="64">
+          <output id="bgMemOut">64</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
+        <div class="ctrl">
+          <label for="bgWeights">Weights</label>
+          <input type="range" id="bgWeights" min="1" max="120" step="1" value="32">
+          <output id="bgWeightsOut">32</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
+        <div class="ctrl">
+          <span class="ctrl-label" id="bgPrecLabel">Cache</span>
+          <div class="seg" id="bgPrec" role="group" aria-labelledby="bgPrecLabel">
+            <button type="button" data-bytes="2" class="on" aria-pressed="true">FP16</button>
+            <button type="button" data-bytes="1" aria-pressed="false">8&#8209;bit KV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-ctx">
+        <label for="bgCtx" class="bg-ctx-k">Context</label>
+        <input type="range" id="bgCtx" min="0" max="10" step="1" value="5">
+        <output id="bgCtxOut" class="bg-ctx-out">32K</output>
+      </div>
+
+      <div class="bg-bar">
+        <div class="bg-track" id="bgTrack">
+          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">32.0 GB</span></div>
+          <div class="bg-seg bg-k" id="bgSegK"><span id="bgLabK">6.0 GB</span></div>
+          <div class="bg-seg bg-o" id="bgSegO"></div>
+          <div class="bg-cap" id="bgCap"><span id="bgCapLab">64 GB installed</span></div>
+        </div>
+        <div class="bg-legend">
+          <span class="lg-item"><i class="sw sw-fast"></i>Weights &mdash; fixed</span>
+          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; grows with every token</span>
+          <span class="lg-item"><i class="sw sw-none"></i>OS and runtime</span>
+        </div>
+      </div>
+
+      <div class="bg-out">
+        <div class="bg-cell">
+          <div class="bg-num" id="bgTotal">40.0</div>
+          <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
+        </div>
+        <div class="bg-cell">
+          <div class="bg-num" id="bgMax">262K</div>
+          <div class="bg-lab">longest context that fits</div>
+        </div>
+        <div class="bg-cell bg-verdict" id="bgVerdict">
+          <div class="bg-v-k" id="bgVKey">FITS</div>
+          <div class="bg-lab" id="bgVText">Comfortable. Keep talking.</div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>This is why a million tokens is a hardware problem, not a
+        setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
+        no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
+        quantization, sliding windows and racks of accelerators. On your laptop, the honest
+        move is to set the context you actually need &mdash; LM Studio hands you that slider,
+        and now you know what it costs.</p>
+    </div>
+  </section>

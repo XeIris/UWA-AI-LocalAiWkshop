@@ -1,0 +1,50 @@
+  <!-- ---- 4 · the question ---- -->
+  <!-- Ask the room BEFORE revealing. Hands up per option, then click. The
+       answer only lands if they have committed to a guess first. -->
+  <section class="slide" data-section="4" id="s-quiz">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; Your turn</div>
+      <h2>Same 15&nbsp;GB. Same tokens per second. Which one do you download?</h2>
+
+      <div class="qq" id="qq">
+        <button type="button" class="qq-card" data-opt="a">
+          <span class="qq-tag">A</span>
+          <span class="qq-spec"><b>7.5B</b> @ 16&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Every weight at full precision</span>
+          <span class="qq-why">Full precision on a small model. You are spending 15&nbsp;GB on
+            decimal places the model barely uses &mdash; and a 7.5B is still a 7.5B.</span>
+        </button>
+
+        <button type="button" class="qq-card" data-opt="b">
+          <span class="qq-tag">B</span>
+          <span class="qq-spec"><b>15B</b> @ 8&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Effectively lossless compression</span>
+          <span class="qq-why">Defensible, and nothing here is wrong. But 8&#8209;bit buys you
+            safety you did not need, and you paid for it with half the parameters.</span>
+        </button>
+
+        <button type="button" class="qq-card" data-opt="c" data-best="1">
+          <span class="qq-tag">C</span>
+          <span class="qq-spec"><b>30B</b> @ 4&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Four times the parameters, roughly compressed</span>
+          <span class="qq-why">Four times the model for the same memory and the same speed.
+            The damage 4&#8209;bit does is small; the gap between 7.5B and 30B is not.</span>
+        </button>
+      </div>
+
+      <div class="qq-answer" id="qqAnswer" hidden>
+        <p class="qq-rule"><strong>Bigger and more compressed usually wins.</strong>
+          All three read 15&nbsp;GB out of memory for every token, so all three decode at the
+          same speed &mdash; bandwidth &divide; size does not care how the bytes are arranged.
+          Size and speed are held constant, which leaves exactly one variable: how much model
+          you got for the money.</p>
+        <button type="button" class="qq-reset" id="qqReset">Ask again</button>
+      </div>
+
+      <p class="caveat" id="qqCaveat">Click an option to reveal &mdash; ask for hands first.
+        The rule has a floor, and the floor is the next slide.</p>
+    </div>
+  </section>

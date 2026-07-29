@@ -1,0 +1,71 @@
+  <!-- ---- 5 · what the cache is, and the straight line it draws ---- -->
+  <section class="slide" data-section="5" id="s-kv">
+    <div class="slide-inner">
+      <div class="eyebrow">05 &mdash; The KV cache</div>
+      <h2>The model re-reads the whole conversation. It refuses to do it twice.</h2>
+
+      <!-- Live formula: every term is a control below, so the arithmetic on
+           screen is the arithmetic being performed. -->
+      <div class="kv-eq">
+        <span class="kv-t"><b>2</b><em>K and V</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvL">32</b><em>layers</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvH">8</b><em>KV heads</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvD">128</b><em>head dim</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvB">2</b><em>bytes</em></span>
+        <span class="kv-x">=</span>
+        <span class="kv-t kv-res"><b id="kvPer">128</b><em>KB per token</em></span>
+      </div>
+
+      <div class="kv">
+        <div class="kv-panel kv-controls">
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvModelLabel">Model</span>
+            <!-- data-kv is the shared-KV count, data-q the query-head count the
+                 same model would need without GQA. Representative configs, not
+                 any one checkpoint's config.json. -->
+            <div class="seg" id="kvModel" role="group" aria-labelledby="kvModelLabel">
+              <button type="button" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8">1B&#8209;class</button>
+              <button type="button" data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
+              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="17.5">30B&#8209;class</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvGqaLabel">Attention</span>
+            <div class="seg" id="kvGqa" role="group" aria-labelledby="kvGqaLabel">
+              <button type="button" data-gqa="1" class="on" aria-pressed="true">GQA</button>
+              <button type="button" data-gqa="0" aria-pressed="false">One KV per head</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvPrecLabel">Cache</span>
+            <div class="seg" id="kvPrec" role="group" aria-labelledby="kvPrecLabel">
+              <button type="button" data-bytes="2" class="on" aria-pressed="true">FP16</button>
+              <button type="button" data-bytes="1" aria-pressed="false">8&#8209;bit KV</button>
+            </div>
+          </div>
+
+          <dl class="kv-stats">
+            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.13 GB</dd></div>
+            <div><dt>At 32k context</dt><dd id="kv32">4.0 GB</dd></div>
+            <div><dt>Cache vs weights at 32k</dt><dd id="kvRatio">0.8&times;</dd></div>
+          </dl>
+        </div>
+
+        <div class="kv-panel kv-chart">
+          <div class="kv-head">
+            <span>Memory against context length</span>
+            <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
+          </div>
+          <canvas id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>GQA is why your arithmetic will over-estimate.</strong> The naive
+        formula gives every attention head its own key and value; modern models share one KV
+        head between groups of them, cutting the cache several-fold. Toggle it and watch the
+        line pivot. Some models cut further still with sliding-window layers, which cap the
+        cache instead of growing it.</p>
+    </div>
+  </section>

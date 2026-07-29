@@ -1,0 +1,44 @@
+  <!-- ---- 4 · the floor ---- -->
+  <section class="slide" data-section="4" id="s-cliff">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; The 4&#8209;bit floor</div>
+      <h2>Compression is nearly free &mdash; right up until it isn&rsquo;t</h2>
+
+      <div class="cl">
+        <div class="cl-panel cl-chart">
+          <canvas id="clCanvas" aria-label="Quality retained against bits per weight; the curve is flat down to 4 bits and falls away sharply below it"></canvas>
+        </div>
+
+        <div class="cl-panel cl-side">
+          <div class="cl-readout">
+            <div class="cl-bits" id="clBits">4</div>
+            <div class="cl-bits-k">bits per weight</div>
+          </div>
+
+          <div class="ctrl">
+            <label for="clSlider">Precision</label>
+            <input type="range" id="clSlider" min="0" max="6" step="1" value="2">
+          </div>
+
+          <dl class="cl-stats">
+            <div><dt>30B model on disk</dt><dd id="clSize">15.0 GB</dd></div>
+            <div><dt>Quality retained</dt><dd id="clQual">98%</dd></div>
+          </dl>
+
+          <p class="cl-verdict" id="clVerdict">The sweet spot. Where almost everyone should live.</p>
+
+          <div class="cl-legend">
+            <span class="lg-item"><i class="ln ln-big"></i>30B model</span>
+            <span class="lg-item"><i class="ln ln-small"></i>1&ndash;4B model</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Small models fall further.</strong> A 30B has parameters to
+        spare and shrugs off rounding; a 1B does not, which matters tonight because a 1B is
+        what most of you downloaded. Below 4&#8209;bit the failure is <em>invisible</em> &mdash;
+        no error, no warning, just quiet loops, contradictions and confident nonsense.
+        Shape of the curve: real. Exact percentages: illustrative, and they move with every
+        model and benchmark.</p>
+    </div>
+  </section>

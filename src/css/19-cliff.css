@@ -1,0 +1,66 @@
+/* --- the quantization quality cliff --------------------------- */
+.cl { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.cl-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.cl-chart { padding: 1.1rem 1.2rem 0.6rem; }
+.cl-chart canvas { display: block; width: 100%; height: 17rem; }
+
+.cl-side { display: flex; flex-direction: column; }
+.cl-readout { display: flex; align-items: baseline; gap: 0.8rem; }
+.cl-bits {
+  font-family: var(--mono); font-size: 4.2rem; line-height: 0.9;
+  color: var(--accent); letter-spacing: -0.05em;
+  text-shadow: 0 0 2.4rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease, text-shadow 200ms ease;
+}
+.cl-bits-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+/* Below the floor the readout itself goes amber, then red — the number is
+   the warning, so it carries the colour. */
+.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem rgba(251,191,36,0.28); }
+.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem rgba(248,113,113,0.28); }
+
+.cl-stats { margin: 1.2rem 0 0; display: grid; gap: 0.7rem; }
+.cl-stats div { border-top: 1px solid var(--rule-soft); padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.cl-stats dt {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim);
+}
+.cl-stats dd {
+  margin: 0; font-family: var(--mono); font-size: 1.2rem; color: var(--ink);
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+
+.cl-verdict {
+  margin: 1.1rem 0 0; font-size: 1.02rem; color: var(--ink-mid);
+  min-height: 3.2rem;
+}
+.cl-side.warn .cl-verdict { color: var(--warn); }
+.cl-side.bad  .cl-verdict { color: var(--bad); }
+
+.cl-legend {
+  margin-top: auto; padding-top: 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; gap: 1.2rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.ln { width: 1.1rem; height: 0; border-top: 2px solid var(--accent); }
+.ln-small { border-top-style: dashed; border-top-color: var(--ink-mid); }
+
+@media (max-width: 900px) {
+  .cl { grid-template-columns: 1fr; gap: 0.7rem; }
+  .cl-panel { padding: 0.85rem 0.9rem; }
+  .cl-chart canvas { height: 12rem; }
+  .cl-bits { font-size: 3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-bits { transition: none; }
+}
