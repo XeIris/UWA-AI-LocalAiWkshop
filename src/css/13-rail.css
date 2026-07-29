@@ -1,0 +1,51 @@
+/* --- section rail ------------------------------------------- */
+.rail {
+  position: fixed; left: 0; right: 0; bottom: 0; height: 4.6rem;
+  display: flex; align-items: stretch;
+  border-top: 1px solid var(--rule-soft);
+  background: linear-gradient(180deg, rgba(5,8,11,0.4), rgba(5,8,11,0.95));
+  backdrop-filter: blur(6px);
+  z-index: 5;
+  padding: 0 1.2rem;
+}
+.rail-item {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  gap: 0.35rem; padding: 0 0.75rem; cursor: pointer;
+  border: none; background: none; text-align: left;
+  font-family: var(--sans); color: var(--ink-dim);
+  transition: color 180ms ease;
+}
+.rail-item:hover { color: var(--ink-mid); }
+.rail-item .bar {
+  height: 2px; background: var(--rule-soft);
+  transition: background 180ms ease;
+}
+.rail-item .txt {
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.11em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rail-item.seen .bar { background: var(--accent-lo); }
+.rail-item.current { color: var(--accent); }
+.rail-item.current .bar { background: var(--accent); box-shadow: 0 0 0.6rem var(--accent-glow); }
+
+.counter {
+  position: fixed; right: 1.6rem; top: 1.5rem; z-index: 5;
+  font-family: var(--mono); font-size: 0.8rem;
+  color: var(--ink-dim); letter-spacing: 0.1em;
+}
+/* Onboarding, not chrome — retires after the first navigation so it
+   never collides with a dense slide. */
+.hint {
+  position: fixed; left: 1.9rem; bottom: 5.4rem; z-index: 5;
+  font-family: var(--mono); font-size: 0.72rem;
+  color: var(--ink-dim); letter-spacing: 0.12em;
+  opacity: 0.75;
+  transition: opacity 420ms ease;
+}
+.hint.gone { opacity: 0; pointer-events: none; }
+
+@media (max-width: 900px) {
+  .rail-item .txt { display: none; }
+  .rail { height: 2.6rem; }
+}

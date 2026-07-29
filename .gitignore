@@ -1,0 +1,3 @@
+# Release build. The committed deck is index.html at the repo root; dist/ is
+# only produced on demand by `python3 build.py --release`.
+dist/

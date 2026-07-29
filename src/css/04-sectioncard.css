@@ -1,0 +1,13 @@
+/* --- section title cards ------------------------------------ */
+.section-card .num {
+  font-family: var(--mono);
+  font-size: 7.5rem; line-height: 0.85;
+  color: var(--accent); opacity: 0.22;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.6rem;
+}
+.stub {
+  margin-top: 2.4rem; font-family: var(--mono);
+  font-size: var(--label-sm); color: var(--ink-dim);
+  letter-spacing: 0.08em;
+}

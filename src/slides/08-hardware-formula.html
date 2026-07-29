@@ -1,0 +1,54 @@
+  <!-- ============ §3 ============ -->
+  <section class="slide section-card" data-section="3">
+    <div class="slide-inner">
+      <div class="num">03</div>
+      <div class="eyebrow">Section 03</div>
+      <h2>Hardware &amp; the one formula</h2>
+      <p class="lede">DRAM versus VRAM. Discrete GPU versus unified memory. And the single
+        equation that explains every speed you will ever see.</p>
+    </div>
+  </section>
+
+  <section class="slide" data-section="3">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; The one formula</div>
+      <h2>Generation speed is a memory problem</h2>
+      <div class="equation bracketed">
+        <span class="eq-lhs">tokens/sec</span>
+        <span class="eq-rel">&asymp;</span>
+        <span class="frac">
+          <span class="num">memory bandwidth<span class="unit">GB / SEC</span></span>
+          <span class="den">model size<span class="unit">GB</span></span>
+        </span>
+      </div>
+      <p class="eq-caption">The through-line of this entire workshop</p>
+
+      <div class="hw">
+        <div class="hw-head">
+          <span>The same 15 GB model, three machines</span>
+          <span>Estimated tokens / sec</span>
+        </div>
+        <div class="hw-row">
+          <span class="name">DDR5 system RAM</span>
+          <span class="bw">80 GB/s</span>
+          <span class="track"><span class="fill" style="--w:9%"></span></span>
+          <span class="out">~5 <small>tok/s</small></span>
+        </div>
+        <div class="hw-row">
+          <span class="name">M&#8209;series unified memory</span>
+          <span class="bw">400 GB/s</span>
+          <span class="track"><span class="fill" style="--w:44%"></span></span>
+          <span class="out">~27 <small>tok/s</small></span>
+        </div>
+        <div class="hw-row">
+          <span class="name">Discrete GPU VRAM</span>
+          <span class="bw">900 GB/s</span>
+          <span class="track"><span class="fill" style="--w:100%"></span></span>
+          <span class="out">~60 <small>tok/s</small></span>
+        </div>
+      </div>
+
+      <p class="caveat">Order&#8209;of&#8209;magnitude teaching aids, not benchmarks &mdash; and all
+        three are optimistic. Real output lands meaningfully lower.</p>
+    </div>
+  </section>

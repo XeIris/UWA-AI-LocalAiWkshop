@@ -1,0 +1,57 @@
+/* --- hardware comparison ------------------------------------ */
+/* Three identical boxes made a 12x difference look like three equal
+   facts. The bar length IS the number. */
+.hw { margin-top: 2.2rem; }
+.hw-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+  padding-bottom: 0.6rem; border-bottom: 1px solid var(--rule-soft);
+}
+.hw-row {
+  display: grid;
+  grid-template-columns: 15rem 6.5rem 1fr 7rem;
+  align-items: center; gap: 1.4rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--rule-soft);
+}
+.hw-row .name { font-size: 1.05rem; color: var(--ink); }
+.hw-row .bw {
+  font-family: var(--mono); font-size: 0.92rem;
+  color: var(--ink-dim); text-align: right;
+}
+.hw-row .track {
+  height: 0.62rem; background: var(--bg-raise);
+  border: 1px solid var(--rule-soft); overflow: hidden;
+  border-radius: var(--r-pill);
+}
+.hw-row .fill {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent));
+  transition: width 720ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+.slide.active .hw-row .fill { width: var(--w); }
+.hw-row .out {
+  font-family: var(--mono); font-size: 1.6rem;
+  color: var(--accent); text-align: right; letter-spacing: -0.02em;
+}
+.hw-row .out small { font-size: 0.8rem; color: var(--ink-dim); letter-spacing: 0; }
+
+.caveat {
+  margin-top: 1.5rem; padding: 0.7rem 1rem;
+  border-left: 2px solid var(--warn);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: rgba(251, 191, 36, 0.05);
+  font-size: 0.98rem; color: var(--ink-mid);
+}
+
+@media (max-width: 900px) {
+  .hw-row { grid-template-columns: 1fr auto; gap: 0.4rem 1rem; padding: 0.7rem 0; }
+  .hw-row .bw { order: 2; }
+  .hw-row .out { order: 3; font-size: 1.2rem; }
+  .hw-row .track { grid-column: 1 / -1; order: 4; }
+  .hw-head span:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-row .fill { transition: none; }
+}

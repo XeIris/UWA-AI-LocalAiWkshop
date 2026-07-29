@@ -1,0 +1,32 @@
+/* --- the equation ------------------------------------------- */
+/* Set as a real stacked fraction, not an inline division sign: the
+   geometry itself says "bigger denominator, smaller result". */
+.equation {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  padding: 2.6rem 2rem 2.2rem;
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.5rem;
+  font-family: var(--mono);
+}
+.eq-lhs { font-size: 2rem; color: var(--ink); letter-spacing: -0.02em; }
+.eq-rel { font-size: 1.9rem; color: var(--accent); }
+.frac { display: flex; flex-direction: column; text-align: center; }
+.frac .num, .frac .den { font-size: 1.85rem; padding: 0.45rem 1.2rem; letter-spacing: -0.02em; }
+.frac .num { border-bottom: 2px solid var(--accent); }
+.frac .unit {
+  display: block; font-size: var(--label-sm); letter-spacing: var(--label-sm-ls);
+  color: var(--ink-dim); margin-top: 0.25rem;
+}
+.eq-caption {
+  text-align: center; font-family: var(--mono);
+  font-size: var(--label-sm); letter-spacing: var(--label-sm-ls);
+  text-transform: uppercase;
+  color: var(--ink-dim); margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .equation { flex-direction: column; gap: 0.9rem; padding: 1.8rem 1rem; }
+  .eq-lhs, .frac .num, .frac .den { font-size: 1.3rem; }
+}

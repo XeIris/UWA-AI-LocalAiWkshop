@@ -1,0 +1,85 @@
+var SECTIONS = [
+  ['00', 'Why bother?'],
+  ['01', 'First win'],
+  ['02', 'Under the hood'],
+  ['03', 'Hardware + formula'],
+  ['04', 'Quantization'],
+  ['05', 'Context / KV'],
+  ['06', 'Good at / bad at'],
+  ['07', 'Horizon']
+];
+
+var slides  = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var rail    = document.getElementById('rail');
+var counter = document.getElementById('counter');
+var index   = 0;
+
+/* ---- section rail ---- */
+SECTIONS.forEach(function (s, i) {
+  var b = document.createElement('button');
+  b.className = 'rail-item';
+  b.innerHTML = '<span class="bar"></span><span class="txt">' + s[0] + ' &nbsp;' + s[1] + '</span>';
+  b.addEventListener('click', function () { goToSection(i); });
+  rail.appendChild(b);
+});
+var railItems = Array.prototype.slice.call(rail.children);
+
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+function render() {
+  slides.forEach(function (s, i) { s.classList.toggle('active', i === index); });
+
+  var sec = parseInt(slides[index].dataset.section, 10);
+  railItems.forEach(function (it, i) {
+    it.classList.toggle('current', i === sec);
+    it.classList.toggle('seen', i <= sec);
+  });
+
+  counter.textContent = pad(index + 1) + ' / ' + pad(slides.length);
+  if (history.replaceState) history.replaceState(null, '', '#' + (index + 1));
+  /* Interactives that measure their own geometry need to re-measure
+     once their slide is actually laid out. */
+  document.dispatchEvent(new CustomEvent('deck:slide'));
+}
+
+var hint = document.querySelector('.hint');
+var started = false;
+
+function goTo(i) {
+  index = Math.max(0, Math.min(slides.length - 1, i));
+  if (started && hint) hint.classList.add('gone');
+  render();
+}
+
+function goToSection(n) {
+  for (var i = 0; i < slides.length; i++) {
+    if (parseInt(slides[i].dataset.section, 10) === n) { goTo(i); return; }
+  }
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  /* A focused slider owns its arrow keys — otherwise dragging a
+     sampling control with the keyboard would flip the slide instead. */
+  var t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'BUTTON' || t.tagName === 'SELECT')) {
+    if (e.key !== 'Escape') return;
+    t.blur();
+  }
+  var k = e.key;
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+    goTo(index + 1); e.preventDefault();
+  } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+    goTo(index - 1); e.preventDefault();
+  } else if (k === 'Home') { goTo(0); e.preventDefault(); }
+  else if (k === 'End')    { goTo(slides.length - 1); e.preventDefault(); }
+  else if (k >= '0' && k <= '7') { goToSection(parseInt(k, 10)); e.preventDefault(); }
+  else if (k === 'f') {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  }
+});
+
+var start = parseInt((location.hash || '').replace('#', ''), 10);
+goTo(isNaN(start) ? 0 : start - 1);
+started = true;

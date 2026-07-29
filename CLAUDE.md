@@ -81,14 +81,55 @@ word is spoken.
 
 ## Tech constraints
 
-- **Single-file HTML** (`index.html`). Vanilla JS + CSS. No React, no bundler, no npm,
-  no build step.
+- **Single-file *output*** (`index.html`). Vanilla JS + CSS. No React, no npm, no
+  node_modules. The source lives in `src/` and is assembled by `build.py` — see
+  "Source layout" below. The constraint that matters is the artifact, not the source:
+  one file you can email, put on a USB stick, or open by double-clicking.
 - Must work **offline** (the workshop may have bad wifi, and it's thematically on-brand).
   No CDN dependencies — inline everything.
 - Works when opened as a `file://` URL.
 - Keyboard navigation between sections (arrow keys), plus a visible section index.
 - Readable when projected: large type, high contrast, dark theme default.
 - Responsive enough that attendees can follow along on their own laptops.
+
+## Source layout & build
+
+```
+src/index.html          shell; everything else is spliced into it
+src/css/NN-name.css     one file per component
+src/js/NN-name.js       one file per feature
+src/slides/NN-name.html one file per slide
+src/assets/             logos/*.svg (one <symbol> each), mlx.png
+build.py                stdlib only
+index.html              BUILT, committed — never edit by hand
+dist/index.html         BUILT release, gitignored
+```
+
+```bash
+python3 build.py
+```
+
+`--release` writes `dist/index.html` instead. Two directives, usable anywhere:
+`<!--#include css/*.css -->` and `<!--#base64 assets/mlx.png -->`. Paths resolve
+relative to `src/`, never to the including file. An include matching zero files is a
+hard error — a silent no-op here would mean a slide quietly vanishing from the deck.
+
+**The `NN-` prefixes are load-bearing.** Includes glob and sort by filename, so the
+prefix *is* the cascade order for CSS, the execution order for JS, and the slide order
+for the deck. Renaming without renumbering silently reorders the presentation — that
+already happened once, when `01-sampling-cuts` sorted ahead of `01-temperature`.
+
+The JS files are concatenated inside a single shared IIFE, so they behave exactly as
+one script: `softmax` and friends are defined once and used across features. Don't add
+a per-file IIFE, and don't assume a file is independently loadable.
+
+**Release mode does only provably-safe things:** strip comments, collapse CSS whitespace
+to single spaces. It deliberately leaves JavaScript untouched. No-npm means any minifier
+would be hand-rolled without a parser, and the classic failure — an ASI bug or an eaten
+regex literal — would appear *only* in the build you present from. Not worth ~6KB.
+Release also leaves `--sans`/`--mono` differing from debug by whitespace inside the
+custom-property token stream; every resolved property, including `font-family`, is
+identical.
 
 ## Interactive elements to build (this is the point of using HTML)
 

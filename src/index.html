@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, Unplugged</title>
+<style>
+<!--#include css/*.css -->
+</style>
+</head>
+<body>
+
+<!-- Every logo is inlined. Nothing is fetched at runtime — the offline
+     rule applies to brand assets too. Numeric prefixes exist so the glob
+     order is stable, not because the order matters for <symbol>. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<!--#include assets/logos/*.svg -->
+</defs></svg>
+
+<div class="substrate"></div>
+<div class="vignette"></div>
+
+<div class="deck" id="deck">
+
+<!--#include slides/*.html -->
+</div>
+
+<div class="counter" id="counter">01 / 11</div>
+<div class="hint">&larr; &rarr; NAVIGATE &nbsp;&middot;&nbsp; 0&ndash;7 JUMP TO SECTION</div>
+<nav class="rail" id="rail"></nav>
+
+<script>
+(function () {
+'use strict';
+
+<!--#include js/*.js -->
+})();
+</script>
+</body>
+</html>

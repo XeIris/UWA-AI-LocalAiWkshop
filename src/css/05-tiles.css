@@ -1,0 +1,41 @@
+/* --- reason tiles ------------------------------------------- */
+/* Five components on a schematic: index, glyph, label, one clause.
+   Still readable in three seconds, but it now fills the frame. */
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+.tile {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 1.4rem 1.3rem 1.6rem;
+  display: flex; flex-direction: column;
+}
+/* Everything flows from the top so the first line of every clause sits
+   on the same baseline. Bottom-aligning made a one-line clause land on
+   its neighbours' SECOND line, which read as broken. */
+.tile .idx {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); color: var(--ink-dim); opacity: 0.7;
+}
+.tile .glyph {
+  width: 2.1rem; height: 2.1rem;
+  margin: 1.4rem 0 1.5rem;
+  stroke: var(--accent); fill: none;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.tile .k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.75rem;
+}
+.tile .v {
+  font-size: 1.28rem; line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+
+@media (max-width: 900px) {
+  .tiles { grid-template-columns: 1fr 1fr; }
+  .tile { min-height: 0; padding: 1rem; }
+  .tile .glyph { margin: 0.8rem 0 0.7rem; }
+  .tile .v { font-size: 1rem; }
+}
