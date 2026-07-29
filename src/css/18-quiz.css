@@ -22,8 +22,15 @@
   font-family: var(--mono); font-size: var(--label-sm);
   letter-spacing: var(--label-sm-ls); color: var(--ink-dim);
 }
-.qq-spec { font-size: 1.5rem; letter-spacing: -0.02em; margin-top: 0.7rem; }
-.qq-spec b { font-weight: 660; }
+/* "7.5B @ 16-bit" is entirely figures and units, so it takes the mono
+   stack like every other number in the deck — and it has to, because the
+   three cards are read as a column and a sans spec above a mono size
+   breaks the alignment the comparison depends on. */
+.qq-spec {
+  font-family: var(--mono); font-size: 1.5rem;
+  letter-spacing: -0.03em; margin-top: 0.7rem;
+}
+.qq-spec b { font-weight: 620; color: var(--ink); }
 .qq-size {
   font-family: var(--mono); font-size: 1.05rem; color: var(--accent);
   letter-spacing: -0.02em;

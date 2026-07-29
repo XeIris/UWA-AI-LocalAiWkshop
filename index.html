@@ -1080,8 +1080,15 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: var(--label-sm);
   letter-spacing: var(--label-sm-ls); color: var(--ink-dim);
 }
-.qq-spec { font-size: 1.5rem; letter-spacing: -0.02em; margin-top: 0.7rem; }
-.qq-spec b { font-weight: 660; }
+/* "7.5B @ 16-bit" is entirely figures and units, so it takes the mono
+   stack like every other number in the deck — and it has to, because the
+   three cards are read as a column and a sans spec above a mono size
+   breaks the alignment the comparison depends on. */
+.qq-spec {
+  font-family: var(--mono); font-size: 1.5rem;
+  letter-spacing: -0.03em; margin-top: 0.7rem;
+}
+.qq-spec b { font-weight: 620; color: var(--ink); }
 .qq-size {
   font-family: var(--mono); font-size: 1.05rem; color: var(--accent);
   letter-spacing: -0.02em;
@@ -2217,7 +2224,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           </div>
 
           <dl class="cl-stats">
-            <div><dt>30B model on disk</dt><dd id="clSize">15.0 GB</dd></div>
+            <!-- Realistic Q4_K_M, not the napkin's 15.0 — this readout is
+                 the one place on the slide that quotes a real file size. -->
+            <div><dt>30B model on disk</dt><dd id="clSize">18.1 GB</dd></div>
             <div><dt>Quality retained</dt><dd id="clQual">98%</dd></div>
           </dl>
 
@@ -2264,7 +2273,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         <span class="kv-t"><b id="kvD">128</b><em>head dim</em></span><span class="kv-x">&times;</span>
         <span class="kv-t"><b id="kvB">2</b><em>bytes</em></span>
         <span class="kv-x">=</span>
-        <span class="kv-t kv-res"><b id="kvPer">128</b><em>KB per token</em></span>
+        <span class="kv-t kv-res"><b id="kvPer">128</b><em id="kvPerUnit">KB per token</em></span>
       </div>
 
       <div class="kv">
@@ -3849,6 +3858,7 @@ if (kvSlide) {
     l: document.getElementById('kvL'), h: document.getElementById('kvH'),
     d: document.getElementById('kvD'), b: document.getElementById('kvB'),
     per: document.getElementById('kvPer'),
+    perUnit: document.getElementById('kvPerUnit'),
     perK: document.getElementById('kvPerK'),
     at32: document.getElementById('kv32'),
     ratio: document.getElementById('kvRatio')
@@ -3871,8 +3881,10 @@ if (kvSlide) {
     var perKB = per / 1024;
     kvEl.per.textContent = perKB >= 1024
       ? (perKB / 1024).toFixed(1) : Math.round(perKB);
-    kvEl.per.nextElementSibling.textContent =
-      perKB >= 1024 ? 'MB per token' : 'KB per token';
+    /* Addressed by id rather than by DOM position: without GQA a 30B
+       crosses into megabytes, so this label really does change, and it
+       must not start pointing at whatever else lands next to it. */
+    kvEl.perUnit.textContent = perKB >= 1024 ? 'MB per token' : 'KB per token';
 
     kvEl.perK.textContent = kvGB(1000).toFixed(2) + ' GB';
     var at32 = kvGB(32768);

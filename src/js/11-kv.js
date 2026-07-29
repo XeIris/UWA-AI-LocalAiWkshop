@@ -16,6 +16,7 @@ if (kvSlide) {
     l: document.getElementById('kvL'), h: document.getElementById('kvH'),
     d: document.getElementById('kvD'), b: document.getElementById('kvB'),
     per: document.getElementById('kvPer'),
+    perUnit: document.getElementById('kvPerUnit'),
     perK: document.getElementById('kvPerK'),
     at32: document.getElementById('kv32'),
     ratio: document.getElementById('kvRatio')
@@ -38,8 +39,10 @@ if (kvSlide) {
     var perKB = per / 1024;
     kvEl.per.textContent = perKB >= 1024
       ? (perKB / 1024).toFixed(1) : Math.round(perKB);
-    kvEl.per.nextElementSibling.textContent =
-      perKB >= 1024 ? 'MB per token' : 'KB per token';
+    /* Addressed by id rather than by DOM position: without GQA a 30B
+       crosses into megabytes, so this label really does change, and it
+       must not start pointing at whatever else lands next to it. */
+    kvEl.perUnit.textContent = perKB >= 1024 ? 'MB per token' : 'KB per token';
 
     kvEl.perK.textContent = kvGB(1000).toFixed(2) + ' GB';
     var at32 = kvGB(32768);
