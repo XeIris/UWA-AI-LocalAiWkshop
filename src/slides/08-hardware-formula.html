@@ -9,11 +9,13 @@
     </div>
   </section>
 
+  <!-- ---- 3 · the formula, stated ---- -->
   <section class="slide" data-section="3">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; The one formula</div>
       <h2>Generation speed is a memory problem</h2>
-      <div class="equation bracketed">
+
+      <div class="equation">
         <span class="eq-lhs">tokens/sec</span>
         <span class="eq-rel">&asymp;</span>
         <span class="frac">
@@ -23,32 +25,29 @@
       </div>
       <p class="eq-caption">The through-line of this entire workshop</p>
 
-      <div class="hw">
-        <div class="hw-head">
-          <span>The same 15 GB model, three machines</span>
-          <span>Estimated tokens / sec</span>
+      <!-- The asymmetry is the whole reason the two machines in §3 behave
+           differently. Stated here, made visible on the next two slides. -->
+      <div class="phases">
+        <div class="phase">
+          <div class="ph-k">Prefill</div>
+          <div class="ph-t">Reading your prompt</div>
+          <div class="ph-b">Every token of the prompt is processed <strong>at once</strong>.
+            The chip is doing arithmetic flat out.</div>
+          <div class="ph-bound">Limited by <strong>compute</strong> &mdash; FLOPS</div>
+          <div class="ph-feel">Feels like: the pause before the first word</div>
         </div>
-        <div class="hw-row">
-          <span class="name">DDR5 system RAM</span>
-          <span class="bw">80 GB/s</span>
-          <span class="track"><span class="fill" style="--w:9%"></span></span>
-          <span class="out">~5 <small>tok/s</small></span>
-        </div>
-        <div class="hw-row">
-          <span class="name">M&#8209;series unified memory</span>
-          <span class="bw">400 GB/s</span>
-          <span class="track"><span class="fill" style="--w:44%"></span></span>
-          <span class="out">~27 <small>tok/s</small></span>
-        </div>
-        <div class="hw-row">
-          <span class="name">Discrete GPU VRAM</span>
-          <span class="bw">900 GB/s</span>
-          <span class="track"><span class="fill" style="--w:100%"></span></span>
-          <span class="out">~60 <small>tok/s</small></span>
+        <div class="phase">
+          <div class="ph-k">Decode</div>
+          <div class="ph-t">Writing the answer</div>
+          <div class="ph-b">One token at a time, and <strong>every weight in the model</strong>
+            must be read from memory for each one.</div>
+          <div class="ph-bound">Limited by <strong>memory bandwidth</strong> &mdash; GB/s</div>
+          <div class="ph-feel">Feels like: the speed the words appear</div>
         </div>
       </div>
 
-      <p class="caveat">Order&#8209;of&#8209;magnitude teaching aids, not benchmarks &mdash; and all
-        three are optimistic. Real output lands meaningfully lower.</p>
+      <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
+        thinks slowly. A big discrete GPU is fast at both &mdash; right up until the model
+        stops fitting in its VRAM.</p>
     </div>
   </section>

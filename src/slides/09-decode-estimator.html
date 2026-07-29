@@ -1,0 +1,56 @@
+  <!-- ---- 3 · decode speed estimator ---- -->
+  <section class="slide" data-section="3" id="s-decode">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Decode speed estimator</div>
+      <h2>Divide one by the other. That is the whole trick.</h2>
+
+      <div class="dk">
+        <div class="dk-controls">
+          <div class="dk-presets">
+            <span class="dk-plabel">Jump to real hardware</span>
+            <div class="seg" id="bwPresets">
+              <button data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
+              <button data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
+              <button data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
+              <button data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="bwSlider">Bandwidth</label>
+            <!-- step must be 1: the presets include 307 and 1792, and a coarser
+                 step would silently snap past them so no preset ever matches. -->
+            <input type="range" id="bwSlider" min="40" max="1800" step="1" value="614">
+            <output id="bwOut">614</output>
+            <span class="ctrl-unit">GB/s</span>
+          </div>
+
+          <div class="ctrl">
+            <label for="szSlider">Model size</label>
+            <input type="range" id="szSlider" min="1" max="64" step="1" value="15">
+            <output id="szOut">15</output>
+            <span class="ctrl-unit">GB</span>
+          </div>
+
+          <div class="dk-readout">
+            <div class="dk-num" id="dkRate">41</div>
+            <div class="dk-unit">tokens / sec<span id="dkNote">M5 Max unified memory, 40&#8209;core GPU</span></div>
+            <div class="dk-verdict" id="dkVerdict">Comfortably faster than you read</div>
+          </div>
+        </div>
+
+        <div class="dk-stage">
+          <div class="dk-stage-head">
+            <span>Live at this speed</span>
+            <span class="dk-wpm" id="dkWpm">&nbsp;</span>
+          </div>
+          <p class="dk-text" id="dkText"></p>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>This assumes the model fits.</strong> Drag the size past
+        what the machine actually holds and the number above becomes a fantasy &mdash; that
+        is the next slide. Even when it does fit, this is a theoretical ceiling: attention,
+        sampling and the KV cache all take a cut, and no chip sustains its paper bandwidth.</p>
+    </div>
+  </section>

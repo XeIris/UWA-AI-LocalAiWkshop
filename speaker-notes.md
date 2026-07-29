@@ -144,14 +144,65 @@ Two physical machines in the room if at all possible. A discrete-GPU PC and a Ma
 Ryzen APU behave completely differently, and teaching from only one gives a skewed
 mental model.
 
+Three slides: the formula, the estimator, the two machines.
+
+### 3a — The formula
+
 - Decode is **memory-bandwidth bound**: `tok/s ≈ bandwidth ÷ model size`.
 - Prefill is **compute bound** — the pause before the first token.
 
 That asymmetry is what makes Macs punch above their weight for generation, and what
-makes offloading to plain DDR5 feel like wading through mud.
+makes offloading to plain DDR5 feel like wading through mud. The two panels are there
+so you can point at them; don't read them aloud.
 
-Every tok/s number on the slide is an order-of-magnitude teaching aid. Say so out loud.
-Someone will benchmark it afterwards and find you optimistic.
+### 3b — Decode speed estimator
+
+Four presets, then drag. The demo that lands: put it on **DDR5 RAM** with a 15 GB model
+(6.4 tok/s) and let the room watch the text crawl for a few seconds in silence. Then hit
+**RTX 5090** (119 tok/s). Nobody argues with the formula after that.
+
+The passage streams at the computed rate, so the panel *is* the number. Say out loud
+that a token is roughly ¾ of a word — the words/min readout depends on it.
+
+**The slide deliberately ignores capacity.** It will happily report 28 tok/s for a 64 GB
+model on a 5090, which is a lie, and the caveat says so. That lie is the setup for 3c —
+don't fix it, use it.
+
+### 3c — Two machines, same model
+
+Hardware figures, all verified July 2026 — re-check before presenting:
+
+| | capacity | bandwidth |
+|---|---|---|
+| RTX 5090 | 32 GB GDDR7 | 1792 GB/s |
+| DDR5-6000, dual channel | 32 GB | 96 GB/s (6000 MT/s × 128 bit ÷ 8) |
+| M5 Max (40-core GPU) | up to 128 GB unified | 614 GB/s |
+
+The 32-core M5 Max is 460 GB/s and the M5 Pro is 307 GB/s — if someone in the room owns
+one, say which they have.
+
+Both machines on the slide hold **64 GB total**, which is the whole trick: capacity is
+equal, so any difference you see is bandwidth and placement, not size.
+
+The run of numbers, at 16-bit:
+
+| model | weights | PC | Mac | |
+|---|---|---|---|---|
+| 8B | 16 GB | **112** | 38 | PC 2.9× |
+| 16B | 32 GB | **56** | 19 | PC 2.9× — still fits VRAM exactly |
+| 20B | 40 GB | 9.9 | **15** | crossover |
+| 24B | 48 GB | 5.4 | **13** | Mac 2.4× |
+| 32B | 64 GB | 2.8 | **9.6** | Mac 3.4× |
+
+**Drag slowly from 16B to 20B.** That single step is the entire section: the PC goes
+from 56 tok/s to 9.9 because 8 GB of 40 now sits on a bus that is 19× slower. The read
+head visibly stops sprinting and starts crawling. Let it run for a few seconds.
+
+Then hit **4-bit** with the slider still at 32B: 112 tok/s on the PC. That is the §4
+thesis arriving a section early, and it is the right note to end §3 on.
+
+Every tok/s number is a theoretical ceiling. Say so out loud — someone will benchmark it
+afterwards and find you optimistic.
 
 ## Section 4 — Quantization
 

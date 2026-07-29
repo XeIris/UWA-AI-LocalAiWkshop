@@ -75,7 +75,14 @@ word is spoken.
 1. ~~Shell + theme spike~~ — nav, rail, fades, cover, §0 content, §3 formula slide.
 2. ~~§1 model picker + sampling interactives, §2 provenance/engines/alternatives~~ —
    brand chip system and the rounded-corner dial landed with these.
-3. **§3 decode-speed estimator** — bandwidth slider driving real streaming text.
+3. ~~§3 decode-speed estimator~~ — plus the two-machine fit/spill slide. Hardware
+   figures verified Jul 2026: RTX 5090 32 GB @ 1792 GB/s, DDR5-6000 dual-channel
+   96 GB/s, M5 Max 614 GB/s (40-core; 32-core is 460, M5 Pro 307). Both machines on
+   the slide hold 64 GB *on purpose* — equal capacity isolates bandwidth as the
+   variable. The read head crosses the whole model once per token at the bandwidth of
+   whichever pool it is in, slowed by a single constant (`SLOWMO`), so every ratio on
+   screen is the true ratio. Canvas metrics derive from the live root font size —
+   canvas ignores rem, and hardcoded px would not survive a projector.
 4. §4 memory calculator + fit indicator + quality cliff; §5 KV cache chart.
 5. §6 / §7 content, cover art polish.
 

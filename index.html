@@ -609,6 +609,231 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .rail-item .txt { display: none; }
   .rail { height: 2.6rem; }
 }
+/* --- prefill / decode contrast ------------------------------- */
+/* Two panels rather than a table: the asymmetry is the content, and a
+   table would imply the two phases are the same kind of thing measured
+   twice. They are not — one is compute-bound, one is bandwidth-bound. */
+.phases {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  margin-top: 1.2rem;
+}
+.phase {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 0.95rem 1.15rem 1rem;
+}
+/* Decode is the one the whole workshop hangs on, so it gets the lit edge. */
+.phase:last-child { border-top-color: var(--accent); }
+
+.phase .ph-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.15rem;
+}
+.phase .ph-t { font-size: 1.16rem; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+.phase .ph-b { font-size: 0.95rem; color: var(--ink-mid); line-height: 1.4; }
+.phase .ph-b strong { color: var(--ink); font-weight: 600; }
+.phase .ph-bound {
+  margin-top: 0.85rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.78rem;
+  letter-spacing: 0.06em; color: var(--ink-mid);
+}
+.phase .ph-bound strong { color: var(--accent); font-weight: 500; }
+.phase .ph-feel {
+  margin-top: 0.35rem;
+  font-size: 0.85rem; color: var(--ink-dim); font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .phases { grid-template-columns: 1fr; gap: 0.7rem; }
+  .phase { padding: 0.85rem 0.9rem; }
+  .phase .ph-t { font-size: 1rem; }
+}
+/* --- decode speed estimator ---------------------------------- */
+.dk {
+  display: grid; grid-template-columns: 1fr 1.05fr; gap: 1.1rem;
+  margin-top: 1.4rem;
+}
+.dk-controls, .dk-stage {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.2rem 1.3rem 1.3rem;
+}
+.dk-controls { display: flex; flex-direction: column; }
+
+.dk-plabel {
+  display: block;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.55rem;
+}
+.dk-presets { margin-bottom: 0.4rem; }
+.dk-presets .seg { flex-wrap: wrap; }
+
+.ctrl-unit {
+  font-family: var(--mono); font-size: 0.72rem;
+  color: var(--ink-dim); letter-spacing: 0.08em;
+  min-width: 2.6rem;
+}
+
+/* The readout is the answer, so it is the largest thing in the panel. */
+.dk-readout {
+  margin-top: auto; padding-top: 1.1rem;
+  border-top: 1px solid var(--rule-soft);
+  display: grid; grid-template-columns: auto 1fr; gap: 0 0.9rem; align-items: baseline;
+}
+.dk-num {
+  font-family: var(--mono); font-size: 4.4rem; line-height: 0.9;
+  color: var(--accent); letter-spacing: -0.045em;
+  text-shadow: 0 0 2.4rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+}
+.dk-unit {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.dk-unit span {
+  display: block; margin-top: 0.35rem;
+  letter-spacing: 0.06em; text-transform: none; color: var(--ink-mid);
+  font-size: 0.72rem;
+}
+.dk-verdict {
+  grid-column: 1 / -1; margin-top: 0.75rem;
+  font-size: 1.02rem; color: var(--ink-mid);
+}
+
+/* --- the streaming panel ------------------------------------- */
+.dk-stage { display: flex; flex-direction: column; }
+.dk-stage-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-bottom: 0.7rem; margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dk-wpm { color: var(--accent); }
+.dk-text {
+  margin: 0; font-size: 1.06rem; line-height: 1.5;
+  color: var(--ink-mid); flex: 1;
+  /* Fixed box: text arriving must not reflow the panel, or the whole
+     slide twitches on every token and the speed stops being legible. */
+  overflow: hidden;
+}
+.dk-text .tk { color: var(--ink); }
+.dk-text .caret {
+  display: inline-block; width: 0.55rem; height: 1.05rem;
+  background: var(--accent); vertical-align: -0.15rem;
+  margin-left: 0.12rem;
+  animation: dk-blink 1s steps(2, start) infinite;
+}
+@keyframes dk-blink { to { visibility: hidden; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dk-text .caret { animation: none; }
+}
+
+@media (max-width: 900px) {
+  .dk { grid-template-columns: 1fr; gap: 0.7rem; }
+  .dk-controls, .dk-stage { padding: 0.85rem 0.9rem; }
+  .dk-num { font-size: 3rem; }
+  .dk-text { font-size: 0.95rem; min-height: 7rem; }
+}
+/* --- two-machine fit / spill comparison ---------------------- */
+.mx-controls {
+  display: flex; align-items: center; gap: 2rem;
+  margin: 1.2rem 0 1.1rem;
+}
+.mx-controls .ctrl { margin-top: 0; flex: 0 1 26rem; }
+.mx-controls .ctrl:nth-child(2) { flex: none; }
+.mx-controls .mx-weight { margin-left: auto; }
+
+.mx-weight { display: flex; align-items: baseline; gap: 0.5rem; white-space: nowrap; }
+.mx-w-num {
+  font-family: var(--mono); font-size: 2rem; color: var(--accent);
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.mx-w-unit {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+
+.mx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.mach {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.15rem;
+}
+.mach-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 1rem; margin-bottom: 0.9rem;
+}
+.mach-name { display: block; font-size: 1.14rem; letter-spacing: -0.012em; }
+.mach-sub {
+  display: block; margin-top: 0.2rem;
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.07em; color: var(--ink-dim);
+}
+.mach-rate { display: flex; align-items: baseline; gap: 0.35rem; white-space: nowrap; }
+.mach-rate .r-num {
+  font-family: var(--mono); font-size: 2.3rem; line-height: 1;
+  letter-spacing: -0.04em; color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
+}
+.mach-rate .r-unit {
+  font-family: var(--mono); font-size: 0.66rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim);
+}
+/* Semantic, not decorative: amber means part of the model is being read
+   over the slow bus, red means it will not load at all. */
+.mach.spilled .r-num { color: var(--warn); }
+.mach.toobig  .r-num { color: var(--bad); }
+
+.mach-canvas { display: block; width: 100%; height: 7.6rem; }
+
+.mach-state {
+  margin-top: 0.7rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.07em; color: var(--ink-mid);
+}
+.mach.spilled .mach-state { color: var(--warn); }
+.mach.toobig  .mach-state { color: var(--bad); }
+
+/* --- legend --------------------------------------------------- */
+.mx-legend {
+  display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+  margin-top: 0.9rem;
+  font-family: var(--mono); font-size: 0.66rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.lg-item { display: flex; align-items: center; gap: 0.45rem; }
+.lg-item.mono { margin-left: auto; text-transform: none; letter-spacing: 0.05em; }
+.sw {
+  width: 0.72rem; height: 0.72rem; border-radius: 2px;
+  border: 1px solid var(--rule-soft);
+}
+.sw-fast { background: var(--accent); border-color: var(--accent); }
+.sw-slow { background: var(--warn);   border-color: var(--warn); }
+.sw-none { background: var(--bg-raise); }
+
+@media (max-width: 900px) {
+  .mx-controls { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  .mx-grid { grid-template-columns: 1fr; gap: 0.7rem; }
+  .mach { padding: 0.8rem 0.9rem; }
+  .mach-canvas { height: 7.4rem; }
+  .mach-rate .r-num { font-size: 1.7rem; }
+  .mx-legend { gap: 0.7rem; }
+  .lg-item.mono { margin-left: 0; }
+}
 </style>
 </head>
 <body>
@@ -1012,11 +1237,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
     </div>
   </section>
 
+  <!-- ---- 3 · the formula, stated ---- -->
   <section class="slide" data-section="3">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; The one formula</div>
       <h2>Generation speed is a memory problem</h2>
-      <div class="equation bracketed">
+
+      <div class="equation">
         <span class="eq-lhs">tokens/sec</span>
         <span class="eq-rel">&asymp;</span>
         <span class="frac">
@@ -1026,33 +1253,150 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       </div>
       <p class="eq-caption">The through-line of this entire workshop</p>
 
-      <div class="hw">
-        <div class="hw-head">
-          <span>The same 15 GB model, three machines</span>
-          <span>Estimated tokens / sec</span>
+      <!-- The asymmetry is the whole reason the two machines in §3 behave
+           differently. Stated here, made visible on the next two slides. -->
+      <div class="phases">
+        <div class="phase">
+          <div class="ph-k">Prefill</div>
+          <div class="ph-t">Reading your prompt</div>
+          <div class="ph-b">Every token of the prompt is processed <strong>at once</strong>.
+            The chip is doing arithmetic flat out.</div>
+          <div class="ph-bound">Limited by <strong>compute</strong> &mdash; FLOPS</div>
+          <div class="ph-feel">Feels like: the pause before the first word</div>
         </div>
-        <div class="hw-row">
-          <span class="name">DDR5 system RAM</span>
-          <span class="bw">80 GB/s</span>
-          <span class="track"><span class="fill" style="--w:9%"></span></span>
-          <span class="out">~5 <small>tok/s</small></span>
-        </div>
-        <div class="hw-row">
-          <span class="name">M&#8209;series unified memory</span>
-          <span class="bw">400 GB/s</span>
-          <span class="track"><span class="fill" style="--w:44%"></span></span>
-          <span class="out">~27 <small>tok/s</small></span>
-        </div>
-        <div class="hw-row">
-          <span class="name">Discrete GPU VRAM</span>
-          <span class="bw">900 GB/s</span>
-          <span class="track"><span class="fill" style="--w:100%"></span></span>
-          <span class="out">~60 <small>tok/s</small></span>
+        <div class="phase">
+          <div class="ph-k">Decode</div>
+          <div class="ph-t">Writing the answer</div>
+          <div class="ph-b">One token at a time, and <strong>every weight in the model</strong>
+            must be read from memory for each one.</div>
+          <div class="ph-bound">Limited by <strong>memory bandwidth</strong> &mdash; GB/s</div>
+          <div class="ph-feel">Feels like: the speed the words appear</div>
         </div>
       </div>
 
-      <p class="caveat">Order&#8209;of&#8209;magnitude teaching aids, not benchmarks &mdash; and all
-        three are optimistic. Real output lands meaningfully lower.</p>
+      <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
+        thinks slowly. A big discrete GPU is fast at both &mdash; right up until the model
+        stops fitting in its VRAM.</p>
+    </div>
+  </section>
+  <!-- ---- 3 · decode speed estimator ---- -->
+  <section class="slide" data-section="3" id="s-decode">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Decode speed estimator</div>
+      <h2>Divide one by the other. That is the whole trick.</h2>
+
+      <div class="dk">
+        <div class="dk-controls">
+          <div class="dk-presets">
+            <span class="dk-plabel">Jump to real hardware</span>
+            <div class="seg" id="bwPresets">
+              <button data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
+              <button data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
+              <button data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
+              <button data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="bwSlider">Bandwidth</label>
+            <!-- step must be 1: the presets include 307 and 1792, and a coarser
+                 step would silently snap past them so no preset ever matches. -->
+            <input type="range" id="bwSlider" min="40" max="1800" step="1" value="614">
+            <output id="bwOut">614</output>
+            <span class="ctrl-unit">GB/s</span>
+          </div>
+
+          <div class="ctrl">
+            <label for="szSlider">Model size</label>
+            <input type="range" id="szSlider" min="1" max="64" step="1" value="15">
+            <output id="szOut">15</output>
+            <span class="ctrl-unit">GB</span>
+          </div>
+
+          <div class="dk-readout">
+            <div class="dk-num" id="dkRate">41</div>
+            <div class="dk-unit">tokens / sec<span id="dkNote">M5 Max unified memory, 40&#8209;core GPU</span></div>
+            <div class="dk-verdict" id="dkVerdict">Comfortably faster than you read</div>
+          </div>
+        </div>
+
+        <div class="dk-stage">
+          <div class="dk-stage-head">
+            <span>Live at this speed</span>
+            <span class="dk-wpm" id="dkWpm">&nbsp;</span>
+          </div>
+          <p class="dk-text" id="dkText"></p>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>This assumes the model fits.</strong> Drag the size past
+        what the machine actually holds and the number above becomes a fantasy &mdash; that
+        is the next slide. Even when it does fit, this is a theoretical ceiling: attention,
+        sampling and the KV cache all take a cut, and no chip sustains its paper bandwidth.</p>
+    </div>
+  </section>
+  <!-- ---- 3 · fit, spill, and what it costs ---- -->
+  <section class="slide" data-section="3" id="s-mach">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Two machines, same model</div>
+      <h2>Raw bandwidth wins &mdash; until the model stops fitting</h2>
+
+      <div class="mx-controls">
+        <div class="ctrl">
+          <label for="mxParams">Model</label>
+          <input type="range" id="mxParams" min="2" max="40" step="1" value="16">
+          <output id="mxParamsOut">16B</output>
+        </div>
+        <div class="ctrl">
+          <label for="mxBits">Precision</label>
+          <div class="seg" id="mxBits">
+            <button data-bits="16" class="on">16&#8209;bit</button>
+            <button data-bits="8">8&#8209;bit</button>
+            <button data-bits="4">4&#8209;bit</button>
+          </div>
+        </div>
+        <div class="mx-weight">
+          <span class="mx-w-num" id="mxWeight">32.0</span>
+          <span class="mx-w-unit">GB of weights</span>
+        </div>
+      </div>
+
+      <div class="mx-grid">
+        <div class="mach" data-mach="pc">
+          <div class="mach-head">
+            <div>
+              <span class="mach-name">Desktop PC</span>
+              <span class="mach-sub">RTX 5090 &middot; 32 GB VRAM &nbsp;+&nbsp; 32 GB DDR5&#8209;6000</span>
+            </div>
+            <div class="mach-rate"><span class="r-num" id="rate-pc">56</span><span class="r-unit">tok/s</span></div>
+          </div>
+          <canvas class="mach-canvas" id="cv-pc"></canvas>
+          <div class="mach-state" id="state-pc">Everything sits in VRAM &mdash; full speed</div>
+        </div>
+
+        <div class="mach" data-mach="mac">
+          <div class="mach-head">
+            <div>
+              <span class="mach-name">MacBook Pro</span>
+              <span class="mach-sub">M5 Max &middot; 64 GB unified memory</span>
+            </div>
+            <div class="mach-rate"><span class="r-num" id="rate-mac">19</span><span class="r-unit">tok/s</span></div>
+          </div>
+          <canvas class="mach-canvas" id="cv-mac"></canvas>
+          <div class="mach-state" id="state-mac">Fits with room to spare</div>
+        </div>
+      </div>
+
+      <div class="mx-legend">
+        <span class="lg-item"><i class="sw sw-fast"></i>Fast memory &mdash; VRAM or unified</span>
+        <span class="lg-item"><i class="sw sw-slow"></i>Spilled to system DRAM</span>
+        <span class="lg-item"><i class="sw sw-none"></i>Free capacity</span>
+        <span class="lg-item mono">Read head crosses the whole model once per token &middot; slowed 10&times;</span>
+      </div>
+
+      <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
+        the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
+        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.</p>
     </div>
   </section>
   <!-- ============ §4 ============ -->
@@ -1102,7 +1446,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   </section>
 </div>
 
-<div class="counter" id="counter">01 / 11</div>
+<!-- filled by deck.js; empty rather than a stale literal that would
+     be wrong the moment a slide is added -->
+<div class="counter" id="counter"></div>
 <div class="hint">&larr; &rarr; NAVIGATE &nbsp;&middot;&nbsp; 0&ndash;7 JUMP TO SECTION</div>
 <nav class="rail" id="rail"></nav>
 
@@ -1474,6 +1820,433 @@ function draw(now) {
   requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
+/* ==========================================================
+   DECODE SPEED ESTIMATOR
+   tok/s = bandwidth / model size, with the answer streamed at the
+   rate it describes. The number is abstract; watching text arrive at
+   3 tok/s is not.
+   ========================================================== */
+var dkSlide = document.getElementById('s-decode');
+if (dkSlide) {
+  var bwSlider = document.getElementById('bwSlider');
+  var szSlider = document.getElementById('szSlider');
+  var bwOut    = document.getElementById('bwOut');
+  var szOut    = document.getElementById('szOut');
+  var dkRate   = document.getElementById('dkRate');
+  var dkNote   = document.getElementById('dkNote');
+  var dkVerdict= document.getElementById('dkVerdict');
+  var dkWpm    = document.getElementById('dkWpm');
+  var dkText   = document.getElementById('dkText');
+
+  /* A token averages about ¾ of an English word, so words/min is
+     tok/s × 0.75 × 60. Adults read prose at roughly 240 wpm. */
+  var WORDS_PER_TOKEN = 0.75, READING_WPM = 240;
+
+  var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
+    'No request leaves the building, no key is billed, and nothing stops working ' +
+    'when the wifi does. The speed you are watching right now is not a benchmark ' +
+    'result. It is arithmetic: the weights have to be read out of memory once for ' +
+    'every single token, so the memory bus sets the pace and the rest is detail.'
+  ).split(' ');
+
+  function rate() {
+    return (bwSlider.value / szSlider.value);
+  }
+
+  function verdict(r) {
+    if (r < 2)    return 'Painful. You will watch it think.';
+    if (r < 5.5)  return 'Slower than you read &mdash; you will be waiting.';
+    if (r < 12)   return 'About reading speed.';
+    if (r < 30)   return 'Comfortably faster than you read.';
+    return 'Faster than you can follow.';
+  }
+
+  function draw() {
+    var r = rate();
+    bwOut.textContent = bwSlider.value;
+    szOut.textContent = szSlider.value;
+    dkRate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
+    dkVerdict.innerHTML = verdict(r);
+    var wpm = Math.round(r * WORDS_PER_TOKEN * 60);
+    dkWpm.innerHTML = '&asymp; ' + wpm.toLocaleString() + ' words/min &middot; ' +
+      (wpm / READING_WPM).toFixed(1) + '&times; reading speed';
+  }
+
+  /* ---- presets ---- */
+  var presetBtns = Array.prototype.slice.call(
+    document.querySelectorAll('#bwPresets button'));
+
+  function syncPresets() {
+    var hit = null;
+    presetBtns.forEach(function (b) {
+      var on = parseInt(b.dataset.bw, 10) === parseInt(bwSlider.value, 10);
+      b.classList.toggle('on', on);
+      if (on) hit = b;
+    });
+    dkNote.innerHTML = hit ? hit.dataset.note : 'Custom &mdash; drag to a real machine above';
+  }
+
+  presetBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      bwSlider.value = b.dataset.bw;
+      /* Let the tick scale repaint itself; it listens for 'input'. */
+      bwSlider.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
+
+  [bwSlider, szSlider].forEach(function (el) {
+    el.addEventListener('input', function () { draw(); syncPresets(); restart(); });
+  });
+
+  /* ---- streaming text ---- */
+  var shown = 0, acc = 0, last = 0, holding = 0;
+  var HOLD_MS = 1100;                       /* pause before looping   */
+  var reducedMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function restart() { shown = 0; acc = 0; holding = 0; }
+
+  function render() {
+    var html = '';
+    for (var i = 0; i < shown; i++) html += '<span class="tk">' + PASSAGE[i] + '</span> ';
+    dkText.innerHTML = html + '<span class="caret"></span>';
+  }
+
+  function tick(now) {
+    requestAnimationFrame(tick);
+    if (!dkSlide.classList.contains('active')) { last = now; return; }
+    var dt = Math.min(now - last, 250) / 1000;   /* clamp tab-switch jumps */
+    last = now;
+
+    if (holding > 0) { holding -= dt * 1000; if (holding <= 0) { restart(); render(); } return; }
+
+    acc += rate() * dt;
+    if (acc >= 1) {
+      var add = Math.floor(acc);
+      acc -= add;
+      shown = Math.min(PASSAGE.length, shown + add);
+      render();
+      if (shown >= PASSAGE.length) holding = HOLD_MS;
+    }
+  }
+
+  draw();
+  syncPresets();
+  if (reducedMo) {
+    /* Static full passage: the number still teaches, the motion is optional. */
+    shown = PASSAGE.length;
+    render();
+  } else {
+    render();
+    requestAnimationFrame(tick);
+  }
+}
+/* ==========================================================
+   TWO MACHINES — FIT, SPILL, AND WHAT IT COSTS
+   Every token requires reading every weight once, so a read head is
+   swept across the model at the bandwidth of whichever pool it is
+   currently crossing. It flies through VRAM and crawls through DRAM,
+   which is the entire lesson made visible rather than asserted.
+
+   The sweep is slowed by a single constant, so every ratio on screen
+   is exactly the real ratio.
+   ========================================================== */
+var mxSlide = document.getElementById('s-mach');
+if (mxSlide) {
+  var SLOWMO   = 10;      /* wall-clock divisor, applied to both machines */
+  var SCALE_GB = 64;      /* GB spanning the full canvas width            */
+  var DRIFT    = 0.4;     /* token block travel, fraction of width / sec  */
+
+  var MACHINES = {
+    pc:  { pools: [{ label: 'VRAM · GDDR7',   gb: 32, bw: 1792 },
+                   { label: 'System DRAM · DDR5-6000', gb: 32, bw: 96 }] },
+    mac: { pools: [{ label: 'Unified memory', gb: 64, bw: 614 }] }
+  };
+
+  var css = getComputedStyle(document.documentElement);
+  var C = {
+    fast: css.getPropertyValue('--accent').trim(),
+    slow: css.getPropertyValue('--warn').trim(),
+    bad:  css.getPropertyValue('--bad').trim(),
+    empty: css.getPropertyValue('--bg-raise').trim(),
+    rule: css.getPropertyValue('--rule-soft').trim(),
+    dim:  css.getPropertyValue('--ink-dim').trim(),
+    mono: css.getPropertyValue('--mono').trim()
+  };
+
+  var paramsEl = document.getElementById('mxParams');
+  var paramsOut = document.getElementById('mxParamsOut');
+  var weightEl = document.getElementById('mxWeight');
+  var bits = 16;
+
+  /* ---- model size ---- */
+  function weightGB() { return paramsEl.value * (bits / 8); }
+
+  /* ---- fill pools in order, report what did not fit ---- */
+  function allocate(pools, need) {
+    var segs = [], rem = need;
+    pools.forEach(function (p) {
+      var used = Math.min(p.gb, rem);
+      rem -= used;
+      segs.push({ pool: p, used: used });
+    });
+    return { segs: segs, over: rem };
+  }
+
+  /* Time to read every weight once = the sum over pools of
+     (bytes living there / that pool's bandwidth). */
+  function secondsPerToken(segs) {
+    return segs.reduce(function (t, s) {
+      return t + (s.used > 0 ? s.used / s.pool.bw : 0);
+    }, 0);
+  }
+
+  var views = ['pc', 'mac'].map(function (id) {
+    return {
+      id: id,
+      pools: MACHINES[id].pools,
+      cv: document.getElementById('cv-' + id),
+      ctx: document.getElementById('cv-' + id).getContext('2d'),
+      root: document.querySelector('.mach[data-mach="' + id + '"]'),
+      rate: document.getElementById('rate-' + id),
+      state: document.getElementById('state-' + id),
+      head: 0,        /* GB read so far in the current pass */
+      toks: [],       /* emitted token blocks, x in 0..1     */
+      alloc: null, spt: 0
+    };
+  });
+
+  function recompute() {
+    var need = weightGB();
+    paramsOut.textContent = paramsEl.value + 'B';
+    weightEl.textContent = need.toFixed(1);
+
+    views.forEach(function (v) {
+      v.alloc = allocate(v.pools, need);
+      v.spt = secondsPerToken(v.alloc.segs);
+
+      var spilled = v.alloc.segs.length > 1 && v.alloc.segs[1].used > 0;
+      var toobig = v.alloc.over > 0.001;
+      v.root.classList.toggle('spilled', spilled && !toobig);
+      v.root.classList.toggle('toobig', toobig);
+
+      if (toobig) {
+        v.rate.textContent = '—';
+        v.state.textContent = 'Will not load — ' + v.alloc.over.toFixed(1) + ' GB short';
+        v.head = 0; v.toks = [];
+      } else {
+        var r = 1 / v.spt;
+        v.rate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
+        if (spilled) {
+          var pct = Math.round(v.alloc.segs[1].used / weightGB() * 100);
+          v.state.textContent = pct + '% spilled to DRAM — read at 96 GB/s, not 1792';
+        } else if (v.id === 'pc') {
+          v.state.textContent = 'Entirely in VRAM — full 1792 GB/s';
+        } else {
+          v.state.textContent = 'Fits in unified memory — 614 GB/s throughout';
+        }
+      }
+    });
+  }
+
+  /* ---- canvas ---- */
+  function sizeCanvas(v) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = v.cv.clientWidth, h = v.cv.clientHeight;
+    if (!w || !h) return false;
+    if (v.cv.width !== Math.round(w * dpr)) {
+      v.cv.width = Math.round(w * dpr);
+      v.cv.height = Math.round(h * dpr);
+    }
+    v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    v.W = w; v.H = h;
+    return true;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, h / 2, w / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  /* Canvas ignores rem, so every dimension is derived from the live root
+     font size instead of hardcoded. The deck scales off min(vw,vh) for
+     projector legibility and the bars have to come with it. */
+  var LABEL_H, TRACK_H, ROW_GAP, STREAM_H, FONT, REM;
+  function metrics() {
+    REM = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    LABEL_H  = REM * 0.78;
+    TRACK_H  = REM * 0.94;
+    ROW_GAP  = REM * 0.50;
+    STREAM_H = REM * 1.43;
+    FONT     = Math.max(9, Math.round(REM * 0.55));
+  }
+
+  function drawMachine(v) {
+    if (!sizeCanvas(v)) return;
+    metrics();
+    var ctx = v.ctx, W = v.W, H = v.H;
+    ctx.clearRect(0, 0, W, H);
+
+    var toobig = v.alloc.over > 0.001;
+    var y = 0;
+
+    v.alloc.segs.forEach(function (s, i) {
+      var trackW = (s.pool.gb / SCALE_GB) * W;
+      var fillW = s.pool.gb > 0 ? (s.used / s.pool.gb) * trackW : 0;
+      var colour = toobig ? C.bad : (i === 0 ? C.fast : C.slow);
+
+      ctx.font = FONT + 'px ' + C.mono;
+      ctx.fillStyle = C.dim;
+      ctx.textBaseline = 'top';
+      ctx.fillText(s.pool.label.toUpperCase() + '  ·  ' + s.pool.gb + ' GB  ·  ' +
+        s.pool.bw + ' GB/S', 0, y);
+
+      var ty = y + LABEL_H;
+      ctx.fillStyle = C.empty;
+      roundRect(ctx, 0, ty, trackW, TRACK_H, REM * 0.22); ctx.fill();
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+      roundRect(ctx, 0.5, ty + 0.5, trackW - 1, TRACK_H - 1, REM * 0.22); ctx.stroke();
+
+      if (fillW > 0) {
+        ctx.save();
+        roundRect(ctx, 0, ty, Math.max(fillW, 3), TRACK_H, REM * 0.22); ctx.clip();
+        ctx.fillStyle = colour;
+        ctx.globalAlpha = 0.28;
+        ctx.fillRect(0, ty, Math.max(fillW, 3), TRACK_H);
+        ctx.globalAlpha = 1;
+        /* weight blocks, so the bar reads as contents rather than a gauge */
+        ctx.fillStyle = colour;
+        var bw = REM * 0.28, gap = REM * 0.11;
+        for (var x = REM * 0.11; x < fillW - 1; x += bw + gap) {
+          ctx.globalAlpha = 0.72;
+          ctx.fillRect(x, ty + TRACK_H * 0.18, Math.min(bw, fillW - 1 - x), TRACK_H * 0.64);
+        }
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
+      s._ty = ty; s._trackW = trackW; s._fillW = fillW;
+      y = ty + TRACK_H + ROW_GAP;
+    });
+
+    /* Unified memory has no second tier, and the empty row where the PC's
+       DRAM bar sits is the architectural difference — worth drawing as an
+       absence rather than leaving as blank canvas. */
+    if (v.alloc.segs.length === 1) {
+      ctx.font = FONT + 'px ' + C.mono;
+      ctx.fillStyle = C.dim;
+      ctx.globalAlpha = 0.55;
+      ctx.textBaseline = 'top';
+      var ghostW = (32 / SCALE_GB) * W;
+      ctx.fillText('NO SEPARATE VRAM  ·  CPU AND GPU SHARE ONE POOL', 0, y);
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+      ctx.strokeRect(0.5, y + LABEL_H + 0.5, ghostW - 1, TRACK_H - 1);
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+
+    /* ---- read head ---- */
+    if (!toobig && v.spt > 0) {
+      var acc = 0;
+      for (var i = 0; i < v.alloc.segs.length; i++) {
+        var s = v.alloc.segs[i];
+        if (s.used <= 0) continue;
+        if (v.head <= acc + s.used) {
+          var within = (v.head - acc) / s.used;         /* 0..1 of the filled part */
+          var hx = within * s._fillW;
+          var colour = i === 0 ? C.fast : C.slow;
+          ctx.save();
+          ctx.shadowColor = colour; ctx.shadowBlur = REM * 0.5;
+          ctx.fillStyle = colour;
+          ctx.fillRect(hx - 1, s._ty - REM * 0.17, 2, TRACK_H + REM * 0.34);
+          ctx.restore();
+          break;
+        }
+        acc += s.used;
+      }
+    }
+
+    /* ---- emitted tokens ---- */
+    var sy = H - STREAM_H;
+    ctx.font = FONT + 'px ' + C.mono;
+    ctx.fillStyle = C.dim;
+    ctx.textBaseline = 'top';
+    ctx.fillText('TOKENS OUT', 0, sy);
+
+    var by = sy + REM * 0.66, bh = REM * 0.72;
+    v.toks.forEach(function (t) {
+      var x = t.x * W;
+      if (x > W) return;
+      ctx.globalAlpha = Math.max(0, 1 - t.x) * 0.75 + 0.25;
+      ctx.fillStyle = toobig ? C.bad : C.fast;
+      roundRect(ctx, x, by, REM * 0.5, bh, REM * 0.11); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---- animation ---- */
+  var lastT = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    var dt = Math.min(now - lastT, 250) / 1000;
+    lastT = now;
+    if (!mxSlide.classList.contains('active')) return;
+
+    views.forEach(function (v) {
+      var toobig = v.alloc.over > 0.001;
+      if (!toobig) {
+        /* Advance through whichever pool the head is currently inside,
+           at that pool's bandwidth. This is the crawl. */
+        var acc = 0, bw = 0;
+        for (var i = 0; i < v.alloc.segs.length; i++) {
+          var s = v.alloc.segs[i];
+          if (s.used <= 0) continue;
+          if (v.head <= acc + s.used) { bw = s.pool.bw; break; }
+          acc += s.used;
+        }
+        if (!bw) bw = v.alloc.segs[0].pool.bw;
+        v.head += (bw / SLOWMO) * dt;
+
+        var total = weightGB();
+        if (v.head >= total) { v.head = 0; v.toks.push({ x: 0 }); }
+      }
+      for (var k = v.toks.length - 1; k >= 0; k--) {
+        v.toks[k].x += DRIFT * dt;
+        if (v.toks[k].x > 1.05) v.toks.splice(k, 1);
+      }
+      drawMachine(v);
+    });
+  }
+
+  /* ---- controls ---- */
+  paramsEl.addEventListener('input', function () { recompute(); });
+  Array.prototype.forEach.call(document.querySelectorAll('#mxBits button'),
+    function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#mxBits button').forEach(function (b) {
+          b.classList.remove('on');
+        });
+        btn.classList.add('on');
+        bits = parseInt(btn.dataset.bits, 10);
+        recompute();
+      });
+    });
+
+  recompute();
+  window.addEventListener('resize', function () { views.forEach(drawMachine); });
+  document.addEventListener('deck:slide', function () { views.forEach(drawMachine); });
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    views.forEach(drawMachine);
+  } else {
+    requestAnimationFrame(frame);
+  }
+}
 })();
 </script>
 </body>
