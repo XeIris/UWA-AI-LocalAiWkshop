@@ -1,0 +1,51 @@
+  <!-- ============ §2 ============ -->
+  <section class="slide section-card" data-section="2">
+    <div class="slide-inner">
+      <div class="num">02</div>
+      <div class="eyebrow">Section 02</div>
+      <h2>What just happened</h2>
+      <p class="lede">Hugging Face, GGUF, who publishes quants &mdash; and the chat template
+        gotcha that fails silently.</p>
+      <!-- TO BUILD: template gotcha demo -->
+    </div>
+  </section>
+
+  <!-- ---- 2 · where models come from ---- -->
+  <section class="slide" data-section="2">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; Where models come from</div>
+      <h2>One site, one file format, a handful of packagers</h2>
+      <div class="stack three">
+        <div class="srow">
+          <span class="chip lg"><svg><use href="#lg-hf"/></svg></span>
+          <div class="body">
+            <h3>Hugging Face</h3>
+            <p>Where essentially every open model lives. A &ldquo;repo&rdquo; is a folder of files, not a product.</p>
+            <span class="mono-note">HUGGINGFACE.CO</span>
+          </div>
+        </div>
+        <div class="srow">
+          <span class="chip lg text-mark">GGUF</span>
+          <div class="body">
+            <h3>The GGUF file</h3>
+            <p>One self-contained file: the weights plus tokenizer, and <em>usually</em> the chat
+               template. This is what you download.</p>
+            <span class="mono-note">MLX USES ITS OWN FORMAT</span>
+          </div>
+        </div>
+        <div class="srow">
+          <span class="chip lg text-mark">WHO?</span>
+          <div class="body">
+            <h3>Who quantized it</h3>
+            <p>Model authors rarely publish 4&#8209;bit builds. Community packagers do.</p>
+            <span class="mono-note">BARTOWSKI &middot; LMSTUDIO-COMMUNITY &middot; MLX-COMMUNITY</span>
+          </div>
+        </div>
+      </div>
+      <p class="caveat">The name in the search box is not the whole story. One model
+        produces dozens of files at different quantizations &mdash; picking the right one
+        is the skill.</p>
+    </div>
+  </section>
+
+  <!-- ---- 2 · what LM Studio is ---- -->

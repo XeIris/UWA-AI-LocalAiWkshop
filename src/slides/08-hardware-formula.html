@@ -1,0 +1,53 @@
+  <!-- ============ §3 ============ -->
+  <section class="slide section-card" data-section="3">
+    <div class="slide-inner">
+      <div class="num">03</div>
+      <div class="eyebrow">Section 03</div>
+      <h2>Hardware &amp; the one formula</h2>
+      <p class="lede">DRAM versus VRAM. Discrete GPU versus unified memory. And the single
+        equation that explains every speed you will ever see.</p>
+    </div>
+  </section>
+
+  <!-- ---- 3 · the formula, stated ---- -->
+  <section class="slide" data-section="3">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; The one formula</div>
+      <h2>Decode speed is a memory problem</h2>
+
+      <div class="equation">
+        <span class="eq-lhs">tokens/sec</span>
+        <span class="eq-rel">&asymp;</span>
+        <span class="frac">
+          <span class="num">memory bandwidth<span class="unit">GB / SEC</span></span>
+          <span class="den">model size<span class="unit">GB</span></span>
+        </span>
+      </div>
+      <p class="eq-caption">The through-line of this entire workshop</p>
+
+      <!-- The asymmetry is the whole reason the two machines in §3 behave
+           differently. Stated here, made visible on the next two slides. -->
+      <div class="phases">
+        <div class="phase">
+          <div class="ph-k">Prefill</div>
+          <div class="ph-t">Reading your prompt</div>
+          <div class="ph-b">Every token of the prompt is processed <strong>at once</strong>.
+            The chip is doing arithmetic flat out.</div>
+          <div class="ph-bound">Limited by <strong>compute</strong> &mdash; FLOPS</div>
+          <div class="ph-feel">Feels like: the pause before the first word</div>
+        </div>
+        <div class="phase">
+          <div class="ph-k">Decode</div>
+          <div class="ph-t">Writing the answer</div>
+          <div class="ph-b">One token at a time, and <strong>every weight in the model</strong>
+            must be read from memory for each one.</div>
+          <div class="ph-bound">Limited by <strong>memory bandwidth</strong> &mdash; GB/s</div>
+          <div class="ph-feel">Feels like: the speed the words appear</div>
+        </div>
+      </div>
+
+      <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
+        thinks slowly. A big discrete GPU is fast at both &mdash; right up until the model
+        stops fitting in its VRAM.</p>
+    </div>
+  </section>

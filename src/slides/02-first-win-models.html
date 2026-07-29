@@ -1,0 +1,99 @@
+  <!-- ============ §1 ============ -->
+  <section class="slide section-card" data-section="1">
+    <div class="slide-inner">
+      <div class="num">01</div>
+      <div class="eyebrow">Section 01 &middot; Hands on</div>
+      <h2>First win</h2>
+      <p class="lede">Install LM Studio, download one small model, send one message.</p>
+      <!-- TO BUILD: install checklist -->
+    </div>
+  </section>
+
+  <!-- ---- 1 · pick a model ---- -->
+  <section class="slide" data-section="1">
+    <div class="slide-inner">
+      <div class="eyebrow">01 &mdash; First win</div>
+      <h2>Download one of the first two. Bigger is not automatically better.</h2>
+      <div class="models">
+
+        <div class="model pick">
+          <span class="flag">RECOMMENDED</span>
+          <div class="top">
+            <span class="chip"><svg><use href="#lg-gemma"/></svg></span>
+            <span><span class="nm">Gemma 3</span><br><span class="by">GOOGLE &middot; 1B</span></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Download &middot; 4-bit</span>
+            <span class="sv">730 MB <em>MLX</em> / 720 MB <em>GGUF</em></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Comfortable in</span>
+            <span class="sv">~1.5 GB free</span>
+          </div>
+          <div class="tag-row"><span class="tag">QAT</span><span class="tag">TEXT ONLY</span></div>
+          <p class="use">Quantization-aware trained, so it survives 4&#8209;bit better than most. Runs on nearly anything.</p>
+        </div>
+
+        <div class="model pick">
+          <span class="flag">RECOMMENDED</span>
+          <div class="top">
+            <span class="chip"><svg><use href="#lg-liquid"/></svg></span>
+            <span><span class="nm">LFM2.5</span><br><span class="by">LIQUID AI &middot; 1.2B</span></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Download &middot; 4-bit</span>
+            <span class="sv">660 MB <em>MLX</em> / 730 MB <em>GGUF</em></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Comfortable in</span>
+            <span class="sv">~1.5 GB free</span>
+          </div>
+          <div class="tag-row"><span class="tag">ON-DEVICE</span><span class="tag">TOOL USE</span></div>
+          <p class="use">Designed for edge hardware from the start rather than shrunk down to fit it.</p>
+        </div>
+
+        <div class="model">
+          <div class="top">
+            <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
+            <span><span class="nm">Qwen3</span><br><span class="by">QWEN &middot; 4B</span></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Download &middot; 4-bit</span>
+            <span class="sv">2.3 GB <em>MLX</em> / 2.5 GB <em>GGUF</em></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Comfortable in</span>
+            <span class="sv">~4 GB free</span>
+          </div>
+          <div class="tag-row"><span class="tag">REASONING</span><span class="tag">100+ LANGS</span></div>
+          <p class="use">Noticeably sharper than the 1B pair, and still fits an 8&nbsp;GB laptop. Worth grabbing at home.</p>
+        </div>
+
+        <div class="model demo">
+          <span class="flag">PRESENTER DEMO</span>
+          <div class="top">
+            <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
+            <span><span class="nm">Qwen3.5</span><br><span class="by">QWEN &middot; 9B</span></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Download &middot; 4-bit</span>
+            <span class="sv">6.0 GB <em>MLX</em> / 5.6 GB <em>GGUF</em></span>
+          </div>
+          <div class="spec">
+            <span class="sk">Comfortable in</span>
+            <span class="sv">~8 GB free</span>
+          </div>
+          <div class="tag-row"><span class="tag">VISION</span><span class="tag">REASONING</span></div>
+          <p class="use">Only if you have the memory to spare. Reads images, and thinks before answering.</p>
+        </div>
+
+      </div>
+      <p class="caveat"><strong>Take a 1B tonight.</strong> Under 750&nbsp;MB downloads in
+        minutes on shared wifi and leaves your laptop responsive; 2.5&nbsp;GB times thirty
+        people does not. The larger two are here so you can see the trade&#8209;off, and to
+        take home afterwards.
+        <strong>MLX is Apple&nbsp;silicon only</strong> &mdash; everyone else takes the GGUF.</p>
+    </div>
+  </section>
+
+  <!-- ---- 1 · temperature ---- -->

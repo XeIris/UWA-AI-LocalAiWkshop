@@ -1,0 +1,59 @@
+/* --- sampling charts ---------------------------------------- */
+.samp {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.3rem 1.4rem 1.1rem;
+}
+.samp-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 1rem;
+}
+.samp-head .hi { color: var(--accent); }
+.bars { display: flex; align-items: flex-end; gap: 0.5rem; height: 11rem; position: relative; }
+.sbar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.sbar .pct {
+  font-family: var(--mono); font-size: 0.66rem; color: var(--ink-mid);
+  text-align: center; margin-bottom: 0.3rem;
+  transition: color 200ms ease;
+}
+.sbar .stem {
+  background: linear-gradient(180deg, var(--accent), var(--accent-lo));
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  min-height: 2px;
+  transition: height 260ms cubic-bezier(0.22, 0.9, 0.28, 1),
+              background 220ms ease, opacity 220ms ease;
+}
+.sbar .tok {
+  font-family: var(--mono); font-size: 0.7rem; color: var(--ink-mid);
+  text-align: center; margin-top: 0.45rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 200ms ease;
+}
+/* Cut tokens stay visible but obviously dead — the point is that the
+   model COULD have said them and the sampler refused. */
+.sbar.cut .stem { background: var(--ink-dim); opacity: 0.25; }
+.sbar.cut .pct, .sbar.cut .tok { color: var(--ink-dim); opacity: 0.45; }
+.sbar.cut .tok { text-decoration: line-through; }
+
+/* The min-p floor is drawn inside the bar area so it lines up with the
+   stems it is cutting. Amber because it is a threshold, not decoration. */
+.rule {
+  position: absolute; left: 0; right: 0; height: 0;
+  border-top: 1px dashed var(--warn);
+  pointer-events: none;
+  transition: bottom 260ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+.rule::after {
+  content: attr(data-label);
+  position: absolute; right: 0; top: -1.05rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; color: var(--warn);
+}
+
+@media (max-width: 900px) {
+  .bars { height: 8rem; }
+  .sbar .tok { font-size: 0.6rem; }
+}

@@ -1,0 +1,40 @@
+  <section class="slide" data-section="2">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; Under the hood</div>
+      <h2>If you outgrow LM Studio</h2>
+      <div class="stack three">
+        <div class="srow">
+          <span class="chip lg"><svg><use href="#lg-ollama"/></svg></span>
+          <div class="body">
+            <h3>Ollama</h3>
+            <p>Terminal-first. One command pulls and runs a model, and it serves an API
+               other apps can talk to.</p>
+            <span class="mono-note">OLLAMA RUN QWEN3</span>
+          </div>
+        </div>
+        <div class="srow">
+          <span class="chip lg"><svg><use href="#lg-openwebui"/></svg></span>
+          <div class="body">
+            <h3>Open WebUI</h3>
+            <p>A browser front end you self-host, usually pointed at Ollama. Multi-user,
+               and closest to the hosted chat apps.</p>
+            <span class="mono-note">RUNS IN A BROWSER</span>
+          </div>
+        </div>
+        <div class="srow">
+          <span class="chip lg text-mark">G4A</span>
+          <div class="body">
+            <h3>GPT4All</h3>
+            <p>The other friendly desktop app. Leans hard on chatting with your own
+               documents.</p>
+            <span class="mono-note">DESKTOP APP</span>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:1.3rem">
+        Same GGUF files underneath, so the model you just downloaded is not wasted
+        &mdash; but moving is not quite free. Open WebUI is a front end and needs
+        Ollama (or another server) behind it, and Ollama imports a local GGUF through
+        a <span class="mono">Modelfile</span> rather than opening it directly.</p>
+    </div>
+  </section>

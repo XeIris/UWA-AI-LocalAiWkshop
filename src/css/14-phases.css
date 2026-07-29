@@ -1,0 +1,43 @@
+/* --- prefill / decode contrast ------------------------------- */
+/* Two panels rather than a table: the asymmetry is the content, and a
+   table would imply the two phases are the same kind of thing measured
+   twice. They are not — one is compute-bound, one is bandwidth-bound. */
+.phases {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  margin-top: 1.2rem;
+}
+.phase {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 0.95rem 1.15rem 1rem;
+}
+/* Decode is the one the whole workshop hangs on, so it gets the lit edge. */
+.phase:last-child { border-top-color: var(--accent); }
+
+.phase .ph-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.15rem;
+}
+.phase .ph-t { font-size: 1.16rem; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+.phase .ph-b { font-size: 0.95rem; color: var(--ink-mid); line-height: 1.4; }
+.phase .ph-b strong { color: var(--ink); font-weight: 600; }
+.phase .ph-bound {
+  margin-top: 0.85rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.78rem;
+  letter-spacing: 0.06em; color: var(--ink-mid);
+}
+.phase .ph-bound strong { color: var(--accent); font-weight: 500; }
+.phase .ph-feel {
+  margin-top: 0.35rem;
+  font-size: 0.85rem; color: var(--ink-dim); font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .phases { grid-template-columns: 1fr; gap: 0.7rem; }
+  .phase { padding: 0.85rem 0.9rem; }
+  .phase .ph-t { font-size: 1rem; }
+}

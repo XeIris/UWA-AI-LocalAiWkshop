@@ -1,0 +1,55 @@
+/* --- cover -------------------------------------------------- */
+#cover .slide-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 4.5rem;
+  align-items: center;
+  max-width: 82rem;
+}
+.wordmark { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; }
+.wordmark .unplugged {
+  color: var(--accent);
+  text-shadow: 0 0 2.5rem var(--accent-glow);
+}
+.cover-sub {
+  font-size: 1.42rem; color: var(--ink-mid);
+  margin: 1.5rem 0 0; max-width: 26rem;
+}
+.cover-meta {
+  margin-top: 2.6rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: var(--label-lg);
+  color: var(--ink-dim); letter-spacing: 0.1em;
+  display: flex; gap: 1.6rem; flex-wrap: wrap;
+}
+
+.cover-art { position: relative; }
+.cover-art canvas {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  background: #060a0e;
+}
+.art-readout {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; margin-top: 0.9rem;
+  font-family: var(--mono); font-size: 0.88rem; letter-spacing: 0.05em;
+}
+.art-readout .cfg { color: var(--accent); }
+.art-readout .gb  { color: var(--ink-mid); }
+.footprint {
+  margin-top: 0.55rem; height: 0.42rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-pill);
+  position: relative; overflow: hidden;
+}
+.footprint::after {
+  content: ""; position: absolute; inset: 0 0 0 0;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent));
+  opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+  #cover .slide-inner { grid-template-columns: 1fr; gap: 2rem; }
+}

@@ -1,0 +1,52 @@
+/* ============================================================
+   AI, UNPLUGGED — workshop deck
+   Theme: "hardware blueprint"
+   Palette rule: cyan owns all chrome/structure.
+   The ENTIRE warm range (green/amber/red) is reserved for
+   semantics — fit indicators, quality cliffs, warnings.
+   If something is amber on a slide, it MEANS something.
+   ============================================================ */
+
+:root {
+  --bg:        #05080b;
+  --bg-panel:  #0a1015;
+  --bg-raise:  #0e161d;
+  --grid-line: rgba(53, 214, 232, 0.052);
+  --rule:      rgba(53, 214, 232, 0.16);
+  --rule-soft: rgba(53, 214, 232, 0.09);
+
+  --ink:       #e6f1f5;
+  --ink-mid:   #a4b8c1;
+  --ink-dim:   #6c828d;
+
+  --accent:    #35d6e8;
+  --accent-lo: #14818f;
+  --accent-glow: rgba(53, 214, 232, 0.30);
+
+  /* semantic only — never decorative */
+  --ok:   #4ade80;
+  --warn: #fbbf24;
+  --bad:  #f87171;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+          "Cascadia Mono", "Roboto Mono", monospace;
+
+  /* Two mono label tiers, and only two. Everything that labels
+     something picks one — otherwise they drift into four sizes that
+     are all almost the same and the hierarchy stops reading. */
+  --label-lg:    0.82rem;  --label-lg-ls: 0.22em;   /* slide-level  */
+  --label-sm:    0.72rem;  --label-sm-ls: 0.18em;   /* within panels */
+
+  /* Corner radius is a single dial. Set --r-scale to 0 for the original
+     hard-edged draughting look, 1 for the app-like rounding below, or
+     anything between. Every rounded thing in the deck derives from it. */
+  --r-scale: 1;
+  --r-sm:   calc(7px  * var(--r-scale));   /* chips, controls, bars   */
+  --r-md:   calc(14px * var(--r-scale));   /* panels, tiles, cards    */
+  --r-lg:   calc(20px * var(--r-scale));   /* large feature panels    */
+  --r-pill: calc(999px * var(--r-scale));  /* tracks, tags            */
+
+  --fade: 260ms;
+}

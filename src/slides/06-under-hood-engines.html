@@ -1,0 +1,31 @@
+  <section class="slide" data-section="2">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; Under the hood</div>
+      <h2>LM Studio is a wrapper. These do the work.</h2>
+      <div class="stack two">
+        <div class="srow">
+          <span class="chip lg"><svg><use href="#lg-llamacpp"/></svg></span>
+          <div class="body">
+            <h3>llama.cpp</h3>
+            <p>The engine almost everything runs on. C++, no dependencies, runs on
+               anything from a Raspberry Pi to a server. Reads GGUF.</p>
+            <span class="mono-note">EVERY PLATFORM</span>
+          </div>
+        </div>
+        <div class="srow">
+          <span class="chip lg fill"><svg><use href="#lg-mlx"/></svg></span>
+          <div class="body">
+            <h3>MLX</h3>
+            <p>Apple&rsquo;s own array framework, built for unified memory. Meaningfully
+               faster than llama.cpp on a Mac, useless anywhere else.</p>
+            <span class="mono-note">APPLE SILICON ONLY</span>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:1.3rem">
+        Worth knowing because it means the app is not the magic &mdash; it is a face on
+        top of an engine, and you can change either one.</p>
+    </div>
+  </section>
+
+  <!-- ---- 2 · alternatives ---- -->

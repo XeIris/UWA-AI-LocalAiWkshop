@@ -1,0 +1,39 @@
+  <section class="slide" data-section="1" id="s-cut">
+    <div class="slide-inner">
+      <div class="eyebrow">01 &mdash; Sampling</div>
+      <h2>Two ways to cut the tail off</h2>
+      <p class="note" id="cutPrompt" style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
+      <div class="stack two">
+        <div class="samp">
+          <div class="samp-head"><span>Top-p &middot; counts area</span><span class="hi" id="toppKept">4 kept</span></div>
+          <div class="bars" id="toppBars"></div>
+          <div class="ctrl">
+            <label for="toppSlider">p</label>
+            <input type="range" id="toppSlider" min="30" max="100" value="90">
+            <output id="toppOut">0.90</output>
+          </div>
+        </div>
+        <div class="samp">
+          <div class="samp-head"><span>Min-p &middot; sets a floor</span><span class="hi" id="minpKept">4 kept</span></div>
+          <div class="bars" id="minpBars"></div>
+          <div class="ctrl">
+            <label for="minpSlider">ratio</label>
+            <input type="range" id="minpSlider" min="1" max="60" value="10">
+            <output id="minpOut">0.10</output>
+          </div>
+        </div>
+      </div>
+      <div class="ctrl" style="margin-top:1.2rem">
+        <span class="ctrl-label" id="confSegLabel">How sure is the model?</span>
+        <div class="seg" id="confSeg" role="group" aria-labelledby="confSegLabel">
+          <button type="button" data-conf="sure" class="on" aria-pressed="true">Confident</button>
+          <button type="button" data-conf="unsure" aria-pressed="false">Torn</button>
+        </div>
+      </div>
+      <p class="note" style="margin-top:0.9rem">
+        Flip between the two and watch the right-hand panel. <strong>Min&#8209;p adapts</strong> &mdash;
+        when the model is sure of itself the floor rises and almost nothing else survives;
+        when it is torn the floor drops and the alternatives live. Top&#8209;p cannot tell the
+        difference.</p>
+    </div>
+  </section>

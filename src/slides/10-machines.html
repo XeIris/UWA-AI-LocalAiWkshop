@@ -1,0 +1,64 @@
+  <!-- ---- 3 · fit, spill, and what it costs ---- -->
+  <section class="slide" data-section="3" id="s-mach">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Two machines, same model</div>
+      <h2>Raw bandwidth wins &mdash; until the model stops fitting</h2>
+
+      <div class="mx-controls">
+        <div class="ctrl">
+          <label for="mxParams">Model</label>
+          <input type="range" id="mxParams" min="2" max="40" step="1" value="16">
+          <output id="mxParamsOut">16B</output>
+        </div>
+        <div class="ctrl">
+          <span class="ctrl-label" id="mxBitsLabel">Precision</span>
+          <div class="seg" id="mxBits" role="group" aria-labelledby="mxBitsLabel">
+            <button type="button" data-bits="16" class="on" aria-pressed="true">16&#8209;bit</button>
+            <button type="button" data-bits="8" aria-pressed="false">8&#8209;bit</button>
+            <button type="button" data-bits="4" aria-pressed="false">4&#8209;bit</button>
+          </div>
+        </div>
+        <div class="mx-weight">
+          <span class="mx-w-num" id="mxWeight">32.0</span>
+          <span class="mx-w-unit">GB of weights</span>
+        </div>
+      </div>
+
+      <div class="mx-grid">
+        <div class="mach" data-mach="pc">
+          <div class="mach-head">
+            <div>
+              <span class="mach-name">Desktop PC</span>
+              <span class="mach-sub">RTX 5090 &middot; 32 GB VRAM &nbsp;+&nbsp; 32 GB DDR5&#8209;6000</span>
+            </div>
+            <div class="mach-rate"><span class="r-num" id="rate-pc">56</span><span class="r-unit">tok/s</span></div>
+          </div>
+          <canvas class="mach-canvas" id="cv-pc"></canvas>
+          <div class="mach-state" id="state-pc">Everything sits in VRAM &mdash; full speed</div>
+        </div>
+
+        <div class="mach" data-mach="mac">
+          <div class="mach-head">
+            <div>
+              <span class="mach-name">MacBook Pro</span>
+              <span class="mach-sub">M5 Max &middot; 64 GB unified memory</span>
+            </div>
+            <div class="mach-rate"><span class="r-num" id="rate-mac">19</span><span class="r-unit">tok/s</span></div>
+          </div>
+          <canvas class="mach-canvas" id="cv-mac"></canvas>
+          <div class="mach-state" id="state-mac">Fits with room to spare</div>
+        </div>
+      </div>
+
+      <div class="mx-legend">
+        <span class="lg-item"><i class="sw sw-fast"></i>Fast memory &mdash; VRAM or unified</span>
+        <span class="lg-item"><i class="sw sw-slow"></i>Spilled to system DRAM</span>
+        <span class="lg-item"><i class="sw sw-none"></i>Free capacity</span>
+        <span class="lg-item mono">Read head crosses the whole model once per token &middot; slowed 10&times;</span>
+      </div>
+
+      <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
+        the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
+        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.</p>
+    </div>
+  </section>

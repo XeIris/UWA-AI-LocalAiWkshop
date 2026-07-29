@@ -13,15 +13,130 @@ Macs). Assume no prior knowledge of quantization, VRAM, or inference engines.
 with a working local model on their own machine and a correct mental model of *why* it
 performs the way it does.
 
+## Identity & visual design (decided 2026-07-26)
+
+**Title:** **AI, Unplugged** — subtitle *"Real language models, running on the hardware
+you already own."* Cover strapline: NO CLOUD / NO SUBSCRIPTION / NO WI-FI REQUIRED.
+
+**Theme:** *hardware blueprint*. Near-black base (`#05080b`), faint cyan measurement grid,
+thin rules, panels rather than cards-with-shadows. Everything reads as a schematic.
+
+**The palette rule — this is load-bearing, do not break it.** Cyan (`--accent: #35d6e8`)
+owns *all* chrome and structure. The **entire warm range is reserved for semantics**:
+`--ok` green, `--warn` amber, `--bad` red exist only for the fit indicator, the
+quantization cliff, and genuine warnings. If something is amber on a slide, it *means*
+something. Never use warm colors decoratively.
+
+**Third state — filled white.** Where something needs to read as a *different category*
+rather than a stronger recommendation (the "PRESENTER DEMO" badge on the model picker),
+use filled `--ink` with dark text, mirroring the filled-cyan badge. Violet was the
+obvious choice and is wrong: Qwen's own mark is `#6336E7` and sits directly under that
+badge. Do not add a fourth hue without a reason this specific.
+
+**Type:** system font stack (no CDN, no embedded webfont). Sans for prose, monospace for
+every number, formula, label and eyebrow. Root font-size scales off `min(vw, vh)` so the
+deck is legible both projected at 1080p and on an attendee's 13" laptop.
+
+**Motion:** slide-to-slide is a pure ~260ms opacity fade, nothing else. Within a slide,
+**an animation must encode a variable, never decorate one** — if it moves, it is showing
+a quantity changing. Respect `prefers-reduced-motion`.
+
+**Corner radius is a single dial.** `--r-scale` in `:root` drives every rounded corner
+in the deck (`--r-sm` / `--r-md` / `--r-lg` / `--r-pill` all derive from it). `1` is the
+current app-like rounding; `0` returns the whole deck to the original hard-edged
+draughting look. Do not hardcode a `border-radius` anywhere — derive it, or the dial
+stops working.
+
+Note the tension this creates: rounded corners pull *away* from "technical drawing".
+What keeps the blueprint identity is the measurement grid, the thin rules, the mono
+labels and the numeric readouts — not the corners. The corner-bracket panel treatment
+was removed when rounding came in because the two fight each other.
+
+**Brand assets.** All logos are inlined as `<symbol>` elements in a hidden `<svg>` at the
+top of `<body>`, used via `<use href="#lg-…">`. Nothing is fetched at runtime — the
+offline rule applies to logos too. Most come from **lobehub/lobe-icons**, which matters
+because every icon there is a 1:1 24×24 glyph; mixing official brand assets would mean
+mixing wildly different aspect ratios. Exceptions: llama.cpp uses the official
+`ggml-org/llama.brand` 600×600 icon, MLX is Apple's square PNG base64'd (it has no
+dark-background square mark, so it fills its chip as an app icon), and GPT4All has no
+logo at all and gets a typographic chip.
+
+When adding a logo, namespace any `id` inside it — brand gradients collide otherwise.
+If a mark relied on `fill="currentColor"` on its root `<svg>`, that attribute is lost in
+the lift to `<symbol>`; `.chip svg { fill: currentColor }` restores it.
+
+**Cover art:** canvas grid of weights cycling the flagship trio (7.5B@16 → 15B@8 →
+30B@4). As parameters rise the grid gets denser; as precision falls it gets coarser; the
+footprint bar underneath never moves. The invariance *is* the thesis, stated before a
+word is spoken.
+
+## Build order
+
+1. ~~Shell + theme spike~~ — nav, rail, fades, cover, §0 content, §3 formula slide.
+2. ~~§1 model picker + sampling interactives, §2 provenance/engines/alternatives~~ —
+   brand chip system and the rounded-corner dial landed with these.
+3. ~~§3 decode-speed estimator~~ — plus the two-machine fit/spill slide. Hardware
+   figures verified Jul 2026: RTX 5090 32 GB @ 1792 GB/s, DDR5-6000 dual-channel
+   96 GB/s, M5 Max 614 GB/s (40-core; 32-core is 460, M5 Pro 307). Both machines on
+   the slide hold 64 GB *on purpose* — equal capacity isolates bandwidth as the
+   variable. The read head crosses the whole model once per token at the bandwidth of
+   whichever pool it is in, slowed by a single constant (`SLOWMO`), so every ratio on
+   screen is the true ratio. Canvas metrics derive from the live root font size —
+   canvas ignores rem, and hardcoded px would not survive a projector.
+4. §4 memory calculator + fit indicator + quality cliff; §5 KV cache chart.
+5. §6 / §7 content, cover art polish.
+
 ## Tech constraints
 
-- **Single-file HTML.** Vanilla JS + CSS. No React, no bundler, no npm, no build step.
+- **Single-file *output*** (`index.html`). Vanilla JS + CSS. No React, no npm, no
+  node_modules. The source lives in `src/` and is assembled by `build.py` — see
+  "Source layout" below. The constraint that matters is the artifact, not the source:
+  one file you can email, put on a USB stick, or open by double-clicking.
 - Must work **offline** (the workshop may have bad wifi, and it's thematically on-brand).
   No CDN dependencies — inline everything.
 - Works when opened as a `file://` URL.
 - Keyboard navigation between sections (arrow keys), plus a visible section index.
 - Readable when projected: large type, high contrast, dark theme default.
 - Responsive enough that attendees can follow along on their own laptops.
+
+## Source layout & build
+
+```text
+src/index.html          shell; everything else is spliced into it
+src/css/NN-name.css     one file per component
+src/js/NN-name.js       one file per feature
+src/slides/NN-name.html one file per slide
+src/assets/             logos/*.svg (one <symbol> each), mlx.png
+build.py                stdlib only
+index.html              BUILT, committed — never edit by hand
+dist/index.html         BUILT release, gitignored
+```
+
+```bash
+python3 build.py
+```
+
+`--release` writes `dist/index.html` instead. Two directives, usable anywhere:
+`<!--#include css/*.css -->` and `<!--#base64 assets/mlx.png -->`. Paths resolve
+relative to `src/`, never to the including file. An include matching zero files is a
+hard error — a silent no-op here would mean a slide quietly vanishing from the deck.
+
+**The `NN-` prefixes are load-bearing.** Includes glob and sort by filename, so the
+prefix *is* the cascade order for CSS, the execution order for JS, and the slide order
+for the deck. Renaming without renumbering silently reorders the presentation — that
+already happened once, when `01-sampling-cuts` sorted ahead of `01-temperature`.
+
+The JS files are concatenated inside a single shared IIFE, so they behave exactly as
+one script: `softmax` and friends are defined once and used across features. Don't add
+a per-file IIFE, and don't assume a file is independently loadable.
+
+**Release mode does only provably-safe things:** strip comments, collapse CSS whitespace
+to single spaces. It deliberately leaves JavaScript untouched. No-npm means any minifier
+would be hand-rolled without a parser, and the classic failure — an ASI bug or an eaten
+regex literal — would appear *only* in the build you present from. Not worth ~6KB.
+Release also leaves `--sans`/`--mono` differing from debug by whitespace inside the
+custom-property token stream; every resolved property, including `font-family`, is
+identical.
 
 ## Interactive elements to build (this is the point of using HTML)
 
@@ -107,11 +222,14 @@ Lead with **privacy** (data never leaves the machine), **offline**, **no rate li
 > which loses a skeptical beginner in the first minute. "No censorship / no content
 > filtering" survives as **one bullet among several**, not the thesis.
 
-Close with a one-line promise of what they'll have working by the end.
-
 ### 1. First win — hands-on (20 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
+
+**Confirmed: every attendee brings their own laptop.** So §1 is a real hands-on exercise,
+not a demo — which makes the pre-workshop install message **mandatory, not optional**, and
+makes bandwidth the top live risk (N people downloading a multi-GB model over club wifi
+simultaneously will not work; plan for USB sticks or a local mirror).
 
 **This is where 80% of live failures happen.** Budget the buffer here and never cut it.
 Include a slide with a pre-workshop "install this beforehand" checklist that can be sent
@@ -211,9 +329,14 @@ deep sampling internals, runtime internals beyond the one-sentence llama.cpp/MLX
 
 ## Open questions not yet resolved
 
-- Audience size, and whether attendees bring their own laptops. This decides whether §1
-  is a 20-minute exercise or a scheduling hazard, and whether a pre-workshop install
-  message is mandatory.
-- Which specific model to standardize on for the §1 hands-on download.
+- Audience **size** (headcount). Every attendee brings a laptop — see below.
+
+**Resolved — the §1 download.** Attendees take a **1B-class model**: Gemma 3 1B or
+LFM2.5 1.2B, both flagged RECOMMENDED. Both are under 750MB, which downloads in minutes
+over shared wifi and leaves the laptop responsive. **Qwen3.5 9B is presenter-demo only**
+and badged as such, so the room sees what a bigger model buys without thirty people
+trying to pull 5.6GB at once. Qwen3 4B stays on the slide as an unbadged middle option
+to take home. This overrides the older "safe default: a 4B or 7B at Q4" note — bandwidth
+in the room beat model quality.
 - Whether the presenter is solo or co-teaching with someone whose hardware covers the
   other of dGPU / SoC.
