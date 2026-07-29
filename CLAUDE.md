@@ -83,7 +83,18 @@ word is spoken.
    whichever pool it is in, slowed by a single constant (`SLOWMO`), so every ratio on
    screen is the true ratio. Canvas metrics derive from the live root font size —
    canvas ignores rem, and hardcoded px would not survive a projector.
-4. §4 memory calculator + fit indicator + quality cliff; §5 KV cache chart.
+4. ~~§4 quant explainer + memory calculator + fit indicator + quiz + quality cliff;
+   §5 KV formula/chart + the context ceiling.~~ The §4 spine is *what a quant is →
+   see it → cost it → commit to an answer → learn the floor*. The explainer
+   quantizes a real 24-weight block live (symmetric absmax), so the integer codes
+   on screen are the ones a file would hold and the shared fp16 scale is visible —
+   that block-scale overhead is what makes Q4_K_M 4.83 bpw, which is the setup for
+   the calculator's napkin-vs-reality gap. The quiz reveals on click, never on
+   load; ask the room for hands first. §5's per-token figures are representative
+   configs, not any one `config.json`: 1B ≈ 26L/1 KV/256, 8B ≈ 32L/8 KV/128
+   (the familiar 128 KB/token), 30B ≈ 48L/8 KV/128. KV sizes are **binary**
+   throughout — a context length is a power of two and rendering 32768 as "33K"
+   is correct and useless.
 5. §6 / §7 content, cover art polish.
 
 ## Tech constraints

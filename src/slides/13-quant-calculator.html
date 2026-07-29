@@ -1,0 +1,83 @@
+  <!-- ---- 4 · the napkin math, and what it leaves out ---- -->
+  <section class="slide" data-section="4" id="s-calc">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; Napkin math</div>
+      <h2>Parameters &times; bytes = the number that decides everything</h2>
+
+      <div class="mc">
+        <div class="mc-panel mc-controls">
+          <div class="mc-presets">
+            <span class="mc-plabel" id="mcPresetLabel">The three that weigh the same</span>
+            <div class="seg" id="mcPresets" role="group" aria-labelledby="mcPresetLabel">
+              <button type="button" data-p="75" data-bits="16">7.5B @ 16</button>
+              <button type="button" data-p="150" data-bits="8">15B @ 8</button>
+              <button type="button" data-p="300" data-bits="4">30B @ 4</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="mcParams">Parameters</label>
+            <input type="range" id="mcParams" min="5" max="700" step="5" value="80">
+            <output id="mcParamsOut">8.0</output>
+            <span class="ctrl-unit">B</span>
+          </div>
+
+          <div class="ctrl mc-bits">
+            <span class="ctrl-label" id="mcBitsLabel">Quant</span>
+            <!-- data-bits is the napkin figure; data-bpw is what llama.cpp
+                 actually achieves for that scheme, block metadata included. -->
+            <div class="seg" id="mcBits" role="group" aria-labelledby="mcBitsLabel">
+              <button type="button" data-bits="16" data-bpw="16"   data-name="FP16">FP16</button>
+              <button type="button" data-bits="8"  data-bpw="8.5"  data-name="Q8_0">Q8_0</button>
+              <button type="button" data-bits="6"  data-bpw="6.56" data-name="Q6_K">Q6_K</button>
+              <button type="button" data-bits="4"  data-bpw="4.83" data-name="Q4_K_M" class="on" aria-pressed="true">Q4_K_M</button>
+              <button type="button" data-bits="3"  data-bpw="3.91" data-name="Q3_K_M">Q3_K_M</button>
+              <button type="button" data-bits="2"  data-bpw="3.35" data-name="Q2_K">Q2_K</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="mcMem">Your memory</label>
+            <input type="range" id="mcMem" min="4" max="128" step="2" value="16">
+            <output id="mcMemOut">16</output>
+            <span class="ctrl-unit">GB</span>
+          </div>
+
+          <div class="mc-math">
+            <span class="mc-eq" id="mcEq">8.0B &times; 0.50 bytes = 4.0 GB</span>
+            <span class="mc-eq-k">rule of thumb</span>
+          </div>
+        </div>
+
+        <div class="mc-panel mc-out">
+          <div class="mc-readout">
+            <div class="mc-num" id="mcSize">4.8</div>
+            <div class="mc-unit">GB on disk<span id="mcDelta">0.8 GB more than the napkin says</span></div>
+          </div>
+
+          <div class="mc-fitbar" id="mcFitBar">
+            <div class="mc-track">
+              <div class="mc-seg mc-model" id="mcSegModel"></div>
+              <div class="mc-seg mc-reserve" id="mcSegReserve"></div>
+              <div class="mc-cap" id="mcCap"><span>capacity</span></div>
+            </div>
+            <div class="mc-legend">
+              <span class="lg-item"><i class="sw sw-fast"></i>Model weights</span>
+              <span class="lg-item"><i class="sw sw-rsv"></i>OS, app and a modest cache</span>
+            </div>
+          </div>
+
+          <div class="mc-verdict" id="mcVerdict">
+            <span class="mc-v-k" id="mcVKey">FITS</span>
+            <span class="mc-v-t" id="mcVText">Room to work.</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Q4_K_M is 4.83 bits per weight, not 4.</strong> The gap between
+        the two numbers above is the block scales from the last slide. Trust the napkin to
+        tell you which models are plausible; trust the download page for the last gigabyte.
+        The reserve assumes a short conversation &mdash; &sect;5 is what happens to it when the
+        conversation is long.</p>
+    </div>
+  </section>

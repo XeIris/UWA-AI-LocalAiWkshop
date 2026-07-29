@@ -849,6 +849,593 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 @media (prefers-reduced-motion: reduce) {
   .mach-rate .r-num { transition: none; }
 }
+/* --- what a quant is: matrix + level ladder ------------------ */
+.qz { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.qz-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+  display: flex; flex-direction: column;
+}
+.qz-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-bottom: 0.75rem; margin-bottom: 0.95rem;
+  border-bottom: 1px solid var(--rule-soft);
+  min-height: 2.1rem;
+}
+
+/* Six columns of four: enough weights to read as a real block, few enough
+   that every value stays legible from the back of the room. */
+.qz-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.3rem; flex: 1; }
+.qz-cell {
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-sm);
+  padding: 0.45rem 0.2rem 0.4rem;
+  text-align: center;
+  font-family: var(--mono);
+  /* The tint is the error this weight took, so it is semantic, not decor. */
+  transition: background 220ms ease, border-color 220ms ease;
+}
+.qz-code {
+  display: block; font-size: 0.66rem; letter-spacing: 0.04em;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.qz-val {
+  display: block; margin-top: 0.15rem;
+  font-size: 0.86rem; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+.qz-cell.drift { border-color: rgba(251, 191, 36, 0.35); }
+.qz-cell.drift .qz-val { color: var(--warn); }
+
+.qz-store {
+  margin-top: 0.9rem; padding-top: 0.8rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.05em; color: var(--ink-mid);
+}
+.qz-store b { color: var(--accent); font-weight: 500; }
+
+/* --- the ladder ---------------------------------------------- */
+.qz-ladder { display: block; width: 100%; height: 8.4rem; }
+
+.qz-stats { margin: 1rem 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; }
+.qz-stats div {
+  border-top: 1px solid var(--rule-soft); padding-top: 0.5rem;
+}
+.qz-stats dt {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim);
+}
+.qz-stats dd {
+  margin: 0.25rem 0 0;
+  font-family: var(--mono); font-size: 1.28rem; color: var(--accent);
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+
+.qz-why {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  margin-top: 1rem; font-size: 0.98rem; color: var(--ink-mid);
+}
+.qz-why-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
+}
+.qz-why-hi { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .qz { grid-template-columns: 1fr; gap: 0.7rem; }
+  .qz-panel { padding: 0.85rem 0.9rem; }
+  .qz-head { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .qz-val { font-size: 0.7rem; }
+  .qz-stats dd { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qz-cell { transition: none; }
+}
+
+/* --- memory calculator --------------------------------------- */
+.mc { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.mc-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.3rem 1.3rem;
+  display: flex; flex-direction: column;
+}
+.mc-plabel {
+  display: block;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.55rem;
+}
+.mc-presets { margin-bottom: 0.2rem; }
+.mc-bits .seg { flex-wrap: wrap; }
+
+.mc-math {
+  margin-top: auto; padding-top: 1.1rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+}
+.mc-eq {
+  font-family: var(--mono); font-size: 1.15rem; color: var(--ink);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+}
+.mc-eq-k {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* --- the answer + fit indicator ------------------------------ */
+.mc-out { justify-content: space-between; }
+.mc-readout { display: grid; grid-template-columns: auto 1fr; gap: 0 0.9rem; align-items: baseline; }
+.mc-num {
+  font-family: var(--mono); font-size: 4.4rem; line-height: 0.9;
+  color: var(--accent); letter-spacing: -0.045em;
+  text-shadow: 0 0 2.4rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+}
+.mc-unit {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+.mc-unit span {
+  display: block; margin-top: 0.35rem;
+  letter-spacing: 0.06em; text-transform: none; color: var(--warn);
+  font-size: 0.72rem;
+}
+.mc-unit span.flat { color: var(--ink-mid); }
+
+.mc-fitbar { margin: 1.3rem 0 0; }
+.mc-track {
+  position: relative;
+  height: 2.1rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-sm);
+  display: flex; overflow: hidden;
+}
+.mc-seg { flex: 0 0 auto; height: 100%; transition: width 320ms cubic-bezier(0.22, 0.9, 0.28, 1); }
+.mc-model   { background: var(--accent); opacity: 0.85; }
+.mc-reserve { background: var(--ink-dim); opacity: 0.4; }
+/* Over capacity the whole occupancy reads as failure, not just the tail. */
+.mc-fitbar.over .mc-model { background: var(--bad); }
+.mc-fitbar.tight .mc-model { background: var(--warn); }
+.mc-cap {
+  position: absolute; top: 0; bottom: 0; width: 0;
+  border-left: 2px dashed var(--ink-mid);
+  transition: left 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+/* The track clips its overflow, so a label to the right of a marker near
+   the end is simply invisible. Past halfway it hangs off the other side. */
+.mc-cap.flip span { left: auto; right: 0.35rem; }
+.mc-cap span {
+  position: absolute; left: 0.35rem; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mid);
+  white-space: nowrap;
+  /* Sits over whichever segment happens to be under it, including a red
+     one, so it carries its own backing. */
+  background: var(--bg); padding: 0.15rem 0.35rem;
+  border-radius: calc(var(--r-sm) * 0.5);
+}
+.mc-legend {
+  display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.6rem;
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.sw-rsv { background: var(--ink-dim); opacity: 0.5; }
+
+.mc-verdict {
+  margin-top: 1.1rem; padding-top: 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap;
+}
+.mc-v-k {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 0.25rem 0.6rem; border-radius: var(--r-pill);
+  border: 1px solid currentColor; color: var(--ok);
+}
+.mc-v-t { font-size: 1rem; color: var(--ink-mid); }
+.mc-verdict.tight .mc-v-k { color: var(--warn); }
+.mc-verdict.over  .mc-v-k { color: var(--bad); }
+
+@media (max-width: 900px) {
+  .mc { grid-template-columns: 1fr; gap: 0.7rem; }
+  .mc-panel { padding: 0.85rem 0.9rem; }
+  .mc-num { font-size: 3rem; }
+  .mc-math { flex-direction: column; gap: 0.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-seg, .mc-cap { transition: none; }
+}
+/* --- the multiple choice ------------------------------------- */
+/* Cards are <button>s so the keyboard and a screen reader get the same
+   affordance the mouse does; the reveal is a class on the container. */
+.qq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.4rem; }
+
+.qq-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem;
+  text-align: left; font: inherit; cursor: pointer;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 1.3rem 1.3rem 1.5rem;
+  color: var(--ink);
+  transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+}
+.qq-card:hover { border-color: var(--rule); transform: translateY(-2px); }
+.qq-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.qq-tag {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); color: var(--ink-dim);
+}
+/* "7.5B @ 16-bit" is entirely figures and units, so it takes the mono
+   stack like every other number in the deck — and it has to, because the
+   three cards are read as a column and a sans spec above a mono size
+   breaks the alignment the comparison depends on. */
+.qq-spec {
+  font-family: var(--mono); font-size: 1.5rem;
+  letter-spacing: -0.03em; margin-top: 0.7rem;
+}
+.qq-spec b { font-weight: 620; color: var(--ink); }
+.qq-size {
+  font-family: var(--mono); font-size: 1.05rem; color: var(--accent);
+  letter-spacing: -0.02em;
+}
+.qq-sub { font-size: 0.94rem; color: var(--ink-mid); margin-top: 0.35rem; }
+
+/* Reasoning is in the DOM from the start so nothing reflows on reveal —
+   it is clipped to zero height rather than display:none. */
+.qq-why {
+  font-size: 0.94rem; line-height: 1.4; color: var(--ink-mid);
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 320ms ease, opacity 220ms ease, margin 320ms ease;
+}
+.qq.revealed .qq-why { max-height: 9rem; opacity: 1; margin-top: 0.8rem; }
+
+/* Green is the recommendation, and it is the only green on the slide. */
+.qq.revealed .qq-card[data-best] {
+  border-color: var(--ok); border-top-color: var(--ok);
+  background: rgba(74, 222, 128, 0.06);
+}
+.qq.revealed .qq-card[data-best] .qq-size,
+.qq.revealed .qq-card[data-best] .qq-tag { color: var(--ok); }
+.qq.revealed .qq-card[data-best]::after {
+  content: "BEST BUY";
+  position: absolute; top: 1.15rem; right: 1.1rem;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+  padding: 0.2rem 0.5rem; border-radius: var(--r-pill);
+  background: var(--ok); color: #05271a;
+}
+.qq.revealed .qq-card:not([data-best]) { opacity: 0.72; }
+.qq.revealed .qq-card { cursor: default; transform: none; }
+.qq.revealed .qq-card:hover { transform: none; border-color: var(--rule-soft); }
+.qq.revealed .qq-card[data-best]:hover { border-color: var(--ok); }
+/* The one they picked keeps a marker, so the room can see their own answer. */
+.qq-card.picked .qq-tag::after {
+  content: " — your pick"; letter-spacing: 0.06em; text-transform: none;
+  color: var(--ink-dim);
+}
+
+.qq-answer {
+  margin-top: 1.2rem;
+  display: flex; align-items: flex-start; gap: 1.2rem;
+}
+/* display:flex beats the [hidden] UA rule, so the answer shipped visible
+   before anyone had guessed. Restate it. */
+.qq-answer[hidden] { display: none; }
+.qq-rule {
+  flex: 1; margin: 0; font-size: 1.05rem; color: var(--ink-mid);
+  border-left: 2px solid var(--ok);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: rgba(74, 222, 128, 0.05);
+  padding: 0.8rem 1.1rem;
+}
+.qq-rule strong { color: var(--ink); }
+.qq-reset {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 0.9rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  white-space: nowrap;
+}
+.qq-reset:hover { color: var(--ink-mid); border-color: var(--rule); }
+
+@media (max-width: 900px) {
+  .qq { grid-template-columns: 1fr; gap: 0.6rem; }
+  .qq-card { padding: 0.9rem 1rem 1rem; }
+  .qq-spec { font-size: 1.2rem; }
+  .qq.revealed .qq-why { max-height: 14rem; }
+  .qq-answer { flex-direction: column; gap: 0.6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qq-card, .qq-why { transition: none; }
+  .qq-card:hover { transform: none; }
+}
+/* --- the quantization quality cliff --------------------------- */
+.cl { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.cl-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.cl-chart { padding: 1.1rem 1.2rem 0.6rem; }
+.cl-chart canvas { display: block; width: 100%; height: 17rem; }
+
+.cl-side { display: flex; flex-direction: column; }
+.cl-readout { display: flex; align-items: baseline; gap: 0.8rem; }
+.cl-bits {
+  font-family: var(--mono); font-size: 4.2rem; line-height: 0.9;
+  color: var(--accent); letter-spacing: -0.05em;
+  text-shadow: 0 0 2.4rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease, text-shadow 200ms ease;
+}
+.cl-bits-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+/* Below the floor the readout itself goes amber, then red — the number is
+   the warning, so it carries the colour. */
+.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem rgba(251,191,36,0.28); }
+.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem rgba(248,113,113,0.28); }
+
+.cl-stats { margin: 1.2rem 0 0; display: grid; gap: 0.7rem; }
+.cl-stats div { border-top: 1px solid var(--rule-soft); padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.cl-stats dt {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim);
+}
+.cl-stats dd {
+  margin: 0; font-family: var(--mono); font-size: 1.2rem; color: var(--ink);
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+
+.cl-verdict {
+  margin: 1.1rem 0 0; font-size: 1.02rem; color: var(--ink-mid);
+  min-height: 3.2rem;
+}
+.cl-side.warn .cl-verdict { color: var(--warn); }
+.cl-side.bad  .cl-verdict { color: var(--bad); }
+
+.cl-legend {
+  margin-top: auto; padding-top: 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; gap: 1.2rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.ln { width: 1.1rem; height: 0; border-top: 2px solid var(--accent); }
+.ln-small { border-top-style: dashed; border-top-color: var(--ink-mid); }
+
+@media (max-width: 900px) {
+  .cl { grid-template-columns: 1fr; gap: 0.7rem; }
+  .cl-panel { padding: 0.85rem 0.9rem; }
+  .cl-chart canvas { height: 12rem; }
+  .cl-bits { font-size: 3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-bits { transition: none; }
+}
+/* --- KV cache: the live formula ------------------------------- */
+/* Each term is a control below it, so the equation is not a picture of the
+   arithmetic — it is the arithmetic, updating as the room watches. */
+.kv-eq {
+  display: flex; align-items: flex-end; justify-content: center;
+  flex-wrap: wrap; gap: 0.5rem 0.7rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  padding: 1.1rem 1.4rem 1rem;
+  margin-top: 1.2rem;
+}
+.kv-t { display: flex; flex-direction: column; align-items: center; min-width: 3.4rem; }
+.kv-t b {
+  font-family: var(--mono); font-size: 1.85rem; font-weight: 500;
+  color: var(--ink); letter-spacing: -0.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.kv-t em {
+  font-family: var(--mono); font-style: normal;
+  font-size: 0.6rem; letter-spacing: 0.11em; text-transform: uppercase;
+  color: var(--ink-dim); margin-top: 0.4rem; text-align: center;
+}
+.kv-x {
+  font-family: var(--mono); font-size: 1.2rem; color: var(--accent-lo);
+  padding-bottom: 1.2rem;
+}
+.kv-res b { color: var(--accent); text-shadow: 0 0 1.6rem var(--accent-glow); }
+.kv-res em { color: var(--accent); }
+
+.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 1.1rem; }
+.kv-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1rem 1.2rem 1.2rem;
+  display: flex; flex-direction: column;
+}
+.kv-controls .ctrl { margin-top: 0.8rem; align-items: flex-start; flex-direction: column; gap: 0.45rem; }
+.kv-controls .ctrl:first-child { margin-top: 0; }
+.kv-controls .seg { flex-wrap: wrap; }
+
+.kv-stats { margin: auto 0 0; padding-top: 1rem; display: grid; gap: 0.6rem; }
+.kv-stats div {
+  border-top: 1px solid var(--rule-soft); padding-top: 0.5rem;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem;
+}
+.kv-stats dt {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim);
+}
+.kv-stats dd {
+  margin: 0; font-family: var(--mono); font-size: 1.15rem; color: var(--accent);
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+
+.kv-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+  padding-bottom: 0.7rem; margin-bottom: 0.8rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.kv-head-hi { color: var(--accent); text-transform: none; letter-spacing: 0.05em; font-size: 0.66rem; }
+.kv-chart canvas { display: block; width: 100%; flex: 1; min-height: 13rem; }
+
+@media (max-width: 900px) {
+  .kv { grid-template-columns: 1fr; gap: 0.7rem; }
+  .kv-panel { padding: 0.85rem 0.9rem; }
+  .kv-eq { padding: 0.8rem 0.7rem; gap: 0.35rem 0.4rem; }
+  .kv-t b { font-size: 1.15rem; }
+  .kv-t { min-width: 2.6rem; }
+  .kv-x { padding-bottom: 0.9rem; font-size: 0.9rem; }
+  .kv-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+  .kv-chart canvas { min-height: 11rem; }
+}
+/* --- the context ceiling -------------------------------------- */
+.bg-controls { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
+.bg-controls .ctrl { margin-top: 0; flex: 0 1 20rem; }
+.bg-controls .ctrl:last-child { flex: none; }
+
+.bg-ctx { display: flex; align-items: center; gap: 1rem; margin: 0.6rem 0 1rem; }
+.bg-ctx-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); white-space: nowrap;
+}
+.bg-ctx .tickslider { flex: 1; }
+.bg-ctx-out {
+  font-family: var(--mono); font-size: 2.1rem; color: var(--accent);
+  letter-spacing: -0.04em; min-width: 5.5rem; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the bar --------------------------------------------------- */
+.bg-track {
+  position: relative;
+  height: 3.6rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-sm);
+  display: flex; overflow: hidden;
+}
+.bg-seg {
+  flex: 0 0 auto; height: 100%; min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: width 380ms cubic-bezier(0.22, 0.9, 0.28, 1), background 260ms ease;
+}
+.bg-seg span {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
+  color: #04262b; white-space: nowrap; opacity: 1;
+  transition: opacity 200ms ease;
+}
+.bg-seg.narrow span { opacity: 0; }
+
+.bg-w { background: var(--accent); }
+/* Same hue as the weights on purpose: this is the same memory pool, not a
+   different kind of resource. The hatch says "and it keeps growing". */
+.bg-k {
+  background-color: var(--accent-lo);
+  background-image: repeating-linear-gradient(
+    -45deg, rgba(53,214,232,0.55) 0 4px, transparent 4px 9px);
+}
+.bg-k span { color: var(--ink); }
+.bg-o { background: var(--ink-dim); opacity: 0.35; }
+/* Over capacity the cache is the thing that broke it, so the cache is what
+   goes red — the weights were always going to fit. */
+.bg-bar.over .bg-k {
+  background-color: var(--bad);
+  background-image: repeating-linear-gradient(
+    -45deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);
+}
+.bg-bar.over .bg-k span { color: #2b0707; }
+
+.bg-cap {
+  position: absolute; top: -0.35rem; bottom: -0.35rem; width: 0;
+  border-left: 2px dashed var(--ink);
+  transition: left 380ms cubic-bezier(0.22, 0.9, 0.28, 1);
+  pointer-events: none;
+}
+/* Same clipping trap as the fit bar: near the right edge the label has to
+   hang to the left of its own marker or it is not there at all. */
+.bg-cap.flip span { left: auto; right: 0.4rem; }
+.bg-cap span {
+  /* The marker itself overhangs the track; its label must not, or the
+     track's overflow clipping eats the top of the type. */
+  position: absolute; left: 0.4rem; top: 0.5rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink);
+  white-space: nowrap;
+  /* The marker can land anywhere, including on top of a red overflow bar.
+     Its own backing keeps the one fixed number on the slide legible. */
+  background: var(--bg); padding: 0.15rem 0.35rem;
+  border-radius: calc(var(--r-sm) * 0.5);
+}
+.bg-legend {
+  display: flex; gap: 1.3rem; flex-wrap: wrap; margin-top: 0.7rem;
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.sw-kv {
+  background-color: var(--accent-lo); border-color: var(--accent-lo);
+  background-image: repeating-linear-gradient(
+    -45deg, rgba(53,214,232,0.6) 0 2px, transparent 2px 4px);
+}
+
+/* --- readouts --------------------------------------------------- */
+.bg-out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
+.bg-cell {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.9rem 1.1rem 1rem;
+}
+.bg-num {
+  font-family: var(--mono); font-size: 2.6rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  transition: color 220ms ease;
+}
+.bg-lab {
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+  margin-top: 0.5rem;
+}
+.bg-v-k {
+  font-family: var(--mono); font-size: 1.5rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok);
+}
+.bg-verdict.tight { border-color: rgba(251,191,36,0.4); }
+.bg-verdict.tight .bg-v-k { color: var(--warn); }
+.bg-verdict.over  { border-color: rgba(248,113,113,0.45); }
+.bg-verdict.over  .bg-v-k { color: var(--bad); }
+.bg-out.over .bg-num { color: var(--bad); }
+.bg-out.tight .bg-num { color: var(--warn); }
+
+@media (max-width: 900px) {
+  .bg-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .bg-out { grid-template-columns: 1fr; gap: 0.5rem; }
+  .bg-num { font-size: 1.9rem; }
+  .bg-ctx-out { font-size: 1.4rem; min-width: 4rem; }
+  .bg-track { height: 2.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-seg, .bg-cap, .bg-num { transition: none; }
+}
 </style>
 </head>
 <body>
@@ -1428,6 +2015,238 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <!-- TO BUILD: memory calculator, fit indicator, quality cliff -->
     </div>
   </section>
+  <!-- ---- 4 · what a quant actually is ---- -->
+  <!-- The whole slide exists to kill one misconception: that a "quant" is a
+       different, smaller model. It is the same model with the same number of
+       weights — each one just written down more roughly. -->
+  <section class="slide" data-section="4" id="s-quant">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; What a quant actually is</div>
+      <h2>Same weights. Fewer decimal places.</h2>
+
+      <div class="qz">
+        <div class="qz-panel qz-matrix">
+          <div class="qz-head">
+            <span>24 weights from one layer</span>
+            <div class="seg" id="qzBits" role="group" aria-label="Precision">
+              <button type="button" data-bits="16" class="on" aria-pressed="true">FP16</button>
+              <button type="button" data-bits="8" aria-pressed="false">8&#8209;bit</button>
+              <button type="button" data-bits="4" aria-pressed="false">4&#8209;bit</button>
+              <button type="button" data-bits="2" aria-pressed="false">2&#8209;bit</button>
+            </div>
+          </div>
+
+          <div class="qz-grid" id="qzGrid" aria-live="polite"></div>
+
+          <div class="qz-store" id="qzStore"></div>
+        </div>
+
+        <div class="qz-panel qz-side">
+          <div class="qz-head"><span>Values it is allowed to be</span></div>
+          <!-- Ticks are the representable values; each dot is one real weight
+               dropping onto the nearest one. The drop IS the quantization. -->
+          <canvas class="qz-ladder" id="qzLadder" aria-label="Representable values, with each weight snapping to the nearest one"></canvas>
+
+          <dl class="qz-stats">
+            <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
+            <div><dt>Average error</dt><dd id="qzErr">&plusmn;0.0000</dd></div>
+            <div><dt>Bits per weight</dt><dd id="qzBpw">16.00</dd></div>
+            <div><dt>A 30B model</dt><dd id="qzModel">60.0 GB</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="qz-why">
+        <span class="qz-why-k">Why bother</span>
+        <span>Smaller file &rarr; fits in memory you actually have.</span>
+        <span class="qz-why-hi">Half the bytes is <strong>twice the tokens per second</strong> &mdash; same formula as &sect;3.</span>
+      </div>
+
+      <p class="caveat">Note the shared scale. A quant does not store 24 tiny numbers &mdash; it
+        stores 24 tiny <em>integers</em> plus one full-precision multiplier for the block. That
+        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight, and real
+        GGUF blocks carry more metadata than this one. Hold that thought for one slide.</p>
+    </div>
+  </section>
+  <!-- ---- 4 · the napkin math, and what it leaves out ---- -->
+  <section class="slide" data-section="4" id="s-calc">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; Napkin math</div>
+      <h2>Parameters &times; bytes = the number that decides everything</h2>
+
+      <div class="mc">
+        <div class="mc-panel mc-controls">
+          <div class="mc-presets">
+            <span class="mc-plabel" id="mcPresetLabel">The three that weigh the same</span>
+            <div class="seg" id="mcPresets" role="group" aria-labelledby="mcPresetLabel">
+              <button type="button" data-p="75" data-bits="16">7.5B @ 16</button>
+              <button type="button" data-p="150" data-bits="8">15B @ 8</button>
+              <button type="button" data-p="300" data-bits="4">30B @ 4</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="mcParams">Parameters</label>
+            <input type="range" id="mcParams" min="5" max="700" step="5" value="80">
+            <output id="mcParamsOut">8.0</output>
+            <span class="ctrl-unit">B</span>
+          </div>
+
+          <div class="ctrl mc-bits">
+            <span class="ctrl-label" id="mcBitsLabel">Quant</span>
+            <!-- data-bits is the napkin figure; data-bpw is what llama.cpp
+                 actually achieves for that scheme, block metadata included. -->
+            <div class="seg" id="mcBits" role="group" aria-labelledby="mcBitsLabel">
+              <button type="button" data-bits="16" data-bpw="16"   data-name="FP16">FP16</button>
+              <button type="button" data-bits="8"  data-bpw="8.5"  data-name="Q8_0">Q8_0</button>
+              <button type="button" data-bits="6"  data-bpw="6.56" data-name="Q6_K">Q6_K</button>
+              <button type="button" data-bits="4"  data-bpw="4.83" data-name="Q4_K_M" class="on" aria-pressed="true">Q4_K_M</button>
+              <button type="button" data-bits="3"  data-bpw="3.91" data-name="Q3_K_M">Q3_K_M</button>
+              <button type="button" data-bits="2"  data-bpw="3.35" data-name="Q2_K">Q2_K</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <label for="mcMem">Your memory</label>
+            <input type="range" id="mcMem" min="4" max="128" step="2" value="16">
+            <output id="mcMemOut">16</output>
+            <span class="ctrl-unit">GB</span>
+          </div>
+
+          <div class="mc-math">
+            <span class="mc-eq" id="mcEq">8.0B &times; 0.50 bytes = 4.0 GB</span>
+            <span class="mc-eq-k">rule of thumb</span>
+          </div>
+        </div>
+
+        <div class="mc-panel mc-out">
+          <div class="mc-readout">
+            <div class="mc-num" id="mcSize">4.8</div>
+            <div class="mc-unit">GB on disk<span id="mcDelta">0.8 GB more than the napkin says</span></div>
+          </div>
+
+          <div class="mc-fitbar" id="mcFitBar">
+            <div class="mc-track">
+              <div class="mc-seg mc-model" id="mcSegModel"></div>
+              <div class="mc-seg mc-reserve" id="mcSegReserve"></div>
+              <div class="mc-cap" id="mcCap"><span>capacity</span></div>
+            </div>
+            <div class="mc-legend">
+              <span class="lg-item"><i class="sw sw-fast"></i>Model weights</span>
+              <span class="lg-item"><i class="sw sw-rsv"></i>OS, app and a modest cache</span>
+            </div>
+          </div>
+
+          <div class="mc-verdict" id="mcVerdict">
+            <span class="mc-v-k" id="mcVKey">FITS</span>
+            <span class="mc-v-t" id="mcVText">Room to work.</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Q4_K_M is 4.83 bits per weight, not 4.</strong> The gap between
+        the two numbers above is the block scales from the last slide. Trust the napkin to
+        tell you which models are plausible; trust the download page for the last gigabyte.
+        The reserve assumes a short conversation &mdash; &sect;5 is what happens to it when the
+        conversation is long.</p>
+    </div>
+  </section>
+  <!-- ---- 4 · the question ---- -->
+  <!-- Ask the room BEFORE revealing. Hands up per option, then click. The
+       answer only lands if they have committed to a guess first. -->
+  <section class="slide" data-section="4" id="s-quiz">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; Your turn</div>
+      <h2>Same 15&nbsp;GB. Same tokens per second. Which one do you download?</h2>
+
+      <div class="qq" id="qq">
+        <button type="button" class="qq-card" data-opt="a">
+          <span class="qq-tag">A</span>
+          <span class="qq-spec"><b>7.5B</b> @ 16&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Every weight at full precision</span>
+          <span class="qq-why">Full precision on a small model. You are spending 15&nbsp;GB on
+            decimal places the model barely uses &mdash; and a 7.5B is still a 7.5B.</span>
+        </button>
+
+        <button type="button" class="qq-card" data-opt="b">
+          <span class="qq-tag">B</span>
+          <span class="qq-spec"><b>15B</b> @ 8&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Effectively lossless compression</span>
+          <span class="qq-why">Defensible, and nothing here is wrong. But 8&#8209;bit buys you
+            safety you did not need, and you paid for it with half the parameters.</span>
+        </button>
+
+        <button type="button" class="qq-card" data-opt="c" data-best="1">
+          <span class="qq-tag">C</span>
+          <span class="qq-spec"><b>30B</b> @ 4&#8209;bit</span>
+          <span class="qq-size">15.0 GB</span>
+          <span class="qq-sub">Four times the parameters, roughly compressed</span>
+          <span class="qq-why">Four times the model for the same memory and the same speed.
+            The damage 4&#8209;bit does is small; the gap between 7.5B and 30B is not.</span>
+        </button>
+      </div>
+
+      <div class="qq-answer" id="qqAnswer" hidden>
+        <p class="qq-rule"><strong>Bigger and more compressed usually wins.</strong>
+          All three read 15&nbsp;GB out of memory for every token, so all three decode at the
+          same speed &mdash; bandwidth &divide; size does not care how the bytes are arranged.
+          Size and speed are held constant, which leaves exactly one variable: how much model
+          you got for the money.</p>
+        <button type="button" class="qq-reset" id="qqReset">Ask again</button>
+      </div>
+
+      <p class="caveat" id="qqCaveat">Click an option to reveal &mdash; ask for hands first.
+        The rule has a floor, and the floor is the next slide.</p>
+    </div>
+  </section>
+  <!-- ---- 4 · the floor ---- -->
+  <section class="slide" data-section="4" id="s-cliff">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; The 4&#8209;bit floor</div>
+      <h2>Compression is nearly free &mdash; right up until it isn&rsquo;t</h2>
+
+      <div class="cl">
+        <div class="cl-panel cl-chart">
+          <canvas id="clCanvas" aria-label="Quality retained against bits per weight; the curve is flat down to 4 bits and falls away sharply below it"></canvas>
+        </div>
+
+        <div class="cl-panel cl-side">
+          <div class="cl-readout">
+            <div class="cl-bits" id="clBits">4</div>
+            <div class="cl-bits-k">bits per weight</div>
+          </div>
+
+          <div class="ctrl">
+            <label for="clSlider">Precision</label>
+            <input type="range" id="clSlider" min="0" max="6" step="1" value="2">
+          </div>
+
+          <dl class="cl-stats">
+            <!-- Realistic Q4_K_M, not the napkin's 15.0 — this readout is
+                 the one place on the slide that quotes a real file size. -->
+            <div><dt>30B model on disk</dt><dd id="clSize">18.1 GB</dd></div>
+            <div><dt>Quality retained</dt><dd id="clQual">98%</dd></div>
+          </dl>
+
+          <p class="cl-verdict" id="clVerdict">The sweet spot. Where almost everyone should live.</p>
+
+          <div class="cl-legend">
+            <span class="lg-item"><i class="ln ln-big"></i>30B model</span>
+            <span class="lg-item"><i class="ln ln-small"></i>1&ndash;4B model</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Small models fall further.</strong> A 30B has parameters to
+        spare and shrugs off rounding; a 1B does not, which matters tonight because a 1B is
+        what most of you downloaded. Below 4&#8209;bit the failure is <em>invisible</em> &mdash;
+        no error, no warning, just quiet loops, contradictions and confident nonsense.
+        Shape of the curve: real. Exact percentages: illustrative, and they move with every
+        model and benchmark.</p>
+    </div>
+  </section>
   <!-- ============ §5 ============ -->
   <section class="slide section-card" data-section="5">
     <div class="slide-inner">
@@ -1437,6 +2256,150 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <p class="lede">Weights are fixed. The cache is not. Why a long conversation can
         run you out of memory that a short one never touched.</p>
       <!-- TO BUILD: KV growth chart, GQA toggle -->
+    </div>
+  </section>
+  <!-- ---- 5 · what the cache is, and the straight line it draws ---- -->
+  <section class="slide" data-section="5" id="s-kv">
+    <div class="slide-inner">
+      <div class="eyebrow">05 &mdash; The KV cache</div>
+      <h2>The model re-reads the whole conversation. It refuses to do it twice.</h2>
+
+      <!-- Live formula: every term is a control below, so the arithmetic on
+           screen is the arithmetic being performed. -->
+      <div class="kv-eq">
+        <span class="kv-t"><b>2</b><em>K and V</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvL">32</b><em>layers</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvH">8</b><em>KV heads</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvD">128</b><em>head dim</em></span><span class="kv-x">&times;</span>
+        <span class="kv-t"><b id="kvB">2</b><em>bytes</em></span>
+        <span class="kv-x">=</span>
+        <span class="kv-t kv-res"><b id="kvPer">128</b><em id="kvPerUnit">KB per token</em></span>
+      </div>
+
+      <div class="kv">
+        <div class="kv-panel kv-controls">
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvModelLabel">Model</span>
+            <!-- data-kv is the shared-KV count, data-q the query-head count the
+                 same model would need without GQA. Representative configs, not
+                 any one checkpoint's config.json. -->
+            <div class="seg" id="kvModel" role="group" aria-labelledby="kvModelLabel">
+              <button type="button" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8">1B&#8209;class</button>
+              <button type="button" data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
+              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="17.5">30B&#8209;class</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvGqaLabel">Attention</span>
+            <div class="seg" id="kvGqa" role="group" aria-labelledby="kvGqaLabel">
+              <button type="button" data-gqa="1" class="on" aria-pressed="true">GQA</button>
+              <button type="button" data-gqa="0" aria-pressed="false">One KV per head</button>
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <span class="ctrl-label" id="kvPrecLabel">Cache</span>
+            <div class="seg" id="kvPrec" role="group" aria-labelledby="kvPrecLabel">
+              <button type="button" data-bytes="2" class="on" aria-pressed="true">FP16</button>
+              <button type="button" data-bytes="1" aria-pressed="false">8&#8209;bit KV</button>
+            </div>
+          </div>
+
+          <dl class="kv-stats">
+            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.13 GB</dd></div>
+            <div><dt>At 32k context</dt><dd id="kv32">4.0 GB</dd></div>
+            <div><dt>Cache vs weights at 32k</dt><dd id="kvRatio">0.8&times;</dd></div>
+          </dl>
+        </div>
+
+        <div class="kv-panel kv-chart">
+          <div class="kv-head">
+            <span>Memory against context length</span>
+            <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
+          </div>
+          <canvas id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>GQA is why your arithmetic will over-estimate.</strong> The naive
+        formula gives every attention head its own key and value; modern models share one KV
+        head between groups of them, cutting the cache several-fold. Toggle it and watch the
+        line pivot. Some models cut further still with sliding-window layers, which cap the
+        cache instead of growing it.</p>
+    </div>
+  </section>
+  <!-- ---- 5 · the ceiling, and what a million tokens actually costs ---- -->
+  <!-- Drag straight to 1M and stop talking for a second. The bar bursting
+       past the capacity marker does the whole job. -->
+  <section class="slide" data-section="5" id="s-budget">
+    <div class="slide-inner">
+      <div class="eyebrow">05 &mdash; The ceiling</div>
+      <h2>A 32&nbsp;GB model in a 64&nbsp;GB machine. Now make it remember.</h2>
+
+      <div class="bg-controls">
+        <div class="ctrl">
+          <label for="bgMem">Machine</label>
+          <input type="range" id="bgMem" min="8" max="192" step="8" value="64">
+          <output id="bgMemOut">64</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
+        <div class="ctrl">
+          <label for="bgWeights">Weights</label>
+          <input type="range" id="bgWeights" min="1" max="120" step="1" value="32">
+          <output id="bgWeightsOut">32</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
+        <div class="ctrl">
+          <span class="ctrl-label" id="bgPrecLabel">Cache</span>
+          <div class="seg" id="bgPrec" role="group" aria-labelledby="bgPrecLabel">
+            <button type="button" data-bytes="2" class="on" aria-pressed="true">FP16</button>
+            <button type="button" data-bytes="1" aria-pressed="false">8&#8209;bit KV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-ctx">
+        <label for="bgCtx" class="bg-ctx-k">Context</label>
+        <input type="range" id="bgCtx" min="0" max="10" step="1" value="5">
+        <output id="bgCtxOut" class="bg-ctx-out">32K</output>
+      </div>
+
+      <div class="bg-bar">
+        <div class="bg-track" id="bgTrack">
+          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">32.0 GB</span></div>
+          <div class="bg-seg bg-k" id="bgSegK"><span id="bgLabK">6.0 GB</span></div>
+          <div class="bg-seg bg-o" id="bgSegO"></div>
+          <div class="bg-cap" id="bgCap"><span id="bgCapLab">64 GB installed</span></div>
+        </div>
+        <div class="bg-legend">
+          <span class="lg-item"><i class="sw sw-fast"></i>Weights &mdash; fixed</span>
+          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; grows with every token</span>
+          <span class="lg-item"><i class="sw sw-none"></i>OS and runtime</span>
+        </div>
+      </div>
+
+      <div class="bg-out">
+        <div class="bg-cell">
+          <div class="bg-num" id="bgTotal">40.0</div>
+          <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
+        </div>
+        <div class="bg-cell">
+          <div class="bg-num" id="bgMax">262K</div>
+          <div class="bg-lab">longest context that fits</div>
+        </div>
+        <div class="bg-cell bg-verdict" id="bgVerdict">
+          <div class="bg-v-k" id="bgVKey">FITS</div>
+          <div class="bg-lab" id="bgVText">Comfortable. Keep talking.</div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>This is why a million tokens is a hardware problem, not a
+        setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
+        no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
+        quantization, sliding windows and racks of accelerators. On your laptop, the honest
+        move is to set the context you actually need &mdash; LM Studio hands you that slider,
+        and now you know what it costs.</p>
     </div>
   </section>
   <!-- ============ §6 ============ -->
@@ -2321,6 +3284,814 @@ if (mxSlide) {
   } else {
     requestAnimationFrame(frame);
   }
+}
+/* ==========================================================
+   SHARED HELPERS
+   Three patterns that every interactive from §4 on repeats. They live
+   here rather than in each feature file because the JS is concatenated
+   into one IIFE — these are defined once and used throughout.
+   ========================================================== */
+
+/* ---- segmented controls ----
+   One exclusive group of <button>s. Keeps .on and aria-pressed in step,
+   which is the pair that got out of sync when each feature rolled its
+   own. The initially-marked button wins, otherwise the first. */
+function segGroup(sel, onPick) {
+  var btns = Array.prototype.slice.call(document.querySelectorAll(sel + ' button'));
+  if (!btns.length) return null;
+
+  function select(btn, fire) {
+    btns.forEach(function (b) {
+      var on = b === btn;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (fire) onPick(btn);
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { select(b, true); });
+  });
+
+  var start = btns.filter(function (b) { return b.classList.contains('on'); })[0] || btns[0];
+  select(start, false);
+  return { buttons: btns, select: select, current: function () {
+    return btns.filter(function (b) { return b.classList.contains('on'); })[0];
+  } };
+}
+
+/* ---- canvas sizing ----
+   Returns null when the element has no layout yet — a slide that has
+   never been shown measures zero, and drawing into that produces a
+   stretched mess the first time it IS shown. Callers redraw on
+   'deck:slide' for exactly that reason. */
+function fitCanvas(cv) {
+  var dpr = window.devicePixelRatio || 1;
+  var w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return null;
+  var cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+  if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  return { ctx: ctx, w: w, h: h };
+}
+
+/* Canvas cannot read rem, and the deck's root font size scales off
+   min(vw, vh) so a projector and a 13" laptop get different pixels.
+   Every canvas dimension is derived from this, never hardcoded. */
+function rem() {
+  return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+}
+
+var THEME = (function () {
+  var css = getComputedStyle(document.documentElement);
+  function v(name) { return css.getPropertyValue(name).trim(); }
+  return {
+    accent: v('--accent'), accentLo: v('--accent-lo'),
+    ok: v('--ok'), warn: v('--warn'), bad: v('--bad'),
+    ink: v('--ink'), inkMid: v('--ink-mid'), inkDim: v('--ink-dim'),
+    rule: v('--rule-soft'), raise: v('--bg-raise'), mono: v('--mono')
+  };
+}());
+
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Axis gridlines land on numbers a human would have chosen. Without
+   this a 226 GB axis labels itself 0 / 57 / 114 / 171. */
+function niceStep(raw) {
+  var mag = Math.pow(10, Math.floor(Math.log(Math.max(raw, 1e-6)) / Math.LN10));
+  var n = raw / mag;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * mag;
+}
+
+/* Context lengths are powers of two everywhere they appear — in the UI, in
+   config files, in the model card. Dividing by 1000 renders 32768 as "33K",
+   which is right and useless. K and M are binary here. */
+function fmtTokens(n) {
+  if (n < 1024) return Math.max(0, Math.round(n)) + '';
+  if (n < 1048576) return Math.round(n / 1024) + 'K';
+  var m = n / 1048576;
+  return (m % 1 === 0 ? m : m.toFixed(1)) + 'M';
+}
+/* ==========================================================
+   WHAT A QUANT IS
+   Real absmax block quantization, computed live. The codes on screen
+   are the integers that would actually be written to the file, and the
+   values are what dequantizing them gives back — so the error the room
+   sees is the error the format really makes.
+   ========================================================== */
+var qzSlide = document.getElementById('s-quant');
+if (qzSlide) {
+  /* One block of 24. Plausible trained weights: mostly small, a few
+     outliers, because it is the outliers that set the scale. */
+  var QW = [
+     0.0142, -0.0871,  0.2314, -0.4025,  0.0663,  0.1508,
+    -0.1937,  0.5521, -0.0284,  0.3176, -0.6842,  0.0925,
+     0.4413, -0.2260,  0.1071, -0.0517,  0.2842, -0.3694,
+    -0.0736,  0.1629,  0.7315, -0.1183,  0.0398, -0.2571
+  ];
+  var QMAXABS = QW.reduce(function (m, w) { return Math.max(m, Math.abs(w)); }, 0);
+  var SCALE_BITS = 16;                      /* the block's shared fp16 multiplier */
+  var DRIFT_AT = 0.02;                      /* error a viewer can actually see    */
+
+  var qzGrid   = document.getElementById('qzGrid');
+  var qzStore  = document.getElementById('qzStore');
+  var qzLevels = document.getElementById('qzLevels');
+  var qzErr    = document.getElementById('qzErr');
+  var qzBpw    = document.getElementById('qzBpw');
+  var qzModel  = document.getElementById('qzModel');
+  var qzLadder = document.getElementById('qzLadder');
+
+  var qzCells = QW.map(function () {
+    var cell = document.createElement('div');
+    cell.className = 'qz-cell';
+    var code = document.createElement('span'); code.className = 'qz-code';
+    var val  = document.createElement('span'); val.className  = 'qz-val';
+    cell.appendChild(code); cell.appendChild(val);
+    qzGrid.appendChild(cell);
+    return { cell: cell, code: code, val: val };
+  });
+
+  var qzBits = 16;
+  /* Where each dot is drawn, and where it is heading. Bits changing mid
+     flight just retargets; the dot never jumps. */
+  var qzPos = QW.slice(), qzTarget = QW.slice(), qzAnim = false;
+
+  /* Symmetric absmax: one scale for the block, every weight becomes a
+     signed integer index. This is the whole algorithm. */
+  function quantize(bits) {
+    if (bits >= 16) {
+      return { scale: 0, codes: QW.map(function () { return null; }), vals: QW.slice(), qmax: 0 };
+    }
+    var qmax = (1 << (bits - 1)) - 1;
+    var scale = QMAXABS / qmax;
+    var codes = QW.map(function (w) {
+      return Math.max(-qmax - 1, Math.min(qmax, Math.round(w / scale)));
+    });
+    return { scale: scale, codes: codes, qmax: qmax,
+             vals: codes.map(function (c) { return c * scale; }) };
+  }
+
+  function drawQuant() {
+    var q = quantize(qzBits);
+    var n = QW.length;
+    var err = 0;
+
+    qzCells.forEach(function (c, i) {
+      var d = Math.abs(QW[i] - q.vals[i]);
+      err += d;
+      c.code.textContent = q.codes[i] === null ? '—' : (q.codes[i] > 0 ? '+' : '') + q.codes[i];
+      c.val.textContent = q.vals[i].toFixed(4);
+      c.cell.classList.toggle('drift', d > DRIFT_AT);
+    });
+
+    /* A "4-bit" file is 4 bits per weight PLUS the shared scale, spread
+       over the block. This is the whole reason Q4_K_M is not 4.00. */
+    var bpw = qzBits >= 16 ? 16 : qzBits + SCALE_BITS / n;
+    var bytes = Math.ceil(bpw * n / 8);
+
+    qzLevels.textContent = Math.pow(2, qzBits).toLocaleString();
+    qzErr.textContent = '±' + (err / n).toFixed(4);
+    qzBpw.textContent = bpw.toFixed(2);
+    qzModel.textContent = (30 * bpw / 8).toFixed(1) + ' GB';
+
+    qzStore.innerHTML = qzBits >= 16
+      ? '24 values &times; 16 bits = <b>' + bytes + ' bytes</b> &middot; nothing shared, nothing rounded'
+      : '24 codes &times; ' + qzBits + ' bits &nbsp;+&nbsp; one shared scale (16 bits) = <b>' +
+        bytes + ' bytes</b> &middot; was 48';
+
+    qzTarget = q.vals.slice();
+    if (REDUCED) { qzPos = qzTarget.slice(); paintLadder(q); }
+    else if (!qzAnim) { qzAnim = true; requestAnimationFrame(stepLadder); }
+    else paintLadder(q);
+  }
+
+  function stepLadder() {
+    var moving = false;
+    for (var i = 0; i < qzPos.length; i++) {
+      var d = qzTarget[i] - qzPos[i];
+      if (Math.abs(d) > 0.0004) { qzPos[i] += d * 0.22; moving = true; }
+      else qzPos[i] = qzTarget[i];
+    }
+    paintLadder(quantize(qzBits));
+    if (moving && qzSlide.classList.contains('active')) requestAnimationFrame(stepLadder);
+    else { qzPos = qzTarget.slice(); paintLadder(quantize(qzBits)); qzAnim = false; }
+  }
+
+  function paintLadder(q) {
+    var f = fitCanvas(qzLadder);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h, R = rem();
+    var pad = R * 1.1;
+    var span = QMAXABS * 1.12;
+    function X(v) { return pad + ((v + span) / (2 * span)) * (W - pad * 2); }
+
+    var yTop = R * 1.5, yAxis = H - R * 2.2;
+
+    ctx.font = Math.max(9, Math.round(R * 0.55)) + 'px ' + THEME.mono;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = THEME.inkDim;
+    ctx.fillText('ACTUAL WEIGHT', pad, yTop - R * 0.7);
+    ctx.fillText('WHAT THE FILE CAN STORE', pad, yAxis + R * 1.5);
+
+    /* ---- the representable values ---- */
+    ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, yAxis + 0.5); ctx.lineTo(W - pad, yAxis + 0.5); ctx.stroke();
+
+    if (q.scale === 0) {
+      /* 65,536 levels would be denser than the screen. Drawing it as a
+         continuous band is not a cheat — that is what it looks like. */
+      ctx.fillStyle = THEME.accent;
+      ctx.globalAlpha = 0.5;
+      ctx.fillRect(pad, yAxis - R * 0.42, W - pad * 2, R * 0.84);
+      ctx.globalAlpha = 1;
+    } else {
+      /* Sixteen levels have to read as sixteen countable slots, so the
+         ticks are taller than the dots that land on them and lit brighter
+         when there are few enough to count. */
+      ctx.strokeStyle = THEME.accent;
+      ctx.lineWidth = q.qmax > 40 ? 1 : 1.5;
+      ctx.globalAlpha = q.qmax > 40 ? 0.4 : 0.9;
+      ctx.beginPath();
+      for (var k = -q.qmax - 1; k <= q.qmax; k++) {
+        var x = Math.round(X(k * q.scale)) + 0.5;
+        if (x < pad || x > W - pad) continue;
+        ctx.moveTo(x, yAxis - R * 0.62); ctx.lineTo(x, yAxis + R * 0.62);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
+    }
+
+    /* ---- each weight, and the drop onto its nearest level ---- */
+    for (var i = 0; i < QW.length; i++) {
+      var x0 = X(QW[i]), x1 = X(qzPos[i]);
+      var moved = Math.abs(QW[i] - qzTarget[i]) > DRIFT_AT;
+
+      ctx.strokeStyle = moved ? THEME.warn : THEME.accentLo;
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x0, yTop); ctx.lineTo(x1, yAxis - R * 0.62);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.strokeStyle = THEME.inkMid; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x0, yTop, R * 0.17, 0, 6.284); ctx.stroke();
+
+      ctx.fillStyle = moved ? THEME.warn : THEME.accent;
+      ctx.beginPath(); ctx.arc(x1, yAxis, R * 0.19, 0, 6.284); ctx.fill();
+    }
+  }
+
+  segGroup('#qzBits', function (btn) {
+    qzBits = parseInt(btn.dataset.bits, 10);
+    drawQuant();
+  });
+
+  drawQuant();
+  window.addEventListener('resize', function () { paintLadder(quantize(qzBits)); });
+  document.addEventListener('deck:slide', function () { paintLadder(quantize(qzBits)); });
+}
+/* ==========================================================
+   MEMORY CALCULATOR + FIT INDICATOR
+   Two numbers, always both: the rule of thumb they can do in their
+   head, and the file size the download page will actually show. The
+   gap between them is the lesson, so it is never hidden.
+   ========================================================== */
+var mcSlide = document.getElementById('s-calc');
+if (mcSlide) {
+  /* Everything except the weights: the OS, LM Studio itself, and a KV
+     cache for a short conversation. §5 is what happens when it is long. */
+  var RESERVE_GB = 2.5;
+
+  var mcParams = document.getElementById('mcParams');
+  var mcMem    = document.getElementById('mcMem');
+  var mcOuts = {
+    params: document.getElementById('mcParamsOut'),
+    mem:    document.getElementById('mcMemOut'),
+    eq:     document.getElementById('mcEq'),
+    size:   document.getElementById('mcSize'),
+    delta:  document.getElementById('mcDelta'),
+    bar:    document.getElementById('mcFitBar'),
+    model:  document.getElementById('mcSegModel'),
+    rsv:    document.getElementById('mcSegReserve'),
+    cap:    document.getElementById('mcCap'),
+    verdict:document.getElementById('mcVerdict'),
+    vkey:   document.getElementById('mcVKey'),
+    vtext:  document.getElementById('mcVText')
+  };
+
+  var mcBits = 4, mcBpw = 4.83;
+
+  function mcDraw() {
+    var P = mcParams.value / 10;            /* billions of parameters */
+    var mem = parseFloat(mcMem.value);
+    var napkin = P * mcBits / 8;
+    var real = P * mcBpw / 8;
+    var total = real + RESERVE_GB;
+
+    mcOuts.params.textContent = P.toFixed(1);
+    mcOuts.mem.textContent = mem;
+    mcOuts.eq.textContent = P.toFixed(1) + 'B × ' + (mcBits / 8).toFixed(2) +
+      ' bytes = ' + napkin.toFixed(1) + ' GB';
+    /* Always one decimal: the whole point of this readout is that it is
+       NOT the round number the napkin gave, and rounding hides that. */
+    mcOuts.size.textContent = real.toFixed(1);
+
+    var gap = real - napkin;
+    var noGap = Math.abs(gap) < 0.05;
+    mcOuts.delta.textContent = noGap
+      ? 'exactly what the napkin says'
+      : (gap > 0 ? '+' : '−') + Math.abs(gap).toFixed(1) + ' GB vs the napkin';
+    /* Amber is the surprise, so it only appears when there is one. */
+    mcOuts.delta.classList.toggle('flat', noGap);
+
+    /* The bar always shows the truth: if the model is bigger than the
+       machine, the machine shrinks on screen rather than the bar lying. */
+    var scale = Math.max(mem, total) * 1.04;
+    mcOuts.model.style.width = (real / scale * 100) + '%';
+    mcOuts.rsv.style.width = (RESERVE_GB / scale * 100) + '%';
+    var capPct = mem / scale * 100;
+    mcOuts.cap.style.left = capPct + '%';
+    mcOuts.cap.classList.toggle('flip', capPct > 55);
+
+    var state = total > mem ? 'over' : (total > mem * 0.85 ? 'tight' : 'ok');
+    ['tight', 'over'].forEach(function (c) {
+      mcOuts.bar.classList.toggle(c, state === c);
+      mcOuts.verdict.classList.toggle(c, state === c);
+    });
+
+    if (state === 'over') {
+      mcOuts.vkey.textContent = 'WILL NOT LOAD';
+      mcOuts.vtext.textContent = 'Short by ' + (total - mem).toFixed(1) +
+        ' GB. Drop a quant step, or a size class.';
+    } else if (state === 'tight') {
+      mcOuts.vkey.textContent = 'TIGHT';
+      mcOuts.vtext.textContent = 'It fits, and nothing else does. Expect a sluggish machine.';
+    } else {
+      mcOuts.vkey.textContent = 'FITS';
+      mcOuts.vtext.textContent = 'Room to work — and room for the context in §5.';
+    }
+    mcSyncPresets();
+  }
+
+  /* ---- quant scheme ---- */
+  var mcBitsSeg = segGroup('#mcBits', function (btn) {
+    mcBits = parseFloat(btn.dataset.bits);
+    mcBpw = parseFloat(btn.dataset.bpw);
+    mcDraw();
+  });
+  var startBits = mcBitsSeg.current();
+  mcBits = parseFloat(startBits.dataset.bits);
+  mcBpw = parseFloat(startBits.dataset.bpw);
+
+  /* ---- the three that weigh the same ---- */
+  var mcPresetBtns = Array.prototype.slice.call(
+    document.querySelectorAll('#mcPresets button'));
+
+  function mcSyncPresets() {
+    mcPresetBtns.forEach(function (b) {
+      var on = parseInt(b.dataset.p, 10) === parseInt(mcParams.value, 10) &&
+               parseFloat(b.dataset.bits) === mcBits;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  mcPresetBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      mcParams.value = b.dataset.p;
+      /* The tick scale repaints on 'input', so go through the event
+         rather than setting .value and leaving the scale stale. */
+      mcParams.dispatchEvent(new Event('input', { bubbles: true }));
+      var want = mcBitsSeg.buttons.filter(function (x) {
+        return x.dataset.bits === b.dataset.bits;
+      })[0];
+      if (want) mcBitsSeg.select(want, true);
+      else mcDraw();
+    });
+  });
+
+  [mcParams, mcMem].forEach(function (el) {
+    el.addEventListener('input', mcDraw);
+  });
+  mcDraw();
+}
+/* ==========================================================
+   THE QUESTION
+   Deliberately dumb: a class on the container, and a record of which
+   card they picked. The teaching is in the copy, not the code — all
+   this has to do is not reveal the answer too early.
+   ========================================================== */
+var qqHost = document.getElementById('qq');
+if (qqHost) {
+  var qqAnswer = document.getElementById('qqAnswer');
+  var qqCaveat = document.getElementById('qqCaveat');
+  var qqReset  = document.getElementById('qqReset');
+  var qqCards  = Array.prototype.slice.call(qqHost.querySelectorAll('.qq-card'));
+
+  function qqShow(picked) {
+    qqHost.classList.add('revealed');
+    qqCards.forEach(function (c) {
+      c.classList.toggle('picked', c === picked);
+      /* Once revealed the cards are a readout, not a control. */
+      c.setAttribute('aria-disabled', 'true');
+    });
+    qqAnswer.hidden = false;
+    qqCaveat.hidden = true;
+  }
+
+  function qqHide() {
+    qqHost.classList.remove('revealed');
+    qqCards.forEach(function (c) {
+      c.classList.remove('picked');
+      c.removeAttribute('aria-disabled');
+    });
+    qqAnswer.hidden = true;
+    qqCaveat.hidden = false;
+  }
+
+  qqCards.forEach(function (c) {
+    c.addEventListener('click', function () {
+      if (qqHost.classList.contains('revealed')) return;
+      qqShow(c);
+    });
+  });
+
+  qqReset.addEventListener('click', qqHide);
+}
+/* ==========================================================
+   THE QUANTIZATION QUALITY CLIFF
+   Two curves, plotted on a categorical axis so 16-bit does not squash
+   everything interesting into the left margin. The numbers are shaped
+   from published perplexity/benchmark behaviour, not measured here —
+   the slide says so, and so does this comment.
+   ========================================================== */
+var clSlide = document.getElementById('s-cliff');
+if (clSlide) {
+  var CL_BITS  = [2, 3, 4, 5, 6, 8, 16];
+  var CL_BPW   = [3.35, 3.91, 4.83, 5.68, 6.56, 8.5, 16];   /* real GGUF cost */
+  var CL_BIG   = [72, 93, 98, 99, 99.5, 99.8, 100];
+  var CL_SMALL = [48, 82, 94.5, 97, 98.5, 99.5, 100];
+  var CL_SAY = [
+    'Broken in ways that are hard to spot. Loops, contradictions, invented facts.',
+    'Noticeably duller. Only if literally nothing else fits.',
+    'The sweet spot. Where almost everyone should live.',
+    'Excellent. Worth the extra gigabytes if you have them.',
+    'Indistinguishable from the original, and you are paying for it.',
+    'Lossless for practical purposes. Twice the file, no more model.',
+    'Full precision. Four times the memory for a rounding error.'
+  ];
+  var CL_Y0 = 40;                      /* axis floor — labelled on the chart */
+
+  var clSlider  = document.getElementById('clSlider');
+  var clCanvas  = document.getElementById('clCanvas');
+  var clSide    = clCanvas.closest('.cl').querySelector('.cl-side');
+  var clOut = {
+    bits: document.getElementById('clBits'),
+    size: document.getElementById('clSize'),
+    qual: document.getElementById('clQual'),
+    verdict: document.getElementById('clVerdict')
+  };
+
+  function clDraw() {
+    var i = parseInt(clSlider.value, 10);
+    clOut.bits.textContent = CL_BITS[i];
+    clOut.size.textContent = (30 * CL_BPW[i] / 8).toFixed(1) + ' GB';
+    clOut.qual.textContent = CL_BIG[i].toFixed(CL_BIG[i] % 1 ? 1 : 0) + '%';
+    clOut.verdict.textContent = CL_SAY[i];
+    clSide.classList.toggle('warn', CL_BITS[i] === 3);
+    clSide.classList.toggle('bad', CL_BITS[i] === 2);
+    clPaint(i);
+  }
+
+  function clPaint(sel) {
+    var f = fitCanvas(clCanvas);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h, R = rem();
+    var padL = R * 2.6, padR = R * 0.9, padT = R * 1.2, padB = R * 2.2;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var n = CL_BITS.length;
+
+    function X(i) { return padL + (i / (n - 1)) * plotW; }
+    function Y(q) { return padT + (1 - (q - CL_Y0) / (100 - CL_Y0)) * plotH; }
+
+    ctx.font = Math.max(9, Math.round(R * 0.56)) + 'px ' + THEME.mono;
+
+    /* ---- below the floor is a hazard zone, and it is the only red ---- */
+    var floorX = X(CL_BITS.indexOf(4));
+    ctx.fillStyle = THEME.bad;
+    ctx.globalAlpha = 0.07;
+    ctx.fillRect(padL, padT, floorX - padL, plotH);
+    ctx.globalAlpha = 1;
+
+    /* ---- grid + y labels ---- */
+    ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+    ctx.fillStyle = THEME.inkDim; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    [50, 75, 100].forEach(function (q) {
+      var y = Math.round(Y(q)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.fillText(q + '%', padL - R * 0.5, y);
+    });
+
+    /* ---- x labels ---- */
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    CL_BITS.forEach(function (b, i) {
+      ctx.fillStyle = i === sel ? THEME.accent : THEME.inkDim;
+      ctx.fillText(b + '-BIT', X(i), H - padB + R * 0.55);
+    });
+
+    /* ---- the sweet-spot marker ---- */
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = THEME.ok; ctx.globalAlpha = 0.7;
+    ctx.beginPath(); ctx.moveTo(floorX, padT); ctx.lineTo(floorX, padT + plotH); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = THEME.ok; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('SWEET SPOT', floorX + R * 0.35, padT + R * 0.1);
+
+    /* ---- curves ---- */
+    function curve(data, colour, dashed) {
+      ctx.save();
+      if (dashed) ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = colour; ctx.lineWidth = 2;
+      ctx.beginPath();
+      data.forEach(function (q, i) { i ? ctx.lineTo(X(i), Y(q)) : ctx.moveTo(X(i), Y(q)); });
+      ctx.stroke();
+      ctx.restore();
+      data.forEach(function (q, i) {
+        ctx.fillStyle = i === sel ? colour : THEME.raise;
+        ctx.strokeStyle = colour; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(X(i), Y(q), R * (i === sel ? 0.26 : 0.17), 0, 6.284);
+        ctx.fill(); ctx.stroke();
+      });
+    }
+    curve(CL_SMALL, THEME.inkMid, true);
+    curve(CL_BIG, THEME.accent, false);
+
+    /* ---- the scrubber ---- */
+    ctx.strokeStyle = THEME.accent; ctx.globalAlpha = 0.35; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(sel), padT); ctx.lineTo(X(sel), padT + plotH); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  clSlider.addEventListener('input', clDraw);
+  window.addEventListener('resize', clDraw);
+  document.addEventListener('deck:slide', clDraw);
+  clDraw();
+}
+/* ==========================================================
+   KV CACHE — THE FORMULA AND THE STRAIGHT LINE
+   Every term in the on-screen equation is read from the controls, so
+   the formula is not an illustration of the arithmetic; it is the
+   arithmetic. KV sizes use binary units throughout — 128 KB/token and
+   4 GB at 32k are the figures people will meet elsewhere.
+   ========================================================== */
+var kvSlide = document.getElementById('s-kv');
+if (kvSlide) {
+  var KV_MAX_CTX = 131072;                 /* chart x-axis: 0 → 128k */
+  var kvCfg = { l: 32, kv: 8, q: 32, d: 128, w: 4.9 };
+  var kvGqaOn = true, kvBytes = 2;
+
+  var kvCanvas = document.getElementById('kvCanvas');
+  var kvEl = {
+    l: document.getElementById('kvL'), h: document.getElementById('kvH'),
+    d: document.getElementById('kvD'), b: document.getElementById('kvB'),
+    per: document.getElementById('kvPer'),
+    perUnit: document.getElementById('kvPerUnit'),
+    perK: document.getElementById('kvPerK'),
+    at32: document.getElementById('kv32'),
+    ratio: document.getElementById('kvRatio')
+  };
+
+  function kvHeads() { return kvGqaOn ? kvCfg.kv : kvCfg.q; }
+
+  /* 2 (one key, one value) × layers × KV heads × head dim × bytes. */
+  function kvPerToken() { return 2 * kvCfg.l * kvHeads() * kvCfg.d * kvBytes; }
+
+  function kvGB(tokens) { return tokens * kvPerToken() / 1073741824; }
+
+  function kvDraw() {
+    var per = kvPerToken();
+    kvEl.l.textContent = kvCfg.l;
+    kvEl.h.textContent = kvHeads();
+    kvEl.d.textContent = kvCfg.d;
+    kvEl.b.textContent = kvBytes;
+
+    var perKB = per / 1024;
+    kvEl.per.textContent = perKB >= 1024
+      ? (perKB / 1024).toFixed(1) : Math.round(perKB);
+    /* Addressed by id rather than by DOM position: without GQA a 30B
+       crosses into megabytes, so this label really does change, and it
+       must not start pointing at whatever else lands next to it. */
+    kvEl.perUnit.textContent = perKB >= 1024 ? 'MB per token' : 'KB per token';
+
+    kvEl.perK.textContent = kvGB(1000).toFixed(2) + ' GB';
+    var at32 = kvGB(32768);
+    kvEl.at32.textContent = at32.toFixed(1) + ' GB';
+    kvEl.ratio.textContent = (at32 / kvCfg.w).toFixed(1) + '×';
+    kvPaint();
+  }
+
+  function kvPaint() {
+    var f = fitCanvas(kvCanvas);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h, R = rem();
+    var padL = R * 2.8, padR = R * 0.8, padT = R * 0.8, padB = R * 1.9;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+
+    var top = Math.max(kvCfg.w + kvGB(KV_MAX_CTX), kvCfg.w * 2) * 1.08;
+    function X(t) { return padL + (t / KV_MAX_CTX) * plotW; }
+    function Y(gb) { return padT + (1 - gb / top) * plotH; }
+
+    ctx.font = Math.max(9, Math.round(R * 0.54)) + 'px ' + THEME.mono;
+
+    /* ---- axes ---- */
+    ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+    ctx.fillStyle = THEME.inkDim; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    var stepGB = niceStep(top / 4);
+    for (var k = 0; k * stepGB <= top; k++) {
+      var g = k * stepGB;
+      var y = Math.round(Y(g)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.fillText((stepGB < 1 ? g.toFixed(1) : Math.round(g)) + ' GB', padL - R * 0.45, y);
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    [0, 32768, 65536, 98304, 131072].forEach(function (t) {
+      ctx.fillStyle = THEME.inkDim;
+      ctx.fillText(t === 0 ? '0' : fmtTokens(t), X(t), padT + plotH + R * 0.45);
+    });
+
+    /* ---- the cache, as the gap between weights and total ---- */
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(kvCfg.w));
+    ctx.lineTo(X(KV_MAX_CTX), Y(kvCfg.w + kvGB(KV_MAX_CTX)));
+    ctx.lineTo(X(KV_MAX_CTX), Y(kvCfg.w));
+    ctx.closePath();
+    ctx.fillStyle = THEME.accent; ctx.globalAlpha = 0.14; ctx.fill();
+    ctx.globalAlpha = 1;
+
+    /* weights: flat, and that is the point */
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = THEME.inkMid; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(X(0), Y(kvCfg.w)); ctx.lineTo(X(KV_MAX_CTX), Y(kvCfg.w));
+    ctx.stroke();
+    ctx.restore();
+
+    /* total: dead straight, sloping up */
+    ctx.strokeStyle = THEME.accent; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(kvCfg.w));
+    ctx.lineTo(X(KV_MAX_CTX), Y(kvCfg.w + kvGB(KV_MAX_CTX)));
+    ctx.stroke();
+
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillStyle = THEME.inkMid;
+    ctx.fillText('WEIGHTS — FIXED', X(0) + R * 0.4, Y(kvCfg.w) - R * 0.25);
+    ctx.fillStyle = THEME.accent;
+    ctx.fillText('+ KV CACHE', X(KV_MAX_CTX * 0.42),
+      Y(kvCfg.w + kvGB(KV_MAX_CTX * 0.42)) - R * 0.35);
+
+    /* ---- the 32k marker, because that is the default people ship ---- */
+    var mx = X(32768), my = Y(kvCfg.w + kvGB(32768));
+    ctx.save();
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = THEME.accent; ctx.globalAlpha = 0.4; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(mx, padT + plotH); ctx.stroke();
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = THEME.accent;
+    ctx.beginPath(); ctx.arc(mx, my, R * 0.2, 0, 6.284); ctx.fill();
+  }
+
+  function kvUseModel(btn) {
+    kvCfg = {
+      l: +btn.dataset.l, kv: +btn.dataset.kv, q: +btn.dataset.q,
+      d: +btn.dataset.d, w: +btn.dataset.w
+    };
+  }
+
+  /* State is read back off the initially-selected buttons rather than
+     duplicated as literals up top — one place to be wrong instead of two. */
+  var kvModelSeg = segGroup('#kvModel', function (b) { kvUseModel(b); kvDraw(); });
+  var kvGqaSeg = segGroup('#kvGqa', function (b) { kvGqaOn = b.dataset.gqa === '1'; kvDraw(); });
+  var kvPrecSeg = segGroup('#kvPrec', function (b) { kvBytes = +b.dataset.bytes; kvDraw(); });
+
+  kvUseModel(kvModelSeg.current());
+  kvGqaOn = kvGqaSeg.current().dataset.gqa === '1';
+  kvBytes = +kvPrecSeg.current().dataset.bytes;
+  kvDraw();
+  window.addEventListener('resize', kvPaint);
+  document.addEventListener('deck:slide', kvPaint);
+}
+/* ==========================================================
+   THE CONTEXT CEILING
+   One bar, drawn against the machine rather than against itself. When
+   the total exceeds capacity the scale grows and the bar bursts past
+   the capacity marker — the marker never moves to accommodate it,
+   because in real life the RAM does not either.
+   ========================================================== */
+var bgSlide = document.getElementById('s-budget');
+if (bgSlide) {
+  var BG_CTX = [1024, 2048, 4096, 8192, 16384, 32768,
+                65536, 131072, 262144, 524288, 1048576];
+  /* 30B-class with GQA, matching the previous slide: 2 × 48 layers ×
+     8 KV heads × 128 head dim = 96 KB per token per byte of precision. */
+  var BG_PER_TOKEN_FP16 = 2 * 48 * 8 * 128 * 2;
+  var BG_OVERHEAD = 2;                     /* OS + runtime, GB */
+  var GIB = 1073741824;
+
+  var bgMem = document.getElementById('bgMem');
+  var bgW   = document.getElementById('bgWeights');
+  var bgCtx = document.getElementById('bgCtx');
+  var bgBytes = 2;
+
+  var bgEl = {
+    memOut: document.getElementById('bgMemOut'),
+    wOut:   document.getElementById('bgWeightsOut'),
+    ctxOut: document.getElementById('bgCtxOut'),
+    bar:    document.querySelector('.bg-bar'),
+    segW:   document.getElementById('bgSegW'),
+    segK:   document.getElementById('bgSegK'),
+    segO:   document.getElementById('bgSegO'),
+    labW:   document.getElementById('bgLabW'),
+    labK:   document.getElementById('bgLabK'),
+    cap:    document.getElementById('bgCap'),
+    capLab: document.getElementById('bgCapLab'),
+    out:    document.querySelector('.bg-out'),
+    total:  document.getElementById('bgTotal'),
+    pct:    document.getElementById('bgPct'),
+    max:    document.getElementById('bgMax'),
+    verdict:document.getElementById('bgVerdict'),
+    vkey:   document.getElementById('bgVKey'),
+    vtext:  document.getElementById('bgVText')
+  };
+
+  function bgSeg(el, lab, gb, scale, text) {
+    var pct = gb / scale * 100;
+    el.style.width = pct + '%';
+    el.classList.toggle('narrow', pct < 9);
+    if (lab) lab.textContent = text;
+  }
+
+  function bgDraw() {
+    var mem = parseFloat(bgMem.value);
+    var weights = parseFloat(bgW.value);
+    var ctxLen = BG_CTX[parseInt(bgCtx.value, 10)];
+    var perTok = BG_PER_TOKEN_FP16 * (bgBytes / 2);
+    var kv = ctxLen * perTok / GIB;
+    var total = weights + kv + BG_OVERHEAD;
+
+    bgEl.memOut.textContent = mem;
+    bgEl.wOut.textContent = weights;
+    bgEl.ctxOut.textContent = fmtTokens(ctxLen);
+
+    var scale = Math.max(total, mem) * 1.03;
+    bgSeg(bgEl.segW, bgEl.labW, weights, scale, weights.toFixed(1) + ' GB');
+    bgSeg(bgEl.segK, bgEl.labK, kv, scale, kv.toFixed(kv < 10 ? 1 : 0) + ' GB cache');
+    bgSeg(bgEl.segO, null, BG_OVERHEAD, scale);
+    var capPct = mem / scale * 100;
+    bgEl.cap.style.left = capPct + '%';
+    bgEl.cap.classList.toggle('flip', capPct > 55);
+    bgEl.capLab.textContent = mem + ' GB installed';
+
+    bgEl.total.textContent = total < 100 ? total.toFixed(1) : Math.round(total);
+    bgEl.pct.textContent = Math.round(total / mem * 100) + '%';
+
+    /* The headroom left for cache after the weights and the OS, turned
+       back into tokens. This is the number people actually want. */
+    var room = (mem - weights - BG_OVERHEAD) * GIB;
+    bgEl.max.textContent = room <= 0 ? '—' : fmtTokens(Math.floor(room / perTok));
+
+    var state = total > mem ? 'over' : (total > mem * 0.9 ? 'tight' : 'ok');
+    ['tight', 'over'].forEach(function (c) {
+      bgEl.bar.classList.toggle(c, state === c);
+      bgEl.out.classList.toggle(c, state === c);
+      bgEl.verdict.classList.toggle(c, state === c);
+    });
+
+    if (state === 'over') {
+      bgEl.vkey.textContent = 'OVER BY ' + (total - mem).toFixed(0) + ' GB';
+      bgEl.vtext.textContent = room <= 0
+        ? 'The weights alone do not fit. The context is academic.'
+        : 'Refuses to allocate, or crawls through swap until you kill it.';
+    } else if (state === 'tight') {
+      bgEl.vkey.textContent = 'TIGHT';
+      bgEl.vtext.textContent = 'Allocates, then fights the OS for what is left.';
+    } else {
+      bgEl.vkey.textContent = 'FITS';
+      bgEl.vtext.textContent = 'Comfortable. Keep talking.';
+    }
+  }
+
+  var bgPrecSeg = segGroup('#bgPrec', function (b) { bgBytes = +b.dataset.bytes; bgDraw(); });
+  bgBytes = +bgPrecSeg.current().dataset.bytes;
+
+  [bgMem, bgW, bgCtx].forEach(function (el) {
+    el.addEventListener('input', bgDraw);
+  });
+  bgDraw();
 }
 })();
 </script>

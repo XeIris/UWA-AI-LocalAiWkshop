@@ -1,0 +1,108 @@
+/* --- the multiple choice ------------------------------------- */
+/* Cards are <button>s so the keyboard and a screen reader get the same
+   affordance the mouse does; the reveal is a class on the container. */
+.qq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.4rem; }
+
+.qq-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem;
+  text-align: left; font: inherit; cursor: pointer;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 1.3rem 1.3rem 1.5rem;
+  color: var(--ink);
+  transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+}
+.qq-card:hover { border-color: var(--rule); transform: translateY(-2px); }
+.qq-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.qq-tag {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); color: var(--ink-dim);
+}
+/* "7.5B @ 16-bit" is entirely figures and units, so it takes the mono
+   stack like every other number in the deck — and it has to, because the
+   three cards are read as a column and a sans spec above a mono size
+   breaks the alignment the comparison depends on. */
+.qq-spec {
+  font-family: var(--mono); font-size: 1.5rem;
+  letter-spacing: -0.03em; margin-top: 0.7rem;
+}
+.qq-spec b { font-weight: 620; color: var(--ink); }
+.qq-size {
+  font-family: var(--mono); font-size: 1.05rem; color: var(--accent);
+  letter-spacing: -0.02em;
+}
+.qq-sub { font-size: 0.94rem; color: var(--ink-mid); margin-top: 0.35rem; }
+
+/* Reasoning is in the DOM from the start so nothing reflows on reveal —
+   it is clipped to zero height rather than display:none. */
+.qq-why {
+  font-size: 0.94rem; line-height: 1.4; color: var(--ink-mid);
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 320ms ease, opacity 220ms ease, margin 320ms ease;
+}
+.qq.revealed .qq-why { max-height: 9rem; opacity: 1; margin-top: 0.8rem; }
+
+/* Green is the recommendation, and it is the only green on the slide. */
+.qq.revealed .qq-card[data-best] {
+  border-color: var(--ok); border-top-color: var(--ok);
+  background: rgba(74, 222, 128, 0.06);
+}
+.qq.revealed .qq-card[data-best] .qq-size,
+.qq.revealed .qq-card[data-best] .qq-tag { color: var(--ok); }
+.qq.revealed .qq-card[data-best]::after {
+  content: "BEST BUY";
+  position: absolute; top: 1.15rem; right: 1.1rem;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+  padding: 0.2rem 0.5rem; border-radius: var(--r-pill);
+  background: var(--ok); color: #05271a;
+}
+.qq.revealed .qq-card:not([data-best]) { opacity: 0.72; }
+.qq.revealed .qq-card { cursor: default; transform: none; }
+.qq.revealed .qq-card:hover { transform: none; border-color: var(--rule-soft); }
+.qq.revealed .qq-card[data-best]:hover { border-color: var(--ok); }
+/* The one they picked keeps a marker, so the room can see their own answer. */
+.qq-card.picked .qq-tag::after {
+  content: " — your pick"; letter-spacing: 0.06em; text-transform: none;
+  color: var(--ink-dim);
+}
+
+.qq-answer {
+  margin-top: 1.2rem;
+  display: flex; align-items: flex-start; gap: 1.2rem;
+}
+/* display:flex beats the [hidden] UA rule, so the answer shipped visible
+   before anyone had guessed. Restate it. */
+.qq-answer[hidden] { display: none; }
+.qq-rule {
+  flex: 1; margin: 0; font-size: 1.05rem; color: var(--ink-mid);
+  border-left: 2px solid var(--ok);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: rgba(74, 222, 128, 0.05);
+  padding: 0.8rem 1.1rem;
+}
+.qq-rule strong { color: var(--ink); }
+.qq-reset {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 0.9rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  white-space: nowrap;
+}
+.qq-reset:hover { color: var(--ink-mid); border-color: var(--rule); }
+
+@media (max-width: 900px) {
+  .qq { grid-template-columns: 1fr; gap: 0.6rem; }
+  .qq-card { padding: 0.9rem 1rem 1rem; }
+  .qq-spec { font-size: 1.2rem; }
+  .qq.revealed .qq-why { max-height: 14rem; }
+  .qq-answer { flex-direction: column; gap: 0.6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qq-card, .qq-why { transition: none; }
+  .qq-card:hover { transform: none; }
+}

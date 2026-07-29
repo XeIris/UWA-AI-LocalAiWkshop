@@ -1,0 +1,53 @@
+  <!-- ---- 4 · what a quant actually is ---- -->
+  <!-- The whole slide exists to kill one misconception: that a "quant" is a
+       different, smaller model. It is the same model with the same number of
+       weights — each one just written down more roughly. -->
+  <section class="slide" data-section="4" id="s-quant">
+    <div class="slide-inner">
+      <div class="eyebrow">04 &mdash; What a quant actually is</div>
+      <h2>Same weights. Fewer decimal places.</h2>
+
+      <div class="qz">
+        <div class="qz-panel qz-matrix">
+          <div class="qz-head">
+            <span>24 weights from one layer</span>
+            <div class="seg" id="qzBits" role="group" aria-label="Precision">
+              <button type="button" data-bits="16" class="on" aria-pressed="true">FP16</button>
+              <button type="button" data-bits="8" aria-pressed="false">8&#8209;bit</button>
+              <button type="button" data-bits="4" aria-pressed="false">4&#8209;bit</button>
+              <button type="button" data-bits="2" aria-pressed="false">2&#8209;bit</button>
+            </div>
+          </div>
+
+          <div class="qz-grid" id="qzGrid" aria-live="polite"></div>
+
+          <div class="qz-store" id="qzStore"></div>
+        </div>
+
+        <div class="qz-panel qz-side">
+          <div class="qz-head"><span>Values it is allowed to be</span></div>
+          <!-- Ticks are the representable values; each dot is one real weight
+               dropping onto the nearest one. The drop IS the quantization. -->
+          <canvas class="qz-ladder" id="qzLadder" aria-label="Representable values, with each weight snapping to the nearest one"></canvas>
+
+          <dl class="qz-stats">
+            <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
+            <div><dt>Average error</dt><dd id="qzErr">&plusmn;0.0000</dd></div>
+            <div><dt>Bits per weight</dt><dd id="qzBpw">16.00</dd></div>
+            <div><dt>A 30B model</dt><dd id="qzModel">60.0 GB</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="qz-why">
+        <span class="qz-why-k">Why bother</span>
+        <span>Smaller file &rarr; fits in memory you actually have.</span>
+        <span class="qz-why-hi">Half the bytes is <strong>twice the tokens per second</strong> &mdash; same formula as &sect;3.</span>
+      </div>
+
+      <p class="caveat">Note the shared scale. A quant does not store 24 tiny numbers &mdash; it
+        stores 24 tiny <em>integers</em> plus one full-precision multiplier for the block. That
+        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight, and real
+        GGUF blocks carry more metadata than this one. Hold that thought for one slide.</p>
+    </div>
+  </section>
