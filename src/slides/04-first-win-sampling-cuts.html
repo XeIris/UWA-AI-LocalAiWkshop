@@ -24,10 +24,10 @@
         </div>
       </div>
       <div class="ctrl" style="margin-top:1.2rem">
-        <label>How sure is the model?</label>
-        <div class="seg" id="confSeg">
-          <button data-conf="sure" class="on">Confident</button>
-          <button data-conf="unsure">Torn</button>
+        <span class="ctrl-label" id="confSegLabel">How sure is the model?</span>
+        <div class="seg" id="confSeg" role="group" aria-labelledby="confSegLabel">
+          <button type="button" data-conf="sure" class="on" aria-pressed="true">Confident</button>
+          <button type="button" data-conf="unsure" aria-pressed="false">Torn</button>
         </div>
       </div>
       <p class="note" style="margin-top:0.9rem">

@@ -11,11 +11,11 @@
           <output id="mxParamsOut">16B</output>
         </div>
         <div class="ctrl">
-          <label for="mxBits">Precision</label>
-          <div class="seg" id="mxBits">
-            <button data-bits="16" class="on">16&#8209;bit</button>
-            <button data-bits="8">8&#8209;bit</button>
-            <button data-bits="4">4&#8209;bit</button>
+          <span class="ctrl-label" id="mxBitsLabel">Precision</span>
+          <div class="seg" id="mxBits" role="group" aria-labelledby="mxBitsLabel">
+            <button type="button" data-bits="16" class="on" aria-pressed="true">16&#8209;bit</button>
+            <button type="button" data-bits="8" aria-pressed="false">8&#8209;bit</button>
+            <button type="button" data-bits="4" aria-pressed="false">4&#8209;bit</button>
           </div>
         </div>
         <div class="mx-weight">

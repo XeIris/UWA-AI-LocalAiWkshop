@@ -143,10 +143,13 @@ if (toppHost) {
     document.querySelectorAll('#confSeg button'),
     function (btn) {
       btn.addEventListener('click', function () {
-        document.querySelectorAll('#confSeg button').forEach(function (b) {
-          b.classList.remove('on');
-        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('#confSeg button'), function (b) {
+            b.classList.remove('on');
+            b.setAttribute('aria-pressed', 'false');
+          });
         btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
         scenario = btn.dataset.conf;
         relabel();
         drawCuts();

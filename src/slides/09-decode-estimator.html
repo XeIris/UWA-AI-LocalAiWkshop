@@ -7,12 +7,12 @@
       <div class="dk">
         <div class="dk-controls">
           <div class="dk-presets">
-            <span class="dk-plabel">Jump to real hardware</span>
-            <div class="seg" id="bwPresets">
-              <button data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
-              <button data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
-              <button data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
-              <button data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
+            <span class="dk-plabel" id="bwPresetsLabel">Jump to real hardware</span>
+            <div class="seg" id="bwPresets" role="group" aria-labelledby="bwPresetsLabel">
+              <button type="button" aria-pressed="false" data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
+              <button type="button" aria-pressed="false" data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
+              <button type="button" aria-pressed="false" data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
+              <button type="button" aria-pressed="false" data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
             </div>
           </div>
 

@@ -92,15 +92,21 @@ if (mxSlide) {
         v.state.textContent = 'Will not load — ' + v.alloc.over.toFixed(1) + ' GB short';
         v.head = 0; v.toks = [];
       } else {
+        /* Bandwidth ÷ size is a ceiling, not a benchmark — say so on the face
+           of it, the same way the estimator slide does. */
         var r = 1 / v.spt;
-        v.rate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
+        v.rate.textContent = '≈' + (r < 10 ? r.toFixed(1) : Math.round(r));
+        /* Figures come from the pool definitions; duplicating them in these
+           strings meant editing a pool silently desynced the caption. */
+        var p0 = v.pools[0], p1 = v.pools[1];
         if (spilled) {
-          var pct = Math.round(v.alloc.segs[1].used / weightGB() * 100);
-          v.state.textContent = pct + '% spilled to DRAM — read at 96 GB/s, not 1792';
-        } else if (v.id === 'pc') {
-          v.state.textContent = 'Entirely in VRAM — full 1792 GB/s';
+          var pct = Math.round(v.alloc.segs[1].used / need * 100);
+          v.state.textContent = pct + '% spilled to DRAM — read at ' + p1.bw +
+            ' GB/s, not ' + p0.bw;
+        } else if (p1) {
+          v.state.textContent = 'Entirely in VRAM — full ' + p0.bw + ' GB/s';
         } else {
-          v.state.textContent = 'Fits in unified memory — 614 GB/s throughout';
+          v.state.textContent = 'Fits in unified memory — ' + p0.bw + ' GB/s throughout';
         }
       }
     });
@@ -204,7 +210,8 @@ if (mxSlide) {
       ctx.fillStyle = C.dim;
       ctx.globalAlpha = 0.55;
       ctx.textBaseline = 'top';
-      var ghostW = (32 / SCALE_GB) * W;
+      /* Stands in for the PC's DRAM row, so take its width from that pool. */
+      var ghostW = (MACHINES.pc.pools[0].gb / SCALE_GB) * W;
       ctx.fillText('NO SEPARATE VRAM  ·  CPU AND GPU SHARE ONE POOL', 0, y);
       ctx.setLineDash([3, 4]);
       ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
@@ -291,10 +298,13 @@ if (mxSlide) {
   Array.prototype.forEach.call(document.querySelectorAll('#mxBits button'),
     function (btn) {
       btn.addEventListener('click', function () {
-        document.querySelectorAll('#mxBits button').forEach(function (b) {
-          b.classList.remove('on');
-        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('#mxBits button'), function (b) {
+            b.classList.remove('on');
+            b.setAttribute('aria-pressed', 'false');
+          });
         btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
         bits = parseInt(btn.dataset.bits, 10);
         recompute();
       });

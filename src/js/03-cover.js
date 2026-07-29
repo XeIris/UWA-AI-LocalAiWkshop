@@ -11,8 +11,15 @@ var CONFIGS = [
   { label: '30B · 4-bit',   gb: '15.0 GB', params: 30,   shades: 5  }
 ];
 
-var cv  = document.getElementById('art');
+/* Guarded like every other module: all the JS files share one IIFE, so an
+   unguarded getContext() throw here would abort the rest of the bundle and
+   the decode/machines interactives would silently never initialise. The
+   guard also block-scopes this file's draw(), so it cannot collide with a
+   top-level draw() in another module. */
+var cv = document.getElementById('art');
+if (cv) {
 var ctx = cv.getContext('2d');
+var coverSlide = document.getElementById('cover');
 var cfgEl = document.getElementById('artCfg');
 var gbEl  = document.getElementById('artGb');
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -30,6 +37,11 @@ function field(wx, wy, t) {
 }
 
 function draw(now) {
+  /* ~2000 fillRects a frame; no reason to pay that for the 18 slides where
+     the cover is not on screen. Hold t0 so the cycle resumes, not jumps. */
+  if (coverSlide && !coverSlide.classList.contains('active')) {
+    t0 = now; requestAnimationFrame(draw); return;
+  }
   var elapsed = now - t0;
   if (elapsed > HOLD + XFADE) { t0 = now; elapsed = 0; swapped = false; }
 
@@ -66,6 +78,8 @@ function draw(now) {
     }
   }
   ctx.globalAlpha = 1;
-  requestAnimationFrame(draw);
+  /* Reduced motion gets one static frame, not an endless redraw of it. */
+  if (!reduced) requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
+}

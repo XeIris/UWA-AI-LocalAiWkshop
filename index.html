@@ -500,7 +500,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 /* --- controls ----------------------------------------------- */
 .ctrl { display: flex; align-items: center; gap: 1rem; margin-top: 1.1rem; }
-.ctrl label {
+.ctrl label, .ctrl .ctrl-label {
   font-family: var(--mono); font-size: var(--label-sm);
   letter-spacing: var(--label-sm-ls); text-transform: uppercase;
   color: var(--ink-dim); white-space: nowrap;
@@ -1109,10 +1109,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         </div>
       </div>
       <div class="ctrl" style="margin-top:1.2rem">
-        <label>How sure is the model?</label>
-        <div class="seg" id="confSeg">
-          <button data-conf="sure" class="on">Confident</button>
-          <button data-conf="unsure">Torn</button>
+        <span class="ctrl-label" id="confSegLabel">How sure is the model?</span>
+        <div class="seg" id="confSeg" role="group" aria-labelledby="confSegLabel">
+          <button type="button" data-conf="sure" class="on" aria-pressed="true">Confident</button>
+          <button type="button" data-conf="unsure" aria-pressed="false">Torn</button>
         </div>
       </div>
       <p class="note" style="margin-top:0.9rem">
@@ -1306,12 +1306,12 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <div class="dk">
         <div class="dk-controls">
           <div class="dk-presets">
-            <span class="dk-plabel">Jump to real hardware</span>
-            <div class="seg" id="bwPresets">
-              <button data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
-              <button data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
-              <button data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
-              <button data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
+            <span class="dk-plabel" id="bwPresetsLabel">Jump to real hardware</span>
+            <div class="seg" id="bwPresets" role="group" aria-labelledby="bwPresetsLabel">
+              <button type="button" aria-pressed="false" data-bw="96"   data-note="DDR5&#8209;6000, dual channel">DDR5 RAM</button>
+              <button type="button" aria-pressed="false" data-bw="307"  data-note="M5 Pro unified memory">M5 Pro</button>
+              <button type="button" aria-pressed="false" data-bw="614"  data-note="M5 Max unified memory, 40&#8209;core GPU">M5 Max</button>
+              <button type="button" aria-pressed="false" data-bw="1792" data-note="RTX 5090, 32 GB GDDR7">RTX 5090</button>
             </div>
           </div>
 
@@ -1366,11 +1366,11 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <output id="mxParamsOut">16B</output>
         </div>
         <div class="ctrl">
-          <label for="mxBits">Precision</label>
-          <div class="seg" id="mxBits">
-            <button data-bits="16" class="on">16&#8209;bit</button>
-            <button data-bits="8">8&#8209;bit</button>
-            <button data-bits="4">4&#8209;bit</button>
+          <span class="ctrl-label" id="mxBitsLabel">Precision</span>
+          <div class="seg" id="mxBits" role="group" aria-labelledby="mxBitsLabel">
+            <button type="button" data-bits="16" class="on" aria-pressed="true">16&#8209;bit</button>
+            <button type="button" data-bits="8" aria-pressed="false">8&#8209;bit</button>
+            <button type="button" data-bits="4" aria-pressed="false">4&#8209;bit</button>
           </div>
         </div>
         <div class="mx-weight">
@@ -1720,10 +1720,13 @@ if (toppHost) {
     document.querySelectorAll('#confSeg button'),
     function (btn) {
       btn.addEventListener('click', function () {
-        document.querySelectorAll('#confSeg button').forEach(function (b) {
-          b.classList.remove('on');
-        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('#confSeg button'), function (b) {
+            b.classList.remove('on');
+            b.setAttribute('aria-pressed', 'false');
+          });
         btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
         scenario = btn.dataset.conf;
         relabel();
         drawCuts();
@@ -1796,8 +1799,15 @@ var CONFIGS = [
   { label: '30B · 4-bit',   gb: '15.0 GB', params: 30,   shades: 5  }
 ];
 
-var cv  = document.getElementById('art');
+/* Guarded like every other module: all the JS files share one IIFE, so an
+   unguarded getContext() throw here would abort the rest of the bundle and
+   the decode/machines interactives would silently never initialise. The
+   guard also block-scopes this file's draw(), so it cannot collide with a
+   top-level draw() in another module. */
+var cv = document.getElementById('art');
+if (cv) {
 var ctx = cv.getContext('2d');
+var coverSlide = document.getElementById('cover');
 var cfgEl = document.getElementById('artCfg');
 var gbEl  = document.getElementById('artGb');
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1815,6 +1825,11 @@ function field(wx, wy, t) {
 }
 
 function draw(now) {
+  /* ~2000 fillRects a frame; no reason to pay that for the 18 slides where
+     the cover is not on screen. Hold t0 so the cycle resumes, not jumps. */
+  if (coverSlide && !coverSlide.classList.contains('active')) {
+    t0 = now; requestAnimationFrame(draw); return;
+  }
   var elapsed = now - t0;
   if (elapsed > HOLD + XFADE) { t0 = now; elapsed = 0; swapped = false; }
 
@@ -1851,9 +1866,11 @@ function draw(now) {
     }
   }
   ctx.globalAlpha = 1;
-  requestAnimationFrame(draw);
+  /* Reduced motion gets one static frame, not an endless redraw of it. */
+  if (!reduced) requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
+}
 /* ==========================================================
    DECODE SPEED ESTIMATOR
    tok/s = bandwidth / model size, with the answer streamed at the
@@ -1915,6 +1932,7 @@ if (dkSlide) {
     presetBtns.forEach(function (b) {
       var on = parseInt(b.dataset.bw, 10) === parseInt(bwSlider.value, 10);
       b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
       if (on) hit = b;
     });
     dkNote.innerHTML = hit ? hit.dataset.note : 'Custom &mdash; drag to a real machine above';
@@ -2076,15 +2094,21 @@ if (mxSlide) {
         v.state.textContent = 'Will not load — ' + v.alloc.over.toFixed(1) + ' GB short';
         v.head = 0; v.toks = [];
       } else {
+        /* Bandwidth ÷ size is a ceiling, not a benchmark — say so on the face
+           of it, the same way the estimator slide does. */
         var r = 1 / v.spt;
-        v.rate.textContent = r < 10 ? r.toFixed(1) : Math.round(r);
+        v.rate.textContent = '≈' + (r < 10 ? r.toFixed(1) : Math.round(r));
+        /* Figures come from the pool definitions; duplicating them in these
+           strings meant editing a pool silently desynced the caption. */
+        var p0 = v.pools[0], p1 = v.pools[1];
         if (spilled) {
-          var pct = Math.round(v.alloc.segs[1].used / weightGB() * 100);
-          v.state.textContent = pct + '% spilled to DRAM — read at 96 GB/s, not 1792';
-        } else if (v.id === 'pc') {
-          v.state.textContent = 'Entirely in VRAM — full 1792 GB/s';
+          var pct = Math.round(v.alloc.segs[1].used / need * 100);
+          v.state.textContent = pct + '% spilled to DRAM — read at ' + p1.bw +
+            ' GB/s, not ' + p0.bw;
+        } else if (p1) {
+          v.state.textContent = 'Entirely in VRAM — full ' + p0.bw + ' GB/s';
         } else {
-          v.state.textContent = 'Fits in unified memory — 614 GB/s throughout';
+          v.state.textContent = 'Fits in unified memory — ' + p0.bw + ' GB/s throughout';
         }
       }
     });
@@ -2188,7 +2212,8 @@ if (mxSlide) {
       ctx.fillStyle = C.dim;
       ctx.globalAlpha = 0.55;
       ctx.textBaseline = 'top';
-      var ghostW = (32 / SCALE_GB) * W;
+      /* Stands in for the PC's DRAM row, so take its width from that pool. */
+      var ghostW = (MACHINES.pc.pools[0].gb / SCALE_GB) * W;
       ctx.fillText('NO SEPARATE VRAM  ·  CPU AND GPU SHARE ONE POOL', 0, y);
       ctx.setLineDash([3, 4]);
       ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
@@ -2275,10 +2300,13 @@ if (mxSlide) {
   Array.prototype.forEach.call(document.querySelectorAll('#mxBits button'),
     function (btn) {
       btn.addEventListener('click', function () {
-        document.querySelectorAll('#mxBits button').forEach(function (b) {
-          b.classList.remove('on');
-        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('#mxBits button'), function (b) {
+            b.classList.remove('on');
+            b.setAttribute('aria-pressed', 'false');
+          });
         btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
         bits = parseInt(btn.dataset.bits, 10);
         recompute();
       });

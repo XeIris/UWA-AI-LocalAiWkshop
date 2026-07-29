@@ -59,6 +59,7 @@ if (dkSlide) {
     presetBtns.forEach(function (b) {
       var on = parseInt(b.dataset.bw, 10) === parseInt(bwSlider.value, 10);
       b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
       if (on) hit = b;
     });
     dkNote.innerHTML = hit ? hit.dataset.note : 'Custom &mdash; drag to a real machine above';
