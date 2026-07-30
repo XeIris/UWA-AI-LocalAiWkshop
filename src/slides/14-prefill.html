@@ -1,0 +1,84 @@
+  <!-- ---- 3 · the other half of the formula ---- -->
+  <!-- Decode has had two slides. This is the phase nobody feels until the
+       prompt gets long, and it is the one where the ranking flips hardest. -->
+  <section class="slide" data-section="3" id="s-prefill">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Prefill</div>
+      <h2>Same two machines. Now watch who answers first.</h2>
+
+      <div class="pf-controls">
+        <div class="ctrl">
+          <span class="ctrl-label" id="pfLenLabel">Prompt</span>
+          <div class="seg" id="pfLen" role="group" aria-labelledby="pfLenLabel">
+            <button type="button" data-n="300">A question &middot; 300</button>
+            <button type="button" data-n="2000" class="on" aria-pressed="true">A page &middot; 2,000</button>
+            <button type="button" data-n="8000">A chapter &middot; 8,000</button>
+          </div>
+        </div>
+        <button type="button" class="pf-send" id="pfSend">Send &#9654;</button>
+        <span class="pf-note mono">Real time &mdash; nothing here is sped up</span>
+      </div>
+
+      <div class="pf-grid">
+        <div class="pf-lane" data-m="pc">
+          <div class="pf-head">
+            <div>
+              <span class="pf-name">Desktop PC</span>
+              <span class="pf-sub">RTX 5090 &middot; &asymp;105 TFLOPS fp16</span>
+            </div>
+            <div class="pf-ttft">
+              <span class="pf-t-num" id="pf-ttft-pc">&mdash;</span><span class="pf-t-unit">s to first token</span>
+            </div>
+          </div>
+          <div class="pf-phase">
+            <span class="pf-p-k" id="pf-state-pc">Waiting</span>
+            <span class="pf-p-c" id="pf-read-pc">0 / 2,000 read</span>
+          </div>
+          <div class="pf-bar"><div class="pf-fill" id="pf-fill-pc"></div></div>
+          <div class="pf-stream" id="pf-stream-pc" aria-hidden="true"></div>
+          <div class="pf-stats">
+            <span><i>Prefill</i><b id="pf-pp-pc">10,400</b> tok/s</span>
+            <span><i>Decode</i><b id="pf-tg-pc">186</b> tok/s</span>
+            <span><i>Elapsed</i><b id="pf-el-pc">0.00</b> s</span>
+          </div>
+        </div>
+
+        <div class="pf-lane" data-m="mac">
+          <div class="pf-head">
+            <div>
+              <span class="pf-name">MacBook Pro</span>
+              <span class="pf-sub">M5 Max &middot; &asymp;70 TFLOPS fp16</span>
+            </div>
+            <div class="pf-ttft">
+              <span class="pf-t-num" id="pf-ttft-mac">&mdash;</span><span class="pf-t-unit">s to first token</span>
+            </div>
+          </div>
+          <div class="pf-phase">
+            <span class="pf-p-k" id="pf-state-mac">Waiting</span>
+            <span class="pf-p-c" id="pf-read-mac">0 / 2,000 read</span>
+          </div>
+          <div class="pf-bar"><div class="pf-fill" id="pf-fill-mac"></div></div>
+          <div class="pf-stream" id="pf-stream-mac" aria-hidden="true"></div>
+          <div class="pf-stats">
+            <span><i>Prefill</i><b id="pf-pp-mac">900</b> tok/s</span>
+            <span><i>Decode</i><b id="pf-tg-mac">85</b> tok/s</span>
+            <span><i>Elapsed</i><b id="pf-el-mac">0.00</b> s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pf-verdict">
+        <span class="pf-v-k">The asymmetry</span>
+        <span class="pf-v-t" id="pfVerdict">The Mac is <b>2.2&times;</b> behind on writing &mdash;
+          and <b>11.6&times;</b> behind on reading.</span>
+      </div>
+
+      <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
+        The 5090 has roughly three times the Mac's bandwidth but more than ten times its
+        useful matrix compute &mdash; so which phase you are in decides how big the gap
+        feels. Figures are for an 8&nbsp;B model at 4&#8209;bit; the Mac's prefill is the
+        conservative end of a wide range, because MLX uses the M5's neural accelerators
+        and llama.cpp does not yet. Attention is also quadratic, so a really long prompt
+        is worse than this straight line suggests.</p>
+    </div>
+  </section>

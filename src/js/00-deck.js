@@ -34,6 +34,14 @@ document.addEventListener('click', function (e) {
   if (b && e.detail > 0) b.blur();
 });
 
+/* Anything anywhere in the deck can be a jump target — the contents slide
+   uses it, and the rail is really the same control in another shape.
+   Delegated, so a slide that adds one later needs no JS at all. */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('[data-goto]');
+  if (t) goToSection(parseInt(t.dataset.goto, 10));
+});
+
 function pad(n) { return (n < 10 ? '0' : '') + n; }
 
 function render() {

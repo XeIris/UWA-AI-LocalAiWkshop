@@ -95,7 +95,13 @@ word is spoken.
    (the familiar 128 KB/token), 30B ≈ 48L/8 KV/128. KV sizes are **binary**
    throughout — a context length is a power of two and rendering 32768 as "33K"
    is correct and useless.
-5. §6 / §7 content, cover art polish.
+5. ~~Orientation slide, the LM Studio download slide, the prefill race, and the
+   napkin fraction.~~ Adding three slides forced a full renumber of `src/slides/`
+   — that is the prefix rule working, not a problem with it. The orientation
+   slide's contents rows are `[data-goto]` buttons handled by a delegated
+   listener in `00-deck.js`, so any future slide can carry a jump target with
+   no JS of its own.
+6. §6 / §7 content, cover art polish.
 
 ## Tech constraints
 
@@ -183,12 +189,22 @@ Slider or preset dropdown for hardware bandwidth, with real reference points:
 Output theoretical tok/s, with an explicit note that real-world is meaningfully lower.
 This is the single most important formula in the workshop — give it room.
 
-### 4. Prefill vs decode visual
+### 4. Prefill vs decode visual — BUILT
 An animation contrasting the two phases: prefill processes the whole prompt in parallel
 (compute/FLOPS-bound), decode emits one token at a time (memory-bandwidth-bound).
 
 This is what justifies the "Mac = great decode, meh prefill; big dGPU = great at both
 but capacity-limited by VRAM" conclusion. Make the asymmetry visible, not just stated.
+
+Built as a race between the same two machines as §3's fit/spill slide, on the **real
+wall clock** — no slow-motion constant, because prefill and decode are both plain rates
+and the honest thing is to make the room wait the nine seconds. Figures are for an 8B at
+4-bit: RTX 5090 **10,400 tok/s prefill, 186 tok/s decode** (measured llama.cpp, Qwen3 8B
+Q4 @ 4K, Jul 2026); M5 Max **~900 tok/s prefill, ~85 tok/s decode**. The Mac prefill
+figure is the *conservative* end on purpose — sources for M5's neural accelerators range
+from "+35–40% over M4 Max" to "3–4× on TTFT" depending entirely on whether the runtime
+is MLX or llama.cpp, and llama.cpp does not use them yet. The slide says so on its face.
+Decode ratio ~2.2×, prefill ratio ~11.6×: that gap *is* the slide.
 
 ### 5. KV cache growth chart
 Plot total memory vs context length: **fixed weights (flat) + KV cache (linear) +
@@ -236,6 +252,18 @@ Lead with **privacy** (data never leaves the machine), **offline**, **no rate li
 ### 1. First win — hands-on (20 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
+
+**LM Studio, not LM Studio Bionic** (verified Jul 2026). Bionic is a *second, separate*
+app from the same team — a local-first coding/document agent in the Claude Code / Codex
+mould, built on top of open models. It is not a successor and does not replace the model
+manager; the two are meant to coexist, and LM Studio remains the thing that downloads
+and serves the weights. The download slide says this explicitly because the name invites
+exactly the wrong guess.
+
+The download slide's QR code is a committed asset (`src/assets/qr-lmstudio.svg`),
+generated once with `segno` and verified by decoding the rendered code. It is *not*
+generated at build time — the build stays stdlib-only. If the URL ever changes, the QR
+has to be regenerated and re-verified, not hand-edited.
 
 **Confirmed: every attendee brings their own laptop.** So §1 is a real hands-on exercise,
 not a demo — which makes the pre-workshop install message **mandatory, not optional**, and

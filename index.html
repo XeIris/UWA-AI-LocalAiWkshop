@@ -960,13 +960,47 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .mc-math {
   margin-top: auto; padding-top: 1.1rem;
   border-top: 1px solid var(--rule-soft);
-  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;
 }
-.mc-eq {
-  font-family: var(--mono); font-size: 1.15rem; color: var(--ink);
+/* Same stacked-fraction treatment as the §3 formula slide, deliberately:
+   the two are the same kind of object and should look it. */
+.mc-frac {
+  display: flex; flex-direction: column; text-align: center;
+  font-family: var(--mono);
+}
+.mc-f-num, .mc-f-den {
+  font-size: 0.86rem; color: var(--ink-mid);
+  padding: 0.2rem 0.7rem; letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.mc-f-num { border-bottom: 2px solid var(--accent); }
+.mc-frac b {
+  font-weight: 400; color: var(--accent);
+  font-size: 1.15rem; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.mc-f-op { color: var(--ink-dim); margin: 0 0.25rem; }
+.mc-f-den { font-size: 1.15rem; color: var(--ink); letter-spacing: -0.02em; }
+.mc-f-den i {
+  font-style: normal; font-size: 0.64rem; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-dim); margin-left: 0.45rem;
+}
+.mc-f-rel { font-family: var(--mono); font-size: 1.15rem; color: var(--accent); }
+.mc-f-out {
+  font-family: var(--mono); font-size: 0.86rem; color: var(--ink-mid);
+  letter-spacing: 0.01em;
+}
+.mc-f-out b {
+  font-weight: 400; color: var(--ink); font-size: 1.15rem;
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
 }
+.mc-f-out i {
+  display: block; font-style: normal;
+  font-size: 0.6rem; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
 .mc-eq-k {
+  margin-left: auto;
   font-family: var(--mono); font-size: 0.64rem;
   letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-dim);
   white-space: nowrap;
@@ -1051,7 +1085,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .mc { grid-template-columns: 1fr; gap: 0.7rem; }
   .mc-panel { padding: 0.85rem 0.9rem; }
   .mc-num { font-size: 3rem; }
-  .mc-math { flex-direction: column; gap: 0.3rem; }
+  /* Let the fraction own its row, so "= 4.0 GB" wraps as one piece
+     instead of stranding the equals sign beside the denominator. */
+  .mc-math { gap: 0.5rem; }
+  .mc-frac { flex-basis: 100%; }
+  .mc-f-num, .mc-f-den, .mc-f-out { font-size: 0.7rem; }
+  .mc-frac b, .mc-f-den, .mc-f-rel, .mc-f-out b { font-size: 0.95rem; }
+  .mc-eq-k { margin-left: 0; flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mc-seg, .mc-cap { transition: none; }
@@ -1436,6 +1476,298 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 @media (prefers-reduced-motion: reduce) {
   .bg-seg, .bg-cap, .bg-num { transition: none; }
 }
+/* --- get the app --------------------------------------------- */
+.dl { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.dl-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.4rem 1.5rem 1.5rem;
+  display: flex; flex-direction: column;
+}
+
+.dl-app { align-items: center; text-align: center; }
+/* The app icon ships with its own rounded-square silhouette baked in, so
+   it is placed rather than plated — no chip, no border fighting its edge. */
+.dl-icon { width: 7.2rem; height: 7.2rem; display: block; }
+.dl-name { font-size: 2rem; letter-spacing: -0.025em; margin-top: 0.9rem; font-weight: 640; }
+.dl-desc {
+  font-size: 1.02rem; color: var(--ink-mid);
+  max-width: 22rem; margin: 0.45rem 0 0; line-height: 1.35;
+}
+
+.dl-os {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; width: 100%;
+  margin-top: auto; padding-top: 1.4rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.dl-plat { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.dl-plat .chip { width: 2.7rem; height: 2.7rem; }
+.dl-p-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
+}
+.dl-p-v {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em;
+  color: var(--ink-dim); text-align: center;
+}
+
+/* --- the QR ---------------------------------------------------- */
+.dl-get { align-items: center; text-align: center; }
+.dl-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 1rem;
+}
+/* Scanners want dark modules on a light field, so the plate is functional,
+   not decorative — the same reason the MLX chip is white. */
+.dl-qr {
+  background: #fff; color: #05080b;
+  border-radius: var(--r-sm);
+  padding: 0.55rem; line-height: 0;
+}
+.dl-qr svg { width: 9.4rem; height: 9.4rem; display: block; }
+.dl-url {
+  font-family: var(--mono); font-size: 1.18rem;
+  letter-spacing: -0.01em; color: var(--accent);
+  margin-top: 1rem; text-decoration: none;
+  border-bottom: 1px solid var(--accent-lo);
+}
+.dl-url:hover { border-bottom-color: var(--accent); }
+
+.dl-steps {
+  display: flex; flex-direction: column; gap: 0.45rem;
+  width: 100%; text-align: left;
+  margin-top: auto; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.92rem; color: var(--ink-mid);
+}
+.dl-steps span { display: flex; align-items: center; gap: 0.7rem; }
+.dl-steps i {
+  flex: none; width: 1.4rem; height: 1.4rem;
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  font-family: var(--mono); font-style: normal; font-size: 0.68rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .dl { grid-template-columns: 1fr; gap: 0.7rem; }
+  .dl-panel { padding: 1rem 0.9rem; }
+  .dl-icon { width: 4.6rem; height: 4.6rem; }
+  .dl-name { font-size: 1.5rem; }
+  .dl-os { gap: 0.5rem; padding-top: 1rem; }
+  .dl-qr svg { width: 7rem; height: 7rem; }
+}
+/* --- disclaimers + contents ---------------------------------- */
+.orient { display: grid; grid-template-columns: 1fr 1.15fr; gap: 1.1rem; margin-top: 1.2rem; }
+.orient-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.3rem 1.4rem;
+  display: flex; flex-direction: column; gap: 1.5rem; justify-content: center;
+}
+
+.dis { display: grid; grid-template-columns: auto 1fr; gap: 0 1rem; }
+.dis-n {
+  font-family: var(--mono); font-size: 1.5rem;
+  color: var(--accent); opacity: 0.35; letter-spacing: -0.03em; line-height: 1;
+}
+.dis-k {
+  display: block;
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.5rem;
+}
+.dis p { margin: 0; font-size: 1rem; line-height: 1.4; color: var(--ink-mid); }
+
+/* --- the contents ---------------------------------------------- */
+.toc {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.toc-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-bottom: 0.7rem; margin-bottom: 0.3rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.toc-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0 0.9rem;
+  width: 100%; text-align: left;
+  padding: 0.42rem 0.6rem;
+  margin-left: -0.6rem;
+  background: none; border: 0; border-radius: var(--r-sm);
+  color: inherit; font: inherit; cursor: pointer;
+  transition: background 160ms ease;
+}
+.toc-n {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.1em; color: var(--ink-dim);
+  transition: color 160ms ease;
+}
+.toc-t { font-size: 1.06rem; letter-spacing: -0.012em; }
+.toc-m {
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.08em; color: var(--ink-dim);
+}
+/* The one-liner is the reward for pointing at a row, so it only exists
+   while you are pointing at it. Collapsed by height rather than hidden,
+   so the row grows into place instead of appearing on top of its
+   neighbours. */
+.toc-w {
+  grid-column: 2 / -1;
+  font-size: 0.88rem; color: var(--ink-dim);
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 200ms ease, opacity 160ms ease, margin-top 200ms ease;
+}
+.toc-item:hover, .toc-item:focus-visible {
+  background: var(--bg-raise); outline: none;
+}
+.toc-item:focus-visible { box-shadow: inset 0 0 0 1px var(--accent); }
+.toc-item:hover .toc-n, .toc-item:focus-visible .toc-n { color: var(--accent); }
+.toc-item:hover .toc-w, .toc-item:focus-visible .toc-w {
+  max-height: 3rem; opacity: 1; margin-top: 0.25rem;
+}
+
+@media (max-width: 900px) {
+  .orient { grid-template-columns: 1fr; gap: 0.7rem; }
+  .orient-panel { padding: 0.9rem; gap: 1rem; }
+  .dis p { font-size: 0.92rem; }
+  .toc-t { font-size: 0.95rem; }
+  /* No hover on a touch screen, so the hint is simply always there. */
+  .toc-w { max-height: 3rem; opacity: 1; margin-top: 0.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toc-item, .toc-w { transition: none; }
+}
+/* --- prefill race -------------------------------------------- */
+.pf-controls {
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+.pf-controls .ctrl { margin-top: 0; }
+.pf-send {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 0.35rem 1rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+}
+.pf-note { font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+
+.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+.pf-lane {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+
+.pf-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  padding-bottom: 0.8rem; margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.pf-name { display: block; font-size: 1.16rem; letter-spacing: -0.015em; }
+.pf-sub {
+  display: block; margin-top: 0.15rem;
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim);
+}
+.pf-ttft { text-align: right; white-space: nowrap; }
+.pf-t-num {
+  font-family: var(--mono); font-size: 2.4rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 2rem var(--accent-glow);
+}
+.pf-t-unit {
+  display: block; margin-top: 0.2rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+}
+
+.pf-phase {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem;
+  font-family: var(--mono); font-size: 0.66rem;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.45rem;
+}
+/* Reading and writing are different kinds of work, and the deck already
+   spends cyan on structure — so the distinction is carried by weight,
+   not by a second hue. */
+.pf-lane.reading .pf-p-k { color: var(--ink); }
+.pf-lane.writing .pf-p-k { color: var(--accent); }
+
+.pf-bar {
+  height: 0.85rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.pf-fill {
+  height: 100%; width: 0;
+  background: repeating-linear-gradient(90deg,
+    var(--accent) 0 3px, transparent 3px 6px);
+  opacity: 0.75;
+}
+
+/* The answer, one block per token, appearing at the real decode rate. */
+.pf-stream {
+  display: flex; flex-wrap: wrap; gap: 0.22rem;
+  align-content: flex-start;
+  /* Every block exists from the start and is only lit up, so the height is
+     stable regardless of progress — a minimum, not a cap, or a narrow
+     column clips the last row. */
+  min-height: 5.1rem; margin: 0.9rem 0 0.2rem;
+}
+.pf-stream i {
+  width: 0.62rem; height: 0.62rem;
+  border-radius: calc(var(--r-sm) * 0.35);
+  background: var(--ink-dim); opacity: 0.14;
+}
+.pf-stream i.on { background: var(--accent); opacity: 0.8; }
+
+.pf-stats {
+  display: flex; gap: 1.4rem; flex-wrap: wrap;
+  padding-top: 0.8rem; border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.64rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.pf-stats i { font-style: normal; display: block; }
+.pf-stats b {
+  font-weight: 400; font-size: 1.02rem; color: var(--ink);
+  letter-spacing: -0.02em; text-transform: none;
+  font-variant-numeric: tabular-nums; margin-right: 0.25rem;
+}
+
+.pf-verdict {
+  display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+  margin-top: 1.1rem;
+}
+.pf-v-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
+}
+.pf-v-t { font-size: 1.06rem; color: var(--ink-mid); }
+.pf-v-t b { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .pf-grid { grid-template-columns: 1fr; gap: 0.7rem; }
+  .pf-lane { padding: 0.85rem 0.9rem; }
+  .pf-t-num { font-size: 1.7rem; }
+  .pf-stream { min-height: 0; }
+}
 </style>
 </head>
 <body>
@@ -1453,6 +1785,15 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 <symbol id="lg-lmstudio" viewBox="0 0 24 24"><path d="M2.84 2a1.273 1.273 0 100 2.547h14.107a1.273 1.273 0 100-2.547H2.84zM7.935 5.33a1.273 1.273 0 000 2.548H22.04a1.274 1.274 0 000-2.547H7.935zM3.624 9.935c0-.704.57-1.274 1.274-1.274h14.106a1.274 1.274 0 010 2.547H4.898c-.703 0-1.274-.57-1.274-1.273zM1.273 12.188a1.273 1.273 0 100 2.547H15.38a1.274 1.274 0 000-2.547H1.273zM3.624 16.792c0-.704.57-1.274 1.274-1.274h14.106a1.273 1.273 0 110 2.547H4.898c-.703 0-1.274-.57-1.274-1.273zM13.029 18.849a1.273 1.273 0 100 2.547h9.698a1.273 1.273 0 100-2.547h-9.698z" fill-opacity=".3"></path><path d="M2.84 2a1.273 1.273 0 100 2.547h10.287a1.274 1.274 0 000-2.547H2.84zM7.935 5.33a1.273 1.273 0 000 2.548H18.22a1.274 1.274 0 000-2.547H7.935zM3.624 9.935c0-.704.57-1.274 1.274-1.274h10.286a1.273 1.273 0 010 2.547H4.898c-.703 0-1.274-.57-1.274-1.273zM1.273 12.188a1.273 1.273 0 100 2.547H11.56a1.274 1.274 0 000-2.547H1.273zM3.624 16.792c0-.704.57-1.274 1.274-1.274h10.286a1.273 1.273 0 110 2.547H4.898c-.703 0-1.274-.57-1.274-1.273zM13.029 18.849a1.273 1.273 0 100 2.547h5.78a1.273 1.273 0 100-2.547h-5.78z"></path></symbol>
 <symbol id="lg-llamacpp" viewBox="0 0 600 600"><path d="M600 392L504.249 558L504.137 557.929C487.252 584.069 458.193 600 426.864 600H120L240 392H600Z" fill="currentColor"/> <path d="M240 392H0L199.602 46.0254C216.032 17.5463 246.411 3.25756e-05 279.29 0H466.154L240 392Z" fill="currentColor"/></symbol>
 <symbol id="lg-mlx" viewBox="0 0 160 160"><image href="data:image/png;base64,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" width="160" height="160"/></symbol>
+<!-- Platform marks. Used nominatively — "this app runs on that OS" — not as
+     branding. Filled glyphs so they sit in the same chips as the model logos. -->
+<symbol id="lg-apple" viewBox="0 0 24 24"><path d="M17.05 12.54c-.03-3.02 2.46-4.47 2.58-4.54-1.41-2.05-3.59-2.34-4.37-2.37-1.86-.19-3.62 1.09-4.56 1.09-.95 0-2.4-1.07-3.94-1.04-2.02.03-3.89 1.18-4.93 2.99-2.1 3.64-.53 9.04 1.51 12 1 1.45 2.2 3.07 3.76 3.01 1.51-.06 2.08-.98 3.9-.98 1.83 0 2.34.98 3.93.95 1.62-.03 2.65-1.48 3.64-2.93 1.15-1.68 1.62-3.3 1.65-3.39-.04-.01-3.17-1.21-3.2-4.81zM14.09 4.11c.83-1.01 1.39-2.41 1.24-3.8-1.2.05-2.65.8-3.51 1.8-.77.89-1.45 2.32-1.27 3.69 1.34.1 2.71-.68 3.54-1.69z"/></symbol>
+<symbol id="lg-windows" viewBox="0 0 24 24"><path d="M2.6 4.85 11.05 3.7v8.02H2.6zM12.1 3.55 21.4 2.3v9.42h-9.3zM2.6 12.78h8.45v8.03L2.6 19.66zM12.1 12.78h9.3v9.42l-9.3-1.25z"/></symbol>
+<!-- Tux, reduced to a silhouette: narrow head, wide body, two feet. Eyes and
+     beak are holes in the same path (fill-rule evenodd) rather than shapes
+     filled with the chip colour, so the mark survives a background change.
+     The feet sit just clear of the body — overlap would punch holes too. -->
+<symbol id="lg-linux" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 1.6c-2.05 0-3.7 1.75-3.7 3.9 0 .95-.3 1.75-.9 2.5-1.9 2.35-3.2 5-3.5 7.05-.18 1.2.25 2 1.05 2.25.8.25 1.7-.25 2.35-1.35.35 2.9 2.5 4.55 4.7 4.55s4.35-1.65 4.7-4.55c.65 1.1 1.55 1.6 2.35 1.35.8-.25 1.23-1.05 1.05-2.25-.3-2.05-1.6-4.7-3.5-7.05-.6-.75-.9-1.55-.9-2.5 0-2.15-1.65-3.9-3.7-3.9zm-1.4 2.4a1.05 1.45 0 0 1 0 2.9 1.05 1.45 0 0 1 0-2.9zm2.8 0a1.05 1.45 0 0 1 0 2.9 1.05 1.45 0 0 1 0-2.9zM12 7.2l2.3 1.5-2.3 1.3-2.3-1.3zM9.4 20.8a2.35 1.25 0 0 1 0 2.5 2.35 1.25 0 0 1 0-2.5zm5.2 0a2.35 1.25 0 0 1 0 2.5 2.35 1.25 0 0 1 0-2.5z"/></symbol>
 </defs></svg>
 
 <div class="substrate"></div>
@@ -1479,6 +1820,94 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         </div>
         <div class="footprint"></div>
       </div>
+    </div>
+  </section>
+  <!-- ---- orientation: what to distrust, and what is coming ---- -->
+  <!-- Stated before any number is shown, so the caveats read as honesty
+       rather than as excuses made after someone challenges a figure. -->
+  <section class="slide" data-section="0">
+    <div class="slide-inner">
+      <div class="eyebrow">Before we start</div>
+      <h2>Two disclaimers, then the map</h2>
+
+      <div class="orient">
+        <div class="orient-panel">
+          <div class="dis">
+            <span class="dis-n">01</span>
+            <div>
+              <span class="dis-k">This ages fast</span>
+              <p>Some of what follows is already out of date &mdash; models, apps and
+                hardware all move faster than a slide deck. The shape of it holds.
+                Treat tonight as an entry point, not a reference.</p>
+            </div>
+          </div>
+          <div class="dis">
+            <span class="dis-n">02</span>
+            <div>
+              <span class="dis-k">Every number is an order of magnitude</span>
+              <p>Not a benchmark. Architectures differ, machines differ, and the
+                same model on two laptops will not behave the same. The figures are
+                here to make the <em>relationships</em> visible. For real numbers,
+                read the official docs &mdash; or measure your own machine.</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="toc" aria-label="Workshop contents">
+          <div class="toc-k">Tonight &middot; 2 hours</div>
+          <button type="button" class="toc-item" data-goto="0">
+            <span class="toc-n">00</span>
+            <span class="toc-t">Why bother?</span>
+            <span class="toc-m">10m</span>
+            <span class="toc-w">Privacy, offline, no meter, no subscription.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="1">
+            <span class="toc-n">01</span>
+            <span class="toc-t">First win</span>
+            <span class="toc-m">20m</span>
+            <span class="toc-w">Install, download, send one message. Hands on keyboards.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="2">
+            <span class="toc-n">02</span>
+            <span class="toc-t">What just happened</span>
+            <span class="toc-m">15m</span>
+            <span class="toc-w">Where models come from, and what the app is wrapping.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="3">
+            <span class="toc-n">03</span>
+            <span class="toc-t">Hardware &amp; the one formula</span>
+            <span class="toc-m">20m</span>
+            <span class="toc-w">Why speed is a memory problem &mdash; and where it is not.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="4">
+            <span class="toc-n">04</span>
+            <span class="toc-t">Quantization</span>
+            <span class="toc-m">20m</span>
+            <span class="toc-w">Making a model smaller, and what it costs you.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="5">
+            <span class="toc-n">05</span>
+            <span class="toc-t">Context &amp; KV cache</span>
+            <span class="toc-m">15m</span>
+            <span class="toc-w">The memory that grows while you talk.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="6">
+            <span class="toc-n">06</span>
+            <span class="toc-t">Good at / bad at</span>
+            <span class="toc-m">10m</span>
+            <span class="toc-w">What a small model is genuinely for.</span>
+          </button>
+          <button type="button" class="toc-item" data-goto="7">
+            <span class="toc-n">07</span>
+            <span class="toc-t">The horizon</span>
+            <span class="toc-m">10m</span>
+            <span class="toc-w">Two models that break the arithmetic you are about to learn.</span>
+          </button>
+        </nav>
+      </div>
+
+      <p class="caveat">Any line above is clickable, and so is the index down the left
+        edge &mdash; nothing here has to be walked through in order.</p>
     </div>
   </section>
   <!-- ============ §0 ============ -->
@@ -1557,7 +1986,64 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <!-- TO BUILD: install checklist -->
     </div>
   </section>
+  <!-- ---- 1 · get the app ---- -->
+  <!-- The one slide that has to survive a bad projector and a room of
+       people typing. Big icon, one URL, one QR — nothing else competes. -->
+  <section class="slide" data-section="1">
+    <div class="slide-inner">
+      <div class="eyebrow">01 &mdash; Step one</div>
+      <h2>Install LM Studio. Free, and it runs on all three.</h2>
 
+      <div class="dl">
+        <div class="dl-panel dl-app">
+          <img class="dl-icon" src="data:image/webp;base64,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"
+               alt="LM Studio app icon" width="256" height="256">
+          <div class="dl-name">LM&nbsp;Studio</div>
+          <div class="dl-desc">A desktop app that finds, downloads and runs
+            local models, with a chat window on top.</div>
+          <div class="dl-os">
+            <span class="dl-plat">
+              <span class="chip"><svg><use href="#lg-apple"/></svg></span>
+              <span class="dl-p-k">macOS</span>
+              <span class="dl-p-v">Apple silicon &middot; M1 and later</span>
+            </span>
+            <span class="dl-plat">
+              <span class="chip"><svg><use href="#lg-windows"/></svg></span>
+              <span class="dl-p-k">Windows</span>
+              <span class="dl-p-v">x64 &middot; ARM64</span>
+            </span>
+            <span class="dl-plat">
+              <span class="chip"><svg><use href="#lg-linux"/></svg></span>
+              <span class="dl-p-k">Linux</span>
+              <span class="dl-p-v">x64 &middot; AppImage</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="dl-panel dl-get">
+          <div class="dl-k">Scan, or type it in</div>
+          <div class="dl-qr"><!-- QR for https://lmstudio.ai/download — generated once with segno
+     (ECC level M, 33x33) and committed, so the build stays stdlib-only
+     and nothing is fetched at runtime. Payload verified by decoding the
+     rendered code. Dark modules use currentColor over a light plate;
+     scanners need dark-on-light, so the plate is not optional. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" class="qr" shape-rendering="crispEdges" role="img" aria-label="QR code linking to lmstudio.ai/download"><path class="qrm" stroke="currentColor" d="M2 2.5h7m1 0h1m1 0h1m3 0h2m2 0h2m2 0h7m-29 1h1m5 0h1m1 0h1m2 0h1m1 0h4m2 0h2m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m5 0h3m3 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h1m3 0h1m2 0h3m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h4m1 0h1m2 0h1m2 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h1m2 0h1m1 0h1m2 0h4m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h1m2 0h2m1 0h1m2 0h1m1 0h2m-20 1h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m3 0h3m1 0h1m1 0h5m-29 1h1m2 0h3m3 0h1m1 0h1m1 0h1m2 0h2m2 0h1m1 0h1m2 0h1m2 0h1m-29 1h1m2 0h1m1 0h2m1 0h1m1 0h1m1 0h2m1 0h2m6 0h1m1 0h4m-28 1h1m3 0h1m1 0h1m2 0h3m3 0h2m2 0h3m1 0h1m2 0h1m-27 1h1m1 0h1m2 0h2m1 0h2m2 0h1m1 0h3m1 0h2m1 0h2m-24 1h1m6 0h2m2 0h3m1 0h1m1 0h2m1 0h4m3 0h2m-28 1h1m3 0h2m1 0h1m2 0h1m2 0h2m2 0h1m1 0h4m2 0h3m-28 1h1m1 0h1m1 0h1m1 0h2m2 0h1m3 0h3m1 0h2m1 0h2m3 0h2m-29 1h2m1 0h2m1 0h3m1 0h1m3 0h1m1 0h1m1 0h5m2 0h1m1 0h1m-27 1h1m3 0h1m2 0h3m2 0h1m1 0h3m2 0h3m2 0h4m-29 1h1m2 0h1m2 0h3m2 0h2m2 0h2m3 0h2m2 0h5m-28 1h3m4 0h2m1 0h2m1 0h1m1 0h5m1 0h1m2 0h1m1 0h1m-28 1h1m2 0h1m2 0h1m1 0h1m1 0h3m2 0h3m1 0h6m2 0h1m-20 1h2m1 0h4m1 0h1m2 0h2m3 0h1m2 0h2m-29 1h7m1 0h2m2 0h1m4 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m-29 1h1m5 0h1m2 0h2m1 0h1m2 0h1m4 0h1m3 0h1m3 0h1m-29 1h1m1 0h3m1 0h1m1 0h5m1 0h2m4 0h6m1 0h1m-28 1h1m1 0h3m1 0h1m2 0h1m4 0h2m1 0h1m2 0h2m2 0h1m1 0h1m-27 1h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m4 0h1m3 0h3m2 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m3 0h2m1 0h1m1 0h2m1 0h2m3 0h1m-28 1h7m2 0h1m1 0h1m2 0h1m1 0h2m1 0h2m3 0h1m2 0h2"/></svg></div>
+          <a class="dl-url" href="https://lmstudio.ai/download">lmstudio.ai/download</a>
+          <div class="dl-steps">
+            <span><i>1</i>Download and open it</span>
+            <span><i>2</i>Skip the onboarding model</span>
+            <span><i>3</i>Next slide: pick yours</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Take plain LM Studio, not LM Studio Bionic.</strong> Bionic
+        is a second, separate app from the same team &mdash; a coding and document agent
+        that sits <em>on top of</em> local models. It is not a newer version of this one,
+        and the two are meant to be installed side by side. Tonight we want the app that
+        downloads and runs the model.</p>
+    </div>
+  </section>
   <!-- ---- 1 · pick a model ---- -->
   <section class="slide" data-section="1">
     <div class="slide-inner">
@@ -1859,7 +2345,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <p class="eq-caption">The through-line of this entire workshop</p>
 
       <!-- The asymmetry is the whole reason the two machines in §3 behave
-           differently. Stated here, made visible on the next two slides. -->
+           differently. Stated here; decode is made visible on the next two
+           slides, prefill on the one after those. -->
       <div class="phases">
         <div class="phase">
           <div class="ph-k">Prefill</div>
@@ -2004,6 +2491,90 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.</p>
     </div>
   </section>
+  <!-- ---- 3 · the other half of the formula ---- -->
+  <!-- Decode has had two slides. This is the phase nobody feels until the
+       prompt gets long, and it is the one where the ranking flips hardest. -->
+  <section class="slide" data-section="3" id="s-prefill">
+    <div class="slide-inner">
+      <div class="eyebrow">03 &mdash; Prefill</div>
+      <h2>Same two machines. Now watch who answers first.</h2>
+
+      <div class="pf-controls">
+        <div class="ctrl">
+          <span class="ctrl-label" id="pfLenLabel">Prompt</span>
+          <div class="seg" id="pfLen" role="group" aria-labelledby="pfLenLabel">
+            <button type="button" data-n="300">A question &middot; 300</button>
+            <button type="button" data-n="2000" class="on" aria-pressed="true">A page &middot; 2,000</button>
+            <button type="button" data-n="8000">A chapter &middot; 8,000</button>
+          </div>
+        </div>
+        <button type="button" class="pf-send" id="pfSend">Send &#9654;</button>
+        <span class="pf-note mono">Real time &mdash; nothing here is sped up</span>
+      </div>
+
+      <div class="pf-grid">
+        <div class="pf-lane" data-m="pc">
+          <div class="pf-head">
+            <div>
+              <span class="pf-name">Desktop PC</span>
+              <span class="pf-sub">RTX 5090 &middot; &asymp;105 TFLOPS fp16</span>
+            </div>
+            <div class="pf-ttft">
+              <span class="pf-t-num" id="pf-ttft-pc">&mdash;</span><span class="pf-t-unit">s to first token</span>
+            </div>
+          </div>
+          <div class="pf-phase">
+            <span class="pf-p-k" id="pf-state-pc">Waiting</span>
+            <span class="pf-p-c" id="pf-read-pc">0 / 2,000 read</span>
+          </div>
+          <div class="pf-bar"><div class="pf-fill" id="pf-fill-pc"></div></div>
+          <div class="pf-stream" id="pf-stream-pc" aria-hidden="true"></div>
+          <div class="pf-stats">
+            <span><i>Prefill</i><b id="pf-pp-pc">10,400</b> tok/s</span>
+            <span><i>Decode</i><b id="pf-tg-pc">186</b> tok/s</span>
+            <span><i>Elapsed</i><b id="pf-el-pc">0.00</b> s</span>
+          </div>
+        </div>
+
+        <div class="pf-lane" data-m="mac">
+          <div class="pf-head">
+            <div>
+              <span class="pf-name">MacBook Pro</span>
+              <span class="pf-sub">M5 Max &middot; &asymp;70 TFLOPS fp16</span>
+            </div>
+            <div class="pf-ttft">
+              <span class="pf-t-num" id="pf-ttft-mac">&mdash;</span><span class="pf-t-unit">s to first token</span>
+            </div>
+          </div>
+          <div class="pf-phase">
+            <span class="pf-p-k" id="pf-state-mac">Waiting</span>
+            <span class="pf-p-c" id="pf-read-mac">0 / 2,000 read</span>
+          </div>
+          <div class="pf-bar"><div class="pf-fill" id="pf-fill-mac"></div></div>
+          <div class="pf-stream" id="pf-stream-mac" aria-hidden="true"></div>
+          <div class="pf-stats">
+            <span><i>Prefill</i><b id="pf-pp-mac">900</b> tok/s</span>
+            <span><i>Decode</i><b id="pf-tg-mac">85</b> tok/s</span>
+            <span><i>Elapsed</i><b id="pf-el-mac">0.00</b> s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pf-verdict">
+        <span class="pf-v-k">The asymmetry</span>
+        <span class="pf-v-t" id="pfVerdict">The Mac is <b>2.2&times;</b> behind on writing &mdash;
+          and <b>11.6&times;</b> behind on reading.</span>
+      </div>
+
+      <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
+        The 5090 has roughly three times the Mac's bandwidth but more than ten times its
+        useful matrix compute &mdash; so which phase you are in decides how big the gap
+        feels. Figures are for an 8&nbsp;B model at 4&#8209;bit; the Mac's prefill is the
+        conservative end of a wide range, because MLX uses the M5's neural accelerators
+        and llama.cpp does not yet. Attention is also quadratic, so a really long prompt
+        is worse than this straight line suggests.</p>
+    </div>
+  </section>
   <!-- ============ §4 ============ -->
   <section class="slide section-card" data-section="4">
     <div class="slide-inner">
@@ -2072,7 +2643,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   <section class="slide" data-section="4" id="s-calc">
     <div class="slide-inner">
       <div class="eyebrow">04 &mdash; Napkin math</div>
-      <h2>Parameters &times; bytes = the number that decides everything</h2>
+      <h2>Count the weights, count the bits, divide by eight</h2>
 
       <div class="mc">
         <div class="mc-panel mc-controls">
@@ -2113,8 +2684,21 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
             <span class="ctrl-unit">GB</span>
           </div>
 
+          <!-- Set as a fraction rather than "× 0.50 bytes": a beginner has no
+               feel for half a byte, but everyone can divide by 8. The ÷ 8 is
+               the entire bits-to-bytes conversion, shown rather than absorbed
+               into a decimal that arrives from nowhere. -->
           <div class="mc-math">
-            <span class="mc-eq" id="mcEq">8.0B &times; 0.50 bytes = 4.0 GB</span>
+            <div class="mc-frac">
+              <span class="mc-f-num">
+                <b id="mcFParams">8.0</b> billion weights
+                <span class="mc-f-op">&times;</span>
+                <b id="mcFBits">4</b> bits each
+              </span>
+              <span class="mc-f-den">8 <i>bits in a byte</i></span>
+            </div>
+            <span class="mc-f-rel">=</span>
+            <span class="mc-f-out"><b id="mcFGb">4.0</b> GB <i>billions of bytes</i></span>
             <span class="mc-eq-k">rule of thumb</span>
           </div>
         </div>
@@ -2471,6 +3055,14 @@ var railItems = Array.prototype.slice.call(rail.children);
 document.addEventListener('click', function (e) {
   var b = e.target.closest && e.target.closest('button');
   if (b && e.detail > 0) b.blur();
+});
+
+/* Anything anywhere in the deck can be a jump target — the contents slide
+   uses it, and the rail is really the same control in another shape.
+   Delegated, so a slide that adds one later needs no JS at all. */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('[data-goto]');
+  if (t) goToSection(parseInt(t.dataset.goto, 10));
 });
 
 function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -3569,7 +4161,9 @@ if (mcSlide) {
   var mcOuts = {
     params: document.getElementById('mcParamsOut'),
     mem:    document.getElementById('mcMemOut'),
-    eq:     document.getElementById('mcEq'),
+    fParams: document.getElementById('mcFParams'),
+    fBits:   document.getElementById('mcFBits'),
+    fGb:     document.getElementById('mcFGb'),
     size:   document.getElementById('mcSize'),
     delta:  document.getElementById('mcDelta'),
     bar:    document.getElementById('mcFitBar'),
@@ -3592,8 +4186,9 @@ if (mcSlide) {
 
     mcOuts.params.textContent = P.toFixed(1);
     mcOuts.mem.textContent = mem;
-    mcOuts.eq.textContent = P.toFixed(1) + 'B × ' + (mcBits / 8).toFixed(2) +
-      ' bytes = ' + napkin.toFixed(1) + ' GB';
+    mcOuts.fParams.textContent = P.toFixed(1);
+    mcOuts.fBits.textContent = mcBits;
+    mcOuts.fGb.textContent = napkin.toFixed(1);
     /* Always one decimal: the whole point of this readout is that it is
        NOT the round number the napkin gave, and rounding hides that. */
     mcOuts.size.textContent = real.toFixed(1);
@@ -4092,6 +4687,141 @@ if (bgSlide) {
     el.addEventListener('input', bgDraw);
   });
   bgDraw();
+}
+/* ==========================================================
+   PREFILL — TIME TO FIRST TOKEN, TWO MACHINES
+   Both lanes run on the wall clock, unscaled. Prefill is a rate in
+   tokens/sec and so is decode, so the whole thing is two stopwatches
+   and there is nothing to fudge: if the Mac takes nine seconds to read
+   a chapter, the room waits nine seconds.
+
+   Rates are for an 8B model at 4-bit. The 5090 figures are measured
+   llama.cpp runs; the M5 Max prefill is the conservative end of a wide
+   range, because MLX exploits the M5's neural accelerators and
+   llama.cpp does not yet. The slide says so on its face.
+   ========================================================== */
+var pfSlide = document.getElementById('s-prefill');
+if (pfSlide) {
+  var PF_REPLY = 120;            /* tokens of answer — a short paragraph */
+
+  var PF = [
+    { id: 'pc',  pp: 10400, tg: 186 },
+    { id: 'mac', pp: 900,   tg: 85  }
+  ];
+
+  var pfSend = document.getElementById('pfSend');
+  var pfPrompt = 2000;
+
+  PF.forEach(function (m) {
+    m.root   = pfSlide.querySelector('.pf-lane[data-m="' + m.id + '"]');
+    m.fill   = document.getElementById('pf-fill-' + m.id);
+    m.state  = document.getElementById('pf-state-' + m.id);
+    m.read   = document.getElementById('pf-read-' + m.id);
+    m.ttft   = document.getElementById('pf-ttft-' + m.id);
+    m.el     = document.getElementById('pf-el-' + m.id);
+    m.stream = document.getElementById('pf-stream-' + m.id);
+    document.getElementById('pf-pp-' + m.id).textContent = m.pp.toLocaleString('en-US');
+    document.getElementById('pf-tg-' + m.id).textContent = m.tg;
+    /* The blocks exist from the start and are only switched on. Appending
+       nodes inside the animation frame is what makes a stream stutter. */
+    m.blocks = [];
+    for (var i = 0; i < PF_REPLY; i++) {
+      var b = document.createElement('i');
+      m.stream.appendChild(b);
+      m.blocks.push(b);
+    }
+  });
+
+  function pfSecs(m) {
+    return { pre: pfPrompt / m.pp, dec: PF_REPLY / m.tg };
+  }
+
+  /* ---- paint one lane at a given elapsed time ---- */
+  function pfPaint(m, t) {
+    var s = pfSecs(m);
+    var reading = Math.min(t, s.pre);
+    var done = Math.min(Math.max(t - s.pre, 0) * m.tg, PF_REPLY);
+
+    m.fill.style.width = (reading / s.pre * 100) + '%';
+    m.read.textContent = Math.round(reading * m.pp).toLocaleString('en-US') +
+      ' / ' + pfPrompt.toLocaleString('en-US') + ' read';
+    m.el.textContent = Math.min(t, s.pre + s.dec).toFixed(2);
+
+    var phase = t < s.pre ? 'read' : (done < PF_REPLY ? 'write' : 'done');
+    m.root.classList.toggle('reading', phase === 'read');
+    m.root.classList.toggle('writing', phase === 'write');
+    m.state.textContent = phase === 'read' ? 'Reading the prompt — compute bound'
+      : phase === 'write' ? 'Writing — bandwidth bound'
+      : 'Done';
+    m.ttft.textContent = t < s.pre ? '—' : s.pre.toFixed(2);
+
+    var n = Math.floor(done);
+    if (n !== m.lit) {
+      for (var i = 0; i < PF_REPLY; i++) m.blocks[i].classList.toggle('on', i < n);
+      m.lit = n;
+    }
+  }
+
+  function pfReset() {
+    PF.forEach(function (m) { m.lit = -1; pfPaint(m, 0); });
+  }
+
+  /* ---- the run ---- */
+  var pfT0 = 0, pfRunning = false;
+
+  function pfFrame(now) {
+    if (!pfRunning) return;
+    var t = (now - pfT0) / 1000;
+    var longest = 0;
+    PF.forEach(function (m) {
+      var s = pfSecs(m);
+      longest = Math.max(longest, s.pre + s.dec);
+      pfPaint(m, t);
+    });
+    if (t >= longest) { pfRunning = false; return; }
+    requestAnimationFrame(pfFrame);
+  }
+
+  function pfRun() {
+    pfReset();
+    if (REDUCED) {                       /* jump to the finished state */
+      PF.forEach(function (m) { pfPaint(m, 1e6); });
+      return;
+    }
+    pfRunning = false;
+    requestAnimationFrame(function (now) {
+      pfT0 = now; pfRunning = true;
+      requestAnimationFrame(pfFrame);
+    });
+  }
+
+  /* ---- the ratio, spelled out ---- */
+  var pfVerdict = document.getElementById('pfVerdict');
+  function pfSay() {
+    var pc = PF[0], mac = PF[1];
+    pfVerdict.innerHTML = 'The Mac is <b>' + (pc.tg / mac.tg).toFixed(1) +
+      '&times;</b> behind on writing — and <b>' + (pc.pp / mac.pp).toFixed(1) +
+      '&times;</b> behind on reading.';
+  }
+  pfSay();
+
+  segGroup('#pfLen', function (btn) {
+    pfPrompt = parseInt(btn.dataset.n, 10);
+    pfRun();
+  });
+  pfSend.addEventListener('click', pfRun);
+
+  /* Landing on this slide should show the thing, not a dead diagram the
+     presenter has to remember to start. The deck fires its first
+     'deck:slide' while running goTo() at the bottom of deck.js — before
+     this file exists — so a deep link straight to this slide has to be
+     caught here rather than by the listener. */
+  document.addEventListener('deck:slide', function () {
+    if (pfSlide.classList.contains('active')) pfRun();
+    else pfRunning = false;
+  });
+  if (pfSlide.classList.contains('active')) pfRun();
+  else pfReset();
 }
 })();
 </script>
