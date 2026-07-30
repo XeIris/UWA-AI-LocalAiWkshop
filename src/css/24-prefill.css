@@ -108,7 +108,12 @@
   letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
 }
 .pf-v-t { font-size: 1.06rem; color: var(--ink-mid); }
-.pf-v-t b { color: var(--ink); font-weight: 600; }
+/* The two ratios are the payload of this line, and every number in the
+   deck is monospace. */
+.pf-v-t b {
+  font-family: var(--mono); font-weight: 400;
+  color: var(--ink); letter-spacing: -0.02em;
+}
 
 @media (max-width: 900px) {
   .pf-grid { grid-template-columns: 1fr; gap: 0.7rem; }

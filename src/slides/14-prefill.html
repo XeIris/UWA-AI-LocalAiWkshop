@@ -10,13 +10,13 @@
         <div class="ctrl">
           <span class="ctrl-label" id="pfLenLabel">Prompt</span>
           <div class="seg" id="pfLen" role="group" aria-labelledby="pfLenLabel">
-            <button type="button" data-n="300">A question &middot; 300</button>
+            <button type="button" data-n="300" aria-pressed="false">A question &middot; 300</button>
             <button type="button" data-n="2000" class="on" aria-pressed="true">A page &middot; 2,000</button>
-            <button type="button" data-n="8000">A chapter &middot; 8,000</button>
+            <button type="button" data-n="8000" aria-pressed="false">A chapter &middot; 8,000</button>
           </div>
         </div>
         <button type="button" class="pf-send" id="pfSend">Send &#9654;</button>
-        <span class="pf-note mono">Real time &mdash; nothing here is sped up</span>
+        <span class="pf-note mono">Clock is real time &middot; rates are estimates for one 8B at 4&#8209;bit</span>
       </div>
 
       <div class="pf-grid">
@@ -24,7 +24,7 @@
           <div class="pf-head">
             <div>
               <span class="pf-name">Desktop PC</span>
-              <span class="pf-sub">RTX 5090 &middot; &asymp;105 TFLOPS fp16</span>
+              <span class="pf-sub">RTX 5090 &middot; &asymp;210 TFLOPS fp16 peak, est.</span>
             </div>
             <div class="pf-ttft">
               <span class="pf-t-num" id="pf-ttft-pc">&mdash;</span><span class="pf-t-unit">s to first token</span>
@@ -47,7 +47,7 @@
           <div class="pf-head">
             <div>
               <span class="pf-name">MacBook Pro</span>
-              <span class="pf-sub">M5 Max &middot; &asymp;70 TFLOPS fp16</span>
+              <span class="pf-sub">M5 Max &middot; &asymp;35&ndash;40 TFLOPS fp16 peak, est.</span>
             </div>
             <div class="pf-ttft">
               <span class="pf-t-num" id="pf-ttft-mac">&mdash;</span><span class="pf-t-unit">s to first token</span>
@@ -74,11 +74,14 @@
       </div>
 
       <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
-        The 5090 has roughly three times the Mac's bandwidth but more than ten times its
-        useful matrix compute &mdash; so which phase you are in decides how big the gap
-        feels. Figures are for an 8&nbsp;B model at 4&#8209;bit; the Mac's prefill is the
-        conservative end of a wide range, because MLX uses the M5's neural accelerators
-        and llama.cpp does not yet. Attention is also quadratic, so a really long prompt
-        is worse than this straight line suggests.</p>
+        The 5090 has roughly three times the Mac's bandwidth but around five times its
+        peak matrix compute &mdash; so which phase you are in decides how big the gap
+        feels. The measured prefill gap is wider still, because llama.cpp's CUDA path is
+        mature and its Metal path does not yet use the matrix units built into the
+        M5&nbsp;GPU (Apple calls them Neural Accelerators; they are not the separate
+        Neural Engine, which no local runtime uses). Every rate here is an
+        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit, not
+        a benchmark of your machine &mdash; only the clock is real. Attention is also
+        quadratic, so a really long prompt is worse than this straight line suggests.</p>
     </div>
   </section>

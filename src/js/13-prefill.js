@@ -76,11 +76,16 @@ if (pfSlide) {
     PF.forEach(function (m) { m.lit = -1; pfPaint(m, 0); });
   }
 
-  /* ---- the run ---- */
-  var pfT0 = 0, pfRunning = false;
+  /* ---- the run ----
+     Every run carries an id. Starting a new one (a preset click, or
+     landing on the slide again) invalidates the frames still queued from
+     the last, which otherwise keep painting the same lanes from a
+     different t0 — two clocks writing the same readout. The active check
+     stops a run that was queued a frame before the deck moved on. */
+  var pfT0 = 0, pfRunning = false, pfRunId = 0;
 
-  function pfFrame(now) {
-    if (!pfRunning) return;
+  function pfFrame(now, id) {
+    if (!pfRunning || id !== pfRunId || !pfSlide.classList.contains('active')) return;
     var t = (now - pfT0) / 1000;
     var longest = 0;
     PF.forEach(function (m) {
@@ -89,19 +94,21 @@ if (pfSlide) {
       pfPaint(m, t);
     });
     if (t >= longest) { pfRunning = false; return; }
-    requestAnimationFrame(pfFrame);
+    requestAnimationFrame(function (next) { pfFrame(next, id); });
   }
 
   function pfRun() {
+    var id = ++pfRunId;
+    pfRunning = false;
     pfReset();
     if (REDUCED) {                       /* jump to the finished state */
       PF.forEach(function (m) { pfPaint(m, 1e6); });
       return;
     }
-    pfRunning = false;
     requestAnimationFrame(function (now) {
+      if (id !== pfRunId || !pfSlide.classList.contains('active')) return;
       pfT0 = now; pfRunning = true;
-      requestAnimationFrame(pfFrame);
+      requestAnimationFrame(function (next) { pfFrame(next, id); });
     });
   }
 

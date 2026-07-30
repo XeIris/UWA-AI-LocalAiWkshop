@@ -1760,7 +1760,12 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
 }
 .pf-v-t { font-size: 1.06rem; color: var(--ink-mid); }
-.pf-v-t b { color: var(--ink); font-weight: 600; }
+/* The two ratios are the payload of this line, and every number in the
+   deck is monospace. */
+.pf-v-t b {
+  font-family: var(--mono); font-weight: 400;
+  color: var(--ink); letter-spacing: -0.02em;
+}
 
 @media (max-width: 900px) {
   .pf-grid { grid-template-columns: 1fr; gap: 0.7rem; }
@@ -1911,7 +1916,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
     </div>
   </section>
   <!-- ============ §0 ============ -->
-  <section class="slide section-card" data-section="0">
+  <!-- data-anchor: §0 is the one section whose card is not its first slide
+       (the cover and the orientation slide come first), so it has to name
+       itself as the jump target. -->
+  <section class="slide section-card" data-section="0" data-anchor>
     <div class="slide-inner">
       <div class="num">00</div>
       <div class="eyebrow">Section 00</div>
@@ -2039,9 +2047,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 
       <p class="caveat"><strong>Take plain LM Studio, not LM Studio Bionic.</strong> Bionic
         is a second, separate app from the same team &mdash; a coding and document agent
-        that sits <em>on top of</em> local models. It is not a newer version of this one,
-        and the two are meant to be installed side by side. Tonight we want the app that
-        downloads and runs the model.</p>
+        that runs <em>on top of</em> a model, and it can point at open models in the cloud
+        as well as local ones, so it is not automatically offline the way this app is. It
+        is not a newer version of this one; the two are meant to be installed side by
+        side. Tonight we want the app that downloads and runs the model.</p>
     </div>
   </section>
   <!-- ---- 1 · pick a model ---- -->
@@ -2503,13 +2512,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         <div class="ctrl">
           <span class="ctrl-label" id="pfLenLabel">Prompt</span>
           <div class="seg" id="pfLen" role="group" aria-labelledby="pfLenLabel">
-            <button type="button" data-n="300">A question &middot; 300</button>
+            <button type="button" data-n="300" aria-pressed="false">A question &middot; 300</button>
             <button type="button" data-n="2000" class="on" aria-pressed="true">A page &middot; 2,000</button>
-            <button type="button" data-n="8000">A chapter &middot; 8,000</button>
+            <button type="button" data-n="8000" aria-pressed="false">A chapter &middot; 8,000</button>
           </div>
         </div>
         <button type="button" class="pf-send" id="pfSend">Send &#9654;</button>
-        <span class="pf-note mono">Real time &mdash; nothing here is sped up</span>
+        <span class="pf-note mono">Clock is real time &middot; rates are estimates for one 8B at 4&#8209;bit</span>
       </div>
 
       <div class="pf-grid">
@@ -2517,7 +2526,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <div class="pf-head">
             <div>
               <span class="pf-name">Desktop PC</span>
-              <span class="pf-sub">RTX 5090 &middot; &asymp;105 TFLOPS fp16</span>
+              <span class="pf-sub">RTX 5090 &middot; &asymp;210 TFLOPS fp16 peak, est.</span>
             </div>
             <div class="pf-ttft">
               <span class="pf-t-num" id="pf-ttft-pc">&mdash;</span><span class="pf-t-unit">s to first token</span>
@@ -2540,7 +2549,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <div class="pf-head">
             <div>
               <span class="pf-name">MacBook Pro</span>
-              <span class="pf-sub">M5 Max &middot; &asymp;70 TFLOPS fp16</span>
+              <span class="pf-sub">M5 Max &middot; &asymp;35&ndash;40 TFLOPS fp16 peak, est.</span>
             </div>
             <div class="pf-ttft">
               <span class="pf-t-num" id="pf-ttft-mac">&mdash;</span><span class="pf-t-unit">s to first token</span>
@@ -2567,12 +2576,15 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       </div>
 
       <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
-        The 5090 has roughly three times the Mac's bandwidth but more than ten times its
-        useful matrix compute &mdash; so which phase you are in decides how big the gap
-        feels. Figures are for an 8&nbsp;B model at 4&#8209;bit; the Mac's prefill is the
-        conservative end of a wide range, because MLX uses the M5's neural accelerators
-        and llama.cpp does not yet. Attention is also quadratic, so a really long prompt
-        is worse than this straight line suggests.</p>
+        The 5090 has roughly three times the Mac's bandwidth but around five times its
+        peak matrix compute &mdash; so which phase you are in decides how big the gap
+        feels. The measured prefill gap is wider still, because llama.cpp's CUDA path is
+        mature and its Metal path does not yet use the matrix units built into the
+        M5&nbsp;GPU (Apple calls them Neural Accelerators; they are not the separate
+        Neural Engine, which no local runtime uses). Every rate here is an
+        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit, not
+        a benchmark of your machine &mdash; only the clock is real. Attention is also
+        quadratic, so a really long prompt is worse than this straight line suggests.</p>
     </div>
   </section>
   <!-- ============ §4 ============ -->
@@ -3098,10 +3110,20 @@ function goTo(i) {
   render();
 }
 
+/* Jump to a section's landing slide. Normally that is simply the first
+   slide carrying the section number — but §0 owns the cover and the
+   orientation slide before its section card, so "00 · Why bother?"
+   navigated BACKWARDS to the cover. A slide can mark itself the landing
+   point with data-anchor; without one the first match still wins, so
+   every other section needs no attribute at all. */
 function goToSection(n) {
+  var first = -1;
   for (var i = 0; i < slides.length; i++) {
-    if (parseInt(slides[i].dataset.section, 10) === n) { goTo(i); return; }
+    if (parseInt(slides[i].dataset.section, 10) !== n) continue;
+    if (first < 0) first = i;
+    if (slides[i].dataset.anchor !== undefined) { goTo(i); return; }
   }
+  if (first >= 0) goTo(first);
 }
 
 document.addEventListener('keydown', function (e) {
@@ -4766,11 +4788,16 @@ if (pfSlide) {
     PF.forEach(function (m) { m.lit = -1; pfPaint(m, 0); });
   }
 
-  /* ---- the run ---- */
-  var pfT0 = 0, pfRunning = false;
+  /* ---- the run ----
+     Every run carries an id. Starting a new one (a preset click, or
+     landing on the slide again) invalidates the frames still queued from
+     the last, which otherwise keep painting the same lanes from a
+     different t0 — two clocks writing the same readout. The active check
+     stops a run that was queued a frame before the deck moved on. */
+  var pfT0 = 0, pfRunning = false, pfRunId = 0;
 
-  function pfFrame(now) {
-    if (!pfRunning) return;
+  function pfFrame(now, id) {
+    if (!pfRunning || id !== pfRunId || !pfSlide.classList.contains('active')) return;
     var t = (now - pfT0) / 1000;
     var longest = 0;
     PF.forEach(function (m) {
@@ -4779,19 +4806,21 @@ if (pfSlide) {
       pfPaint(m, t);
     });
     if (t >= longest) { pfRunning = false; return; }
-    requestAnimationFrame(pfFrame);
+    requestAnimationFrame(function (next) { pfFrame(next, id); });
   }
 
   function pfRun() {
+    var id = ++pfRunId;
+    pfRunning = false;
     pfReset();
     if (REDUCED) {                       /* jump to the finished state */
       PF.forEach(function (m) { pfPaint(m, 1e6); });
       return;
     }
-    pfRunning = false;
     requestAnimationFrame(function (now) {
+      if (id !== pfRunId || !pfSlide.classList.contains('active')) return;
       pfT0 = now; pfRunning = true;
-      requestAnimationFrame(pfFrame);
+      requestAnimationFrame(function (next) { pfFrame(next, id); });
     });
   }
 
