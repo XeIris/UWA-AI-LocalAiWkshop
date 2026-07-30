@@ -15,7 +15,9 @@ if (mcSlide) {
   var mcOuts = {
     params: document.getElementById('mcParamsOut'),
     mem:    document.getElementById('mcMemOut'),
-    eq:     document.getElementById('mcEq'),
+    fParams: document.getElementById('mcFParams'),
+    fBits:   document.getElementById('mcFBits'),
+    fGb:     document.getElementById('mcFGb'),
     size:   document.getElementById('mcSize'),
     delta:  document.getElementById('mcDelta'),
     bar:    document.getElementById('mcFitBar'),
@@ -38,8 +40,9 @@ if (mcSlide) {
 
     mcOuts.params.textContent = P.toFixed(1);
     mcOuts.mem.textContent = mem;
-    mcOuts.eq.textContent = P.toFixed(1) + 'B × ' + (mcBits / 8).toFixed(2) +
-      ' bytes = ' + napkin.toFixed(1) + ' GB';
+    mcOuts.fParams.textContent = P.toFixed(1);
+    mcOuts.fBits.textContent = mcBits;
+    mcOuts.fGb.textContent = napkin.toFixed(1);
     /* Always one decimal: the whole point of this readout is that it is
        NOT the round number the napkin gave, and rounding hides that. */
     mcOuts.size.textContent = real.toFixed(1);

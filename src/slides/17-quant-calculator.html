@@ -2,7 +2,7 @@
   <section class="slide" data-section="4" id="s-calc">
     <div class="slide-inner">
       <div class="eyebrow">04 &mdash; Napkin math</div>
-      <h2>Parameters &times; bytes = the number that decides everything</h2>
+      <h2>Count the weights, count the bits, divide by eight</h2>
 
       <div class="mc">
         <div class="mc-panel mc-controls">
@@ -43,8 +43,21 @@
             <span class="ctrl-unit">GB</span>
           </div>
 
+          <!-- Set as a fraction rather than "× 0.50 bytes": a beginner has no
+               feel for half a byte, but everyone can divide by 8. The ÷ 8 is
+               the entire bits-to-bytes conversion, shown rather than absorbed
+               into a decimal that arrives from nowhere. -->
           <div class="mc-math">
-            <span class="mc-eq" id="mcEq">8.0B &times; 0.50 bytes = 4.0 GB</span>
+            <div class="mc-frac">
+              <span class="mc-f-num">
+                <b id="mcFParams">8.0</b> billion weights
+                <span class="mc-f-op">&times;</span>
+                <b id="mcFBits">4</b> bits each
+              </span>
+              <span class="mc-f-den">8 <i>bits in a byte</i></span>
+            </div>
+            <span class="mc-f-rel">=</span>
+            <span class="mc-f-out"><b id="mcFGb">4.0</b> GB <i>billions of bytes</i></span>
             <span class="mc-eq-k">rule of thumb</span>
           </div>
         </div>

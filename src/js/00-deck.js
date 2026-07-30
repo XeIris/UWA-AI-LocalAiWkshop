@@ -34,6 +34,14 @@ document.addEventListener('click', function (e) {
   if (b && e.detail > 0) b.blur();
 });
 
+/* Anything anywhere in the deck can be a jump target — the contents slide
+   uses it, and the rail is really the same control in another shape.
+   Delegated, so a slide that adds one later needs no JS at all. */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('[data-goto]');
+  if (t) goToSection(parseInt(t.dataset.goto, 10));
+});
+
 function pad(n) { return (n < 10 ? '0' : '') + n; }
 
 function render() {
@@ -67,10 +75,20 @@ function goTo(i) {
   render();
 }
 
+/* Jump to a section's landing slide. Normally that is simply the first
+   slide carrying the section number — but §0 owns the cover and the
+   orientation slide before its section card, so "00 · Why bother?"
+   navigated BACKWARDS to the cover. A slide can mark itself the landing
+   point with data-anchor; without one the first match still wins, so
+   every other section needs no attribute at all. */
 function goToSection(n) {
+  var first = -1;
   for (var i = 0; i < slides.length; i++) {
-    if (parseInt(slides[i].dataset.section, 10) === n) { goTo(i); return; }
+    if (parseInt(slides[i].dataset.section, 10) !== n) continue;
+    if (first < 0) first = i;
+    if (slides[i].dataset.anchor !== undefined) { goTo(i); return; }
   }
+  if (first >= 0) goTo(first);
 }
 
 document.addEventListener('keydown', function (e) {

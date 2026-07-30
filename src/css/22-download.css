@@ -1,0 +1,84 @@
+/* --- get the app --------------------------------------------- */
+.dl { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.1rem; margin-top: 1.3rem; }
+.dl-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.4rem 1.5rem 1.5rem;
+  display: flex; flex-direction: column;
+}
+
+.dl-app { align-items: center; text-align: center; }
+/* The app icon ships with its own rounded-square silhouette baked in, so
+   it is placed rather than plated — no chip, no border fighting its edge. */
+.dl-icon { width: 7.2rem; height: 7.2rem; display: block; }
+.dl-name { font-size: 2rem; letter-spacing: -0.025em; margin-top: 0.9rem; font-weight: 640; }
+.dl-desc {
+  font-size: 1.02rem; color: var(--ink-mid);
+  max-width: 22rem; margin: 0.45rem 0 0; line-height: 1.35;
+}
+
+.dl-os {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; width: 100%;
+  margin-top: auto; padding-top: 1.4rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.dl-plat { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.dl-plat .chip { width: 2.7rem; height: 2.7rem; }
+.dl-p-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--accent);
+}
+.dl-p-v {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em;
+  color: var(--ink-dim); text-align: center;
+}
+
+/* --- the QR ---------------------------------------------------- */
+.dl-get { align-items: center; text-align: center; }
+.dl-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 1rem;
+}
+/* Scanners want dark modules on a light field, so the plate is functional,
+   not decorative — the same reason the MLX chip is white. */
+.dl-qr {
+  background: #fff; color: #05080b;
+  border-radius: var(--r-sm);
+  padding: 0.55rem; line-height: 0;
+}
+.dl-qr svg { width: 9.4rem; height: 9.4rem; display: block; }
+.dl-url {
+  font-family: var(--mono); font-size: 1.18rem;
+  letter-spacing: -0.01em; color: var(--accent);
+  margin-top: 1rem; text-decoration: none;
+  border-bottom: 1px solid var(--accent-lo);
+}
+.dl-url:hover { border-bottom-color: var(--accent); }
+
+.dl-steps {
+  display: flex; flex-direction: column; gap: 0.45rem;
+  width: 100%; text-align: left;
+  margin-top: auto; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.92rem; color: var(--ink-mid);
+}
+.dl-steps span { display: flex; align-items: center; gap: 0.7rem; }
+.dl-steps i {
+  flex: none; width: 1.4rem; height: 1.4rem;
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  font-family: var(--mono); font-style: normal; font-size: 0.68rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .dl { grid-template-columns: 1fr; gap: 0.7rem; }
+  .dl-panel { padding: 1rem 0.9rem; }
+  .dl-icon { width: 4.6rem; height: 4.6rem; }
+  .dl-name { font-size: 1.5rem; }
+  .dl-os { gap: 0.5rem; padding-top: 1rem; }
+  .dl-qr svg { width: 7rem; height: 7rem; }
+}
