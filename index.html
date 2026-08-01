@@ -1972,7 +1972,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .cs-av { width: 1.5rem; height: 1.5rem; border-radius: var(--r-sm); flex: none; }
 .k-local .cs-av { background: var(--accent); }
 .k-cloud .cs-av { background: var(--ink); }
-.k-math .cs-av, .k-truth .cs-av { background: var(--bg-raise); border: 1px solid var(--rule); }
+/* The arithmetic and the answer panels are not conversations at all, and
+   must not wear a contact avatar — with one they look like a chat window
+   in which nobody said anything. */
+.k-math .cs-av, .k-truth .cs-av { display: none; }
 .cs-nm {
   font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
 }
@@ -2010,9 +2013,16 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   display: flex; flex-direction: column; gap: 0.5rem;
   scroll-behavior: auto;
 }
-/* Chat windows fill from the bottom. Pushing the first message down with
-   auto margin does that without flex-end, which fights overflow. */
-.cs-thread > :first-child { margin-top: auto; }
+/* Deliberately NOT bottom-anchored, though a real chat app is.
+
+   These panels are a fixed 22rem and most scenarios are four or five
+   messages, so anchoring to the bottom left a large void above the first
+   message — and a void at the top of a chat reads as history that failed
+   to load, or a message that never sent. That is exactly how the two
+   shortest scenarios were being read. Filling from the top puts the empty
+   space at the bottom, where a composer would be, which reads as normal.
+   Overflow still scrolls to the tail, so nothing is lost when a scenario
+   does fill the panel. */
 .cs-msg {
   max-width: 84%; padding: 0.5rem 0.7rem;
   border-radius: var(--r-md);
