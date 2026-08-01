@@ -43,6 +43,7 @@
      hard-edged draughting look, 1 for the app-like rounding below, or
      anything between. Every rounded thing in the deck derives from it. */
   --r-scale: 1;
+  --r-xs:   calc(3px  * var(--r-scale));   /* tick boxes, swatches    */
   --r-sm:   calc(7px  * var(--r-scale));   /* chips, controls, bars   */
   --r-md:   calc(14px * var(--r-scale));   /* panels, tiles, cards    */
   --r-lg:   calc(20px * var(--r-scale));   /* large feature panels    */

@@ -1,3 +1,6 @@
+/* Tightened Aug 2026: at 16:9 the h2 wraps to two lines and the whole
+   slide clipped its own eyebrow and caveat off the top and bottom.
+   Spacing only — no figures or copy moved. */
 /* --- KV cache: the live formula ------------------------------- */
 /* Each term is a control below it, so the equation is not a picture of the
    arithmetic — it is the arithmetic, updating as the room watches. */
@@ -7,12 +10,12 @@
   background: var(--bg-panel);
   border: 1px solid var(--rule);
   border-radius: var(--r-lg);
-  padding: 1.1rem 1.4rem 1rem;
-  margin-top: 1.2rem;
+  padding: 0.8rem 1.4rem 0.7rem;
+  margin-top: 0.9rem;
 }
 .kv-t { display: flex; flex-direction: column; align-items: center; min-width: 3.4rem; }
 .kv-t b {
-  font-family: var(--mono); font-size: 1.85rem; font-weight: 500;
+  font-family: var(--mono); font-size: 1.7rem; font-weight: 500;
   color: var(--ink); letter-spacing: -0.03em; line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -23,24 +26,24 @@
 }
 .kv-x {
   font-family: var(--mono); font-size: 1.2rem; color: var(--accent-lo);
-  padding-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
 }
 .kv-res b { color: var(--accent); text-shadow: 0 0 1.6rem var(--accent-glow); }
 .kv-res em { color: var(--accent); }
 
-.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 1.1rem; }
+.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 0.8rem; }
 .kv-panel {
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
   border-radius: var(--r-md);
-  padding: 1rem 1.2rem 1.2rem;
+  padding: 0.85rem 1.2rem 0.9rem;
   display: flex; flex-direction: column;
 }
-.kv-controls .ctrl { margin-top: 0.8rem; align-items: flex-start; flex-direction: column; gap: 0.45rem; }
+.kv-controls .ctrl { margin-top: 0.55rem; align-items: flex-start; flex-direction: column; gap: 0.45rem; }
 .kv-controls .ctrl:first-child { margin-top: 0; }
 .kv-controls .seg { flex-wrap: wrap; }
 
-.kv-stats { margin: auto 0 0; padding-top: 1rem; display: grid; gap: 0.6rem; }
+.kv-stats { margin: auto 0 0; padding-top: 0.7rem; display: grid; gap: 0.45rem; }
 .kv-stats div {
   border-top: 1px solid var(--rule-soft); padding-top: 0.5rem;
   display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem;

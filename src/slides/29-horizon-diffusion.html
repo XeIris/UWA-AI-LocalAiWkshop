@@ -1,0 +1,66 @@
+  <!-- ---- 7 · a different shape of generation ---- -->
+  <!-- The closing beat. Every formula in §3 assumed one token per pass;
+       this is the slide where that assumption stops being free. -->
+  <section class="slide" data-section="7" id="s-diff">
+    <div class="slide-inner">
+      <div class="eyebrow">07 &mdash; Diffusion</div>
+      <h2>What if it stopped writing left to right?</h2>
+
+      <div class="df-controls">
+        <button type="button" class="df-run" id="dfRun">Generate 512 tokens &#9654;</button>
+        <span class="df-note mono">Both lanes at 2.5&times; slow motion &middot; same slowdown, so
+          the ratio on screen is the real one</span>
+      </div>
+
+      <div class="df-grid">
+        <div class="df-lane" data-m="ar">
+          <div class="df-head">
+            <div>
+              <span class="df-name">Autoregressive</span>
+              <span class="df-sub">Every model you ran tonight</span>
+            </div>
+            <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
+          </div>
+          <canvas id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
+          <div class="df-stats">
+            <span><i>Per pass</i><b>1 token</b></span>
+            <span><i>Rate</i><b id="df-r-ar">&asymp;250</b> tok/s</span>
+            <span><i>Passes</i><b id="df-p-ar">0</b></span>
+          </div>
+        </div>
+
+        <div class="df-lane" data-m="df">
+          <div class="df-head">
+            <div>
+              <span class="df-name">Diffusion</span>
+              <span class="df-sub">DiffusionGemma &middot; Google DeepMind, Jun 2026</span>
+            </div>
+            <div class="df-clock"><span id="df-el-df">0.00</span><i>s</i></div>
+          </div>
+          <canvas id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
+          <div class="df-stats">
+            <span><i>Per pass</i><b>256 tokens</b></span>
+            <span><i>Rate</i><b id="df-r-df">&gt;1,000</b> tok/s</span>
+            <span><i>Passes</i><b id="df-p-df">0</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="df-verdict">
+        <span class="df-v-k">Where the bottleneck went</span>
+        <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
+          <b>per token</b>. Diffusion reads them once <b>per block</b> &mdash; so the memory
+          bus stops being the wall, and arithmetic becomes it instead.</span>
+      </div>
+
+      <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
+        <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
+        produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
+        which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
+        compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
+        experts with 3.8&nbsp;B active, wants roughly 18&nbsp;GB even quantized, scores
+        below standard Gemma&nbsp;4, and has no hosted API. Apache 2.0, weights on Hugging
+        Face &mdash; and above tonight&rsquo;s hardware ceiling. Rates are Google&rsquo;s
+        figures on a single H100, not on anything in this room.</p>
+    </div>
+  </section>

@@ -1,6 +1,9 @@
 /* --- decode speed estimator ---------------------------------- */
 .dk {
   display: grid; grid-template-columns: 1fr 1.05fr; gap: 1.1rem;
+  /* An explicit row, so the passage below can be as long as the script
+     needs without the panel growing and pushing the caveat off-slide. */
+  grid-template-rows: 23rem;
   margin-top: 1.4rem;
 }
 .dk-controls, .dk-stage {
@@ -68,8 +71,12 @@
   margin: 0; font-size: 1.06rem; line-height: 1.5;
   color: var(--ink-mid); flex: 1;
   /* Fixed box: text arriving must not reflow the panel, or the whole
-     slide twitches on every token and the speed stops being legible. */
-  overflow: hidden;
+     slide twitches on every token and the speed stops being legible.
+     min-height:0 is load-bearing — a flex item defaults to min-height
+     auto, so overflow:hidden alone does not stop it growing, and a long
+     passage silently stretched the slide past the viewport. The stream
+     is kept scrolled to the tail in JS, like any chat window. */
+  overflow: hidden; min-height: 0;
 }
 .dk-text .tk { color: var(--ink); }
 .dk-text .caret {

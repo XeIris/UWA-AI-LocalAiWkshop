@@ -51,6 +51,7 @@
      hard-edged draughting look, 1 for the app-like rounding below, or
      anything between. Every rounded thing in the deck derives from it. */
   --r-scale: 1;
+  --r-xs:   calc(3px  * var(--r-scale));   /* tick boxes, swatches    */
   --r-sm:   calc(7px  * var(--r-scale));   /* chips, controls, bars   */
   --r-md:   calc(14px * var(--r-scale));   /* panels, tiles, cards    */
   --r-lg:   calc(20px * var(--r-scale));   /* large feature panels    */
@@ -664,6 +665,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 /* --- decode speed estimator ---------------------------------- */
 .dk {
   display: grid; grid-template-columns: 1fr 1.05fr; gap: 1.1rem;
+  /* An explicit row, so the passage below can be as long as the script
+     needs without the panel growing and pushing the caveat off-slide. */
+  grid-template-rows: 23rem;
   margin-top: 1.4rem;
 }
 .dk-controls, .dk-stage {
@@ -731,8 +735,12 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   margin: 0; font-size: 1.06rem; line-height: 1.5;
   color: var(--ink-mid); flex: 1;
   /* Fixed box: text arriving must not reflow the panel, or the whole
-     slide twitches on every token and the speed stops being legible. */
-  overflow: hidden;
+     slide twitches on every token and the speed stops being legible.
+     min-height:0 is load-bearing — a flex item defaults to min-height
+     auto, so overflow:hidden alone does not stop it growing, and a long
+     passage silently stretched the slide past the viewport. The stream
+     is kept scrolled to the tail in JS, like any chat window. */
+  overflow: hidden; min-height: 0;
 }
 .dk-text .tk { color: var(--ink); }
 .dk-text .caret {
@@ -1270,6 +1278,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 @media (prefers-reduced-motion: reduce) {
   .cl-bits { transition: none; }
 }
+/* Tightened Aug 2026: at 16:9 the h2 wraps to two lines and the whole
+   slide clipped its own eyebrow and caveat off the top and bottom.
+   Spacing only — no figures or copy moved. */
 /* --- KV cache: the live formula ------------------------------- */
 /* Each term is a control below it, so the equation is not a picture of the
    arithmetic — it is the arithmetic, updating as the room watches. */
@@ -1279,12 +1290,12 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   background: var(--bg-panel);
   border: 1px solid var(--rule);
   border-radius: var(--r-lg);
-  padding: 1.1rem 1.4rem 1rem;
-  margin-top: 1.2rem;
+  padding: 0.8rem 1.4rem 0.7rem;
+  margin-top: 0.9rem;
 }
 .kv-t { display: flex; flex-direction: column; align-items: center; min-width: 3.4rem; }
 .kv-t b {
-  font-family: var(--mono); font-size: 1.85rem; font-weight: 500;
+  font-family: var(--mono); font-size: 1.7rem; font-weight: 500;
   color: var(--ink); letter-spacing: -0.03em; line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -1295,24 +1306,24 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 .kv-x {
   font-family: var(--mono); font-size: 1.2rem; color: var(--accent-lo);
-  padding-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
 }
 .kv-res b { color: var(--accent); text-shadow: 0 0 1.6rem var(--accent-glow); }
 .kv-res em { color: var(--accent); }
 
-.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 1.1rem; }
+.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 0.8rem; }
 .kv-panel {
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
   border-radius: var(--r-md);
-  padding: 1rem 1.2rem 1.2rem;
+  padding: 0.85rem 1.2rem 0.9rem;
   display: flex; flex-direction: column;
 }
-.kv-controls .ctrl { margin-top: 0.8rem; align-items: flex-start; flex-direction: column; gap: 0.45rem; }
+.kv-controls .ctrl { margin-top: 0.55rem; align-items: flex-start; flex-direction: column; gap: 0.45rem; }
 .kv-controls .ctrl:first-child { margin-top: 0; }
 .kv-controls .seg { flex-wrap: wrap; }
 
-.kv-stats { margin: auto 0 0; padding-top: 1rem; display: grid; gap: 0.6rem; }
+.kv-stats { margin: auto 0 0; padding-top: 0.7rem; display: grid; gap: 0.45rem; }
 .kv-stats div {
   border-top: 1px solid var(--rule-soft); padding-top: 0.5rem;
   display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem;
@@ -1772,6 +1783,769 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .pf-lane { padding: 0.85rem 0.9rem; }
   .pf-t-num { font-size: 1.7rem; }
   .pf-stream { min-height: 0; }
+}
+/* --- sense of scale ------------------------------------------ */
+.sc {
+  display: grid;
+  grid-template-columns: 1fr 17rem;
+  grid-template-areas: "controls controls" "chart side";
+  /* An explicit row height, not auto. Both panels then have a definite
+     height, which is what lets the canvas below resolve height:100% —
+     with an auto row the canvas falls back to its own width/height
+     attributes, which fitCanvas writes from the measured size, and the
+     two chase each other. */
+  grid-template-rows: auto 23rem;
+  gap: 0.9rem 1.1rem;
+  margin-top: 1.1rem;
+}
+.sc-controls {
+  grid-area: controls;
+  display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+}
+.sc-controls .ctrl { margin-top: 0; }
+
+.sc-add {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 1.1rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  transition: filter 160ms ease, opacity 160ms ease;
+}
+.sc-add:hover { filter: brightness(1.12); }
+/* Exhausted rather than hidden — a control that vanishes mid-demo makes
+   the presenter hunt for it. */
+.sc-add[disabled] {
+  background: transparent; color: var(--ink-dim);
+  border-color: var(--rule-soft); cursor: default; opacity: 0.6;
+}
+.sc-reset {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill); cursor: pointer; margin-left: auto;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.sc-reset:hover { color: var(--ink-mid); border-color: var(--rule); }
+/* The linear/log dial is meaningless against a time axis, where y is
+   always log — dim it rather than reflow the toolbar. */
+.sc-axis-ctrl { transition: opacity 160ms ease; }
+.sc-axis-ctrl.off { opacity: 0.3; pointer-events: none; }
+
+.sc-panel {
+  grid-area: chart; position: relative; overflow: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.9rem 1rem;
+}
+/* height:100%, not stretch. A canvas is a replaced element: with height
+   auto it falls back to its own `height` attribute — which fitCanvas
+   writes from the measured size, so anything that leaves the height
+   unresolved feeds back on itself and runs away to 16 million pixels.
+   The percentage resolves because the grid row gives the panel a
+   definite height, and the side panel is what sets that row. */
+.sc-panel canvas { display: block; width: 100%; height: 100%; }
+.sc-empty {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-dim);
+  transition: opacity 200ms ease;
+}
+.sc-empty.gone { opacity: 0; }
+.sc-empty b { color: var(--accent); font-weight: inherit; }
+
+.sc-side {
+  grid-area: side;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1rem 1.05rem 1.05rem;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.sc-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+.sc-num {
+  font-family: var(--mono); font-size: 2.7rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.05em; margin-top: 0.35rem;
+  text-shadow: 0 0 2.2rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+}
+.sc-sub {
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-mid); margin-top: 0.45rem;
+}
+.sc-say {
+  margin: 0.85rem 0 0; font-size: 0.92rem; color: var(--ink-mid);
+  border-top: 1px solid var(--rule-soft); padding-top: 0.8rem;
+}
+.sc-legend {
+  margin-top: auto; padding-top: 0.8rem;
+  border-top: 1px solid var(--rule-soft);
+  /* Two columns: five stacked rows pushed the panel past its grid row
+     and the legend spilled over the caveat below. */
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem;
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.sc-legend span { display: flex; align-items: center; gap: 0.55rem; }
+.sw { width: 0.85rem; height: 0.85rem; border-radius: var(--r-xs); flex: none; }
+/* The three categories are one hue plus the deck's third state: solid
+   cyan for what you can run, hollow cyan for open-but-out-of-reach,
+   filled white for closed. No fourth colour — warm stays semantic. */
+.sw-local  { background: var(--accent); }
+.sw-open   { border: 1.5px solid var(--accent); }
+.sw-closed { background: var(--ink); }
+.sw-est    { background: var(--ink); opacity: 0.3; }
+.sw-dot    { background: var(--accent); border-radius: 50%; width: 0.5rem; height: 0.5rem; margin: 0 0.18rem; }
+
+@media (max-width: 900px) {
+  .sc {
+    grid-template-columns: 1fr;
+    grid-template-areas: "controls" "chart" "side";
+    grid-template-rows: auto 15rem auto;
+  }
+  .sc-num { font-size: 2.4rem; }
+  .sc-reset { margin-left: 0; }
+}
+/* --- §6 · the chat window ------------------------------------ */
+/* A chat app rendered in the deck's own language: panels and thin
+   rules, not rounded iOS grey. The only warm colour is the verdict —
+   green on a prompt means "this is what it is for", red means "this is
+   where it breaks", and nothing else on the slide is allowed either. */
+
+.cs-tabs {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  margin-top: 0.9rem;
+}
+.cs-group { display: flex; align-items: center; gap: 0.6rem; }
+/* Nine tabs plus a replay button have to share one line, or the button
+   drops to a row of its own and reads as an unrelated control. */
+.cs-tabs .seg { gap: 0.3rem; }
+.cs-tabs .seg button { padding: 0.35rem 0.62rem; letter-spacing: 0.08em; }
+.cs-g-k {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;
+}
+.cs-group.good .cs-g-k { color: var(--ok); }
+.cs-group.bad  .cs-g-k { color: var(--bad); }
+/* The selected tab wears the verdict, so the reader always knows which
+   half of the argument they are watching without reading the label. */
+.cs-group.good .seg button.on { background: var(--ok);  border-color: var(--ok);  color: #052e16; }
+.cs-group.bad  .seg button.on { background: var(--bad); border-color: var(--bad); color: #300f0f; }
+
+.cs-replay {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill); cursor: pointer; margin-left: auto;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.cs-replay:hover { color: var(--accent); border-color: var(--rule); }
+
+/* Fixed row height: the threads scroll internally, so a long scenario
+   can never push the caveat off the bottom of the slide. */
+.cs-lanes { display: grid; grid-template-columns: 1fr; gap: 1rem; height: 22rem; margin-top: 0.9rem; }
+.cs-lanes.two { grid-template-columns: 1fr 1fr; }
+
+.cs-lane {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.cs-lane.k-local { border-top: 2px solid var(--accent); }
+/* Cloud is the deck's third state — filled white, a different category
+   rather than a worse one. Same rule as the PRESENTER DEMO badge. */
+.cs-lane.k-cloud { border-top: 2px solid var(--ink-dim); }
+.cs-lane.k-math, .cs-lane.k-truth { border-top: 2px solid var(--rule); }
+
+.cs-head {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--rule-soft);
+  flex: none;
+}
+.cs-av { width: 1.5rem; height: 1.5rem; border-radius: var(--r-sm); flex: none; }
+.k-local .cs-av { background: var(--accent); }
+.k-cloud .cs-av { background: var(--ink); }
+/* The arithmetic and the answer panels are not conversations at all, and
+   must not wear a contact avatar — with one they look like a chat window
+   in which nobody said anything. */
+.k-math .cs-av, .k-truth .cs-av { display: none; }
+.cs-nm {
+  font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;
+}
+.cs-nm i {
+  display: block; font-style: normal;
+  font-family: var(--mono); font-size: 0.55rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+}
+
+/* ---- the radio cluster ---- */
+.cs-status { margin-left: auto; display: flex; align-items: center; gap: 0.4rem; }
+.cs-ic { width: 1rem; height: 1rem; display: block; }
+.cs-ic svg {
+  width: 100%; height: 100%; display: block;
+  fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.cs-ic.on  { color: var(--ink-mid); }
+.cs-ic.off { color: var(--ink-dim); opacity: 0.35; }
+.cs-ic.cut { color: var(--ink-dim); opacity: 0.5; }
+.cs-ic.cut .cut { stroke: var(--bad); stroke-width: 2; opacity: 1; }
+/* Airplane mode lit is the one state that means something is switched
+   ON deliberately, so it is the one that gets the accent. */
+.cs-ic.hot { color: var(--accent); }
+.cs-net {
+  font-family: var(--mono); font-size: 0.52rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+  margin-left: 0.15rem;
+}
+
+/* ---- the thread ---- */
+.cs-thread {
+  flex: 1; min-height: 0; overflow: hidden;
+  padding: 0.8rem 0.9rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  scroll-behavior: auto;
+}
+/* Deliberately NOT bottom-anchored, though a real chat app is.
+
+   These panels are a fixed 22rem and most scenarios are four or five
+   messages, so anchoring to the bottom left a large void above the first
+   message — and a void at the top of a chat reads as history that failed
+   to load, or a message that never sent. That is exactly how the two
+   shortest scenarios were being read. Filling from the top puts the empty
+   space at the bottom, where a composer would be, which reads as normal.
+   Overflow still scrolls to the tail, so nothing is lost when a scenario
+   does fill the panel. */
+.cs-msg {
+  max-width: 84%; padding: 0.5rem 0.7rem;
+  border-radius: var(--r-md);
+  font-size: 0.86rem; line-height: 1.42;
+  animation: cs-in 220ms ease both;
+}
+@keyframes cs-in { from { opacity: 0; transform: translateY(4px); } }
+
+/* pre preserves the line breaks; mono is a separate decision, for the
+   things that are genuinely tabular. A five-bullet summary set in
+   monospace reads as output from a program, not as an answer. */
+.cs-t.pre  { display: block; white-space: pre-wrap; }
+.cs-t.mono { font-family: var(--mono); font-size: 0.78rem; line-height: 1.42; }
+
+/* user — right-aligned, wearing the verdict of the scenario */
+.cs-msg.u {
+  align-self: flex-end;
+  border-bottom-right-radius: var(--r-sm);
+  color: var(--ink);
+}
+.cs-msg.u.good { background: rgba(74, 222, 128, 0.13);  border: 1px solid rgba(74, 222, 128, 0.3); }
+.cs-msg.u.bad  { background: rgba(248, 113, 113, 0.13); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+.cs-file {
+  display: flex; align-items: center; gap: 0.45rem;
+  margin-bottom: 0.4rem; padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cs-file svg {
+  width: 0.95rem; height: 0.95rem; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.cs-file b { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; }
+.cs-file i {
+  font-style: normal; font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim);
+}
+
+/* assistant */
+.cs-msg.a {
+  align-self: flex-start;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-bottom-left-radius: var(--r-sm);
+  color: var(--ink-mid);
+}
+.cs-msg.a.plain { background: transparent; border-color: transparent; padding-left: 0; }
+.cs-caret {
+  display: none; width: 0.42rem; height: 0.85rem;
+  background: var(--accent); vertical-align: -0.12rem; margin-left: 0.15rem;
+  animation: cs-blink 1s steps(2, start) infinite;
+}
+.cs-msg.a.typing .cs-caret { display: inline-block; }
+@keyframes cs-blink { to { visibility: hidden; } }
+
+/* system status line — the "is it doing something" beat */
+.cs-msg.s {
+  align-self: flex-start; background: transparent; padding: 0.15rem 0.1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.06em; color: var(--ink-dim); max-width: 100%;
+}
+.cs-spin {
+  width: 0.7rem; height: 0.7rem; flex: none;
+  border: 1.5px solid var(--rule); border-top-color: var(--accent);
+  border-radius: 50%; animation: cs-spin 700ms linear infinite;
+}
+@keyframes cs-spin { to { transform: rotate(360deg); } }
+.cs-prog {
+  width: 3.4rem; height: 2px; flex: none;
+  background: var(--rule-soft); border-radius: var(--r-pill); overflow: hidden;
+}
+.cs-prog i { display: block; height: 100%; width: 0; background: var(--accent);
+  animation: cs-fill var(--d) linear forwards; }
+@keyframes cs-fill { to { width: 100%; } }
+
+/* error / rate limit */
+.cs-msg.e {
+  align-self: flex-start; max-width: 100%;
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  background: rgba(248, 113, 113, 0.09);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: var(--bad); font-size: 0.8rem;
+}
+.cs-msg.e b { color: var(--bad); }
+.cs-warn { width: 0.95rem; height: 0.95rem; flex: none; margin-top: 0.1rem;
+  fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+/* The countdown is one line or it is nothing — inheriting the error
+   card's flex layout broke "Resets in 4:37" across three of them. */
+.cs-msg.e.tick {
+  display: block; white-space: nowrap;
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em;
+}
+.cs-msg.e.tick b { font-variant-numeric: tabular-nums; }
+
+/* quiet note, centred */
+.cs-msg.n {
+  align-self: center; max-width: 100%; background: transparent; padding: 0.2rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+}
+
+/* verdict stamp */
+.cs-msg.v {
+  align-self: center; max-width: 100%;
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.11em; text-transform: uppercase;
+  padding: 0.3rem 0.7rem; border-radius: var(--r-pill);
+  text-align: center;
+}
+.cs-msg.v.ok  { color: var(--ok);  border: 1px solid rgba(74, 222, 128, 0.4);  background: rgba(74, 222, 128, 0.09); }
+.cs-msg.v.bad { color: var(--bad); border: 1px solid rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.09); }
+
+/* the twelve-step plan */
+.cs-msg.p { align-self: stretch; max-width: 100%; background: transparent; padding: 0.2rem 0; }
+.cs-plan {
+  list-style: none; margin: 0; padding: 0;
+  /* Column flow, not row flow: a checklist laid out in rows makes the
+     eye read 1,3,5 down the left and the step order stops making sense. */
+  display: grid; grid-auto-flow: column;
+  grid-template-rows: repeat(6, auto); grid-template-columns: 1fr 1fr;
+  gap: 0.18rem 0.9rem;
+}
+.cs-plan li {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-family: var(--mono); font-size: 0.66rem; color: var(--ink-dim);
+  opacity: 0.3; transition: opacity 200ms ease, color 200ms ease;
+}
+.cs-plan li.on, .cs-plan li.run { opacity: 1; }
+.cs-plan li.on { color: var(--ink-mid); }
+.cs-tick {
+  width: 0.62rem; height: 0.62rem; flex: none;
+  border: 1px solid var(--rule); border-radius: var(--r-xs);
+}
+.cs-plan li.on .cs-tick { background: var(--ok); border-color: var(--ok); }
+.cs-plan li.run .cs-tick { border-color: var(--accent); animation: cs-pulse 800ms ease-in-out infinite; }
+@keyframes cs-pulse { 50% { background: var(--accent); } }
+/* The drifted step ticks green like every other one. Nothing marks it
+   at the time — the amber only appears in hindsight, on the verdict. */
+.cs-plan li.slip .cs-tick { background: var(--warn); border-color: var(--warn); }
+.cs-plan li.slip { color: var(--warn); }
+
+/* the arithmetic panel */
+.cs-msg.m {
+  align-self: stretch; max-width: 100%; background: transparent;
+  padding: 0.2rem 0.1rem; color: var(--ink-mid); font-size: 0.82rem;
+}
+.cs-m-eq {
+  font-family: var(--mono); font-size: 1.5rem; color: var(--accent);
+  letter-spacing: -0.02em; margin-bottom: 0.5rem;
+}
+.cs-m-eq em { font-style: italic; }
+.cs-msg.m p { margin: 0 0 0.6rem; }
+.cs-msg.m b { color: var(--ink); }
+.cs-m-tab {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--mono); font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+.cs-m-tab th {
+  text-align: left; font-weight: 400; font-size: 0.58rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim);
+  padding-bottom: 0.25rem; border-bottom: 1px solid var(--rule-soft);
+}
+.cs-m-tab td { padding: 0.2rem 0; color: var(--ink-mid); border-bottom: 1px solid var(--rule-soft); }
+.cs-m-tab tr.hot td { color: var(--bad); }
+.cs-m-note { margin: 0.6rem 0 0 !important; font-size: 0.72rem; color: var(--ink-dim); }
+
+/* ---- the lesson line ---- */
+.cs-why {
+  margin: 0.7rem 0 0; padding: 0.55rem 0 0.55rem 0.9rem;
+  font-size: 1rem; color: var(--ink-mid);
+  border-left: 2px solid var(--rule);
+  min-height: 2.6rem;
+}
+.cs-why.good { border-left-color: var(--ok); }
+.cs-why.bad  { border-left-color: var(--bad); }
+.cs-why em { color: var(--ink); font-style: italic; }
+
+@media (max-width: 900px) {
+  .cs-tabs { gap: 0.7rem; }
+  .cs-replay { margin-left: 0; }
+  .cs-lanes { height: auto; grid-template-rows: 15rem; }
+  .cs-lanes.two { grid-template-columns: 1fr; grid-template-rows: 12rem 12rem; }
+  .cs-msg { font-size: 0.78rem; max-width: 92%; }
+  .cs-plan { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
+  .cs-why { font-size: 0.9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-msg { animation: none; }
+  .cs-spin { animation: none; border-top-color: var(--rule); }
+  .cs-prog i { animation: none; width: 100%; }
+  .cs-caret { animation: none; }
+  .cs-plan li, .cs-plan li.run .cs-tick { transition: none; animation: none; }
+}
+/* --- the catch-up case study --------------------------------- */
+.cu {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 1.1rem; align-items: stretch; margin-top: 1.1rem;
+}
+.cu-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1rem 1.2rem 1.1rem;
+  display: flex; flex-direction: column;
+}
+/* Closed is the deck's third state (filled white); open is cyan, the
+   colour everything you can actually run has worn all evening. */
+.cu-closed { border-top: 2px solid var(--ink-dim); }
+.cu-open   { border-top: 2px solid var(--accent); }
+
+.cu-top { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; }
+.cu-tag {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.22rem 0.6rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--rule-soft); color: var(--ink-dim);
+}
+.cu-tag.on { background: var(--accent); border-color: var(--accent); color: #04262b; }
+.cu-when {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.cu-name {
+  font-size: 2rem; line-height: 1.1; letter-spacing: -0.028em;
+  font-weight: 640; margin-top: 0.9rem;
+}
+.cu-name span { color: var(--ink-dim); font-weight: 400; }
+.cu-by { font-size: 0.92rem; color: var(--ink-mid); margin-top: 0.2rem; }
+
+.cu-score { display: flex; align-items: center; gap: 0.9rem; margin-top: 1rem; }
+.cu-n {
+  font-family: var(--mono); font-size: 3.4rem; line-height: 0.9;
+  letter-spacing: -0.05em; font-variant-numeric: tabular-nums;
+  min-width: 3.4rem;
+}
+.cu-closed .cu-n { color: var(--ink); }
+.cu-open   .cu-n { color: var(--accent); text-shadow: 0 0 2.2rem var(--accent-glow); }
+.cu-bar {
+  flex: 1; height: 0.62rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-pill); overflow: hidden;
+}
+/* The width IS the score, so it grows rather than appearing — the one
+   animation rule of the deck. It fills on slide entry via .lit. */
+.cu-bar i {
+  display: block; height: 100%; width: 0;
+  border-radius: var(--r-pill);
+  transition: width 900ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+.cu-closed .cu-bar i { background: var(--ink-dim); }
+.cu-open   .cu-bar i { background: var(--accent); }
+.slide.active .cu-bar i { width: var(--w); }
+
+.cu-specs { margin: 1.1rem 0 0; display: grid; gap: 0.5rem; }
+.cu-specs div {
+  border-top: 1px solid var(--rule-soft); padding-top: 0.42rem;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+}
+.cu-specs dt {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.cu-specs dd {
+  margin: 0; font-family: var(--mono); font-size: 0.82rem;
+  color: var(--ink-mid); text-align: right;
+}
+.cu-specs dd.yes { color: var(--ok); }
+.cu-specs dd.no  { color: var(--bad); }
+
+.cu-gap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 0.3rem; text-align: center;
+}
+.cu-gap-n {
+  font-family: var(--mono); font-size: 3.2rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.05em;
+}
+.cu-gap-k {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-dim); margin-top: 0.4rem; line-height: 1.5;
+}
+
+.cu-line {
+  margin-top: 1.1rem; padding: 0.8rem 1.2rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  display: flex; align-items: baseline; gap: 1.2rem; flex-wrap: wrap;
+}
+.cu-line-k {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-dim); white-space: nowrap;
+}
+.cu-line-t { font-size: 1.02rem; color: var(--ink-mid); }
+.cu-line-t b { color: var(--accent); font-weight: 620; }
+
+@media (max-width: 900px) {
+  .cu { grid-template-columns: 1fr; }
+  .cu-gap { flex-direction: row; gap: 0.6rem; padding: 0.3rem 0; }
+  .cu-gap-k { margin-top: 0; text-align: left; }
+  .cu-name { font-size: 1.5rem; }
+  .cu-n { font-size: 2.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cu-bar i { transition: none; }
+}
+/* --- natively low-bit weights -------------------------------- */
+.bn-controls {
+  display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+  margin-top: 1.1rem;
+}
+.bn-controls .ctrl { margin-top: 0; }
+.bn-step {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 1.1rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  transition: filter 160ms ease;
+}
+.bn-step:hover { filter: brightness(1.12); }
+.bn-note { font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-dim); margin-left: auto; }
+
+.bn { display: grid; grid-template-columns: 1fr 17rem; gap: 1.1rem; margin-top: 0.9rem; }
+.bn-rows {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.8rem 1.3rem;
+  display: grid; align-content: center; gap: 0.8rem;
+}
+.bn-row { display: grid; grid-template-columns: 7.5rem 1fr; align-items: center; gap: 1rem;
+  opacity: 0.34; transition: opacity 260ms ease; }
+.bn-row.on { opacity: 1; }
+.bn-lab { text-align: right; }
+.bn-lab b {
+  display: block; font-family: var(--mono); font-size: 0.92rem;
+  color: var(--ink); font-weight: 500; letter-spacing: -0.01em;
+}
+.bn-lab span {
+  display: block; font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim);
+}
+.bn-track {
+  position: relative; height: 1.6rem;
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center;
+}
+/* Width is bytes. Nothing here is decorative — the bar shrinking IS the
+   claim, so it eases rather than cutting. */
+.bn-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--w, 0%);
+  background: var(--accent); opacity: 0.22;
+  border-right: 2px solid var(--accent);
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  transition: width 620ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+/* Q2_K is the §4 cliff, and it keeps the cliff's colour. Ternary is not
+   a stronger version of it — it is a different thing, so it does not. */
+.bn-row.cliff .bn-fill { background: var(--bad); border-right-color: var(--bad); }
+.bn-val {
+  position: relative; margin-left: auto; padding-right: 0.8rem;
+  font-family: var(--mono); font-size: 0.82rem; color: var(--ink-mid);
+  font-variant-numeric: tabular-nums;
+}
+.bn-row.on .bn-val { color: var(--ink); }
+.bn-row.cliff.on .bn-val { color: var(--bad); }
+
+.bn-side {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1rem 1.1rem 1.05rem;
+  display: flex; flex-direction: column;
+}
+.bn-name {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.bn-readout { display: flex; align-items: baseline; gap: 0.5rem; margin-top: 0.4rem; }
+.bn-num {
+  font-family: var(--mono); font-size: 2.8rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.05em;
+  text-shadow: 0 0 2.2rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease, text-shadow 200ms ease;
+}
+.bn.cliff .bn-num { color: var(--bad); text-shadow: 0 0 2.2rem rgba(248,113,113,0.28); }
+.bn-unit {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+.bn-stats { margin: 0.8rem 0 0; display: grid; gap: 0.4rem; }
+.bn-stats div {
+  border-top: 1px solid var(--rule-soft); padding-top: 0.42rem;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem;
+}
+.bn-stats dt {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.bn-stats dd {
+  margin: 0; font-family: var(--mono); font-size: 0.82rem;
+  color: var(--ink); text-align: right;
+}
+.bn-say {
+  margin: 0.75rem 0 0; font-size: 0.9rem; color: var(--ink-mid);
+  border-top: 1px solid var(--rule-soft); padding-top: 0.7rem;
+}
+.bn.cliff .bn-say { color: var(--bad); }
+
+/* Fit chips reuse §4's traffic light exactly — same semantic, so it must
+   be the same colours or the palette rule stops meaning anything. */
+.bn-fits {
+  margin-top: auto; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.bn-fits span {
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.28rem 0.55rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--rule-soft); color: var(--ink-dim);
+  transition: color 220ms ease, border-color 220ms ease, background 220ms ease;
+}
+.bn-fits span.fit  { color: var(--ok);  border-color: rgba(74,222,128,0.45);  background: rgba(74,222,128,0.09); }
+.bn-fits span.tight{ color: var(--warn);border-color: rgba(251,191,36,0.45);  background: rgba(251,191,36,0.09); }
+.bn-fits span.no   { color: var(--bad);  border-color: rgba(248,113,113,0.45); background: rgba(248,113,113,0.09); }
+
+@media (max-width: 900px) {
+  .bn { grid-template-columns: 1fr; }
+  .bn-note { margin-left: 0; }
+  .bn-row { grid-template-columns: 5.6rem 1fr; gap: 0.6rem; }
+  .bn-num { font-size: 2.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bn-fill, .bn-row, .bn-num, .bn-fits span { transition: none; }
+}
+/* --- autoregressive vs diffusion ----------------------------- */
+.df-controls {
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  margin-top: 1.1rem;
+}
+.df-run {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 1.1rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  transition: filter 160ms ease, opacity 160ms ease;
+}
+.df-run:hover { filter: brightness(1.12); }
+.df-run[disabled] { opacity: 0.45; cursor: default; }
+.df-note { font-size: 0.66rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-dim); }
+
+.df-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 0.9rem; }
+.df-lane {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.9rem 1.1rem 1rem;
+}
+.df-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.df-name { display: block; font-size: 1.18rem; font-weight: 620; letter-spacing: -0.015em; }
+.df-sub {
+  display: block; font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim);
+  margin-top: 0.15rem;
+}
+.df-clock {
+  font-family: var(--mono); font-size: 1.75rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.df-clock i { font-size: 0.72rem; font-style: normal; color: var(--ink-dim); margin-left: 0.2rem; }
+
+.df-lane canvas { display: block; width: 100%; height: 9.5rem; margin: 0.9rem 0 0; }
+
+.df-stats {
+  margin-top: 0.9rem; padding-top: 0.6rem;
+  border-top: 1px solid var(--rule-soft);
+  display: flex; gap: 1.4rem; flex-wrap: wrap;
+}
+.df-stats span {
+  font-family: var(--mono); font-size: 0.82rem; color: var(--ink-mid);
+  font-variant-numeric: tabular-nums;
+}
+.df-stats i {
+  display: block; font-style: normal; font-size: 0.58rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim);
+  margin-bottom: 0.15rem;
+}
+.df-stats b { color: var(--ink); font-weight: 500; }
+
+.df-verdict {
+  margin-top: 1.1rem; padding: 0.8rem 1.2rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  display: flex; align-items: baseline; gap: 1.2rem; flex-wrap: wrap;
+}
+.df-v-k {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-dim); white-space: nowrap;
+}
+.df-v-t { font-size: 1.02rem; color: var(--ink-mid); flex: 1; min-width: 20rem; }
+.df-v-t b { color: var(--accent); font-weight: 620; }
+
+@media (max-width: 900px) {
+  .df-grid { grid-template-columns: 1fr; gap: 0.7rem; }
+  .df-lane canvas { height: 7rem; }
+  .df-clock { font-size: 1.3rem; }
+  .df-v-t { min-width: 0; }
 }
 </style>
 </head>
@@ -2595,7 +3369,6 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>Quantization &amp; napkin math</h2>
       <p class="lede">30B at 4&#8209;bit, 15B at 8&#8209;bit, 7.5B at 16&#8209;bit. All roughly 15&nbsp;GB.
         Only one of them is the right choice.</p>
-      <!-- TO BUILD: memory calculator, fit indicator, quality cliff -->
     </div>
   </section>
   <!-- ---- 4 · what a quant actually is ---- -->
@@ -2851,14 +3624,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>Context &amp; the KV cache</h2>
       <p class="lede">Weights are fixed. The cache is not. Why a long conversation can
         run you out of memory that a short one never touched.</p>
-      <!-- TO BUILD: KV growth chart, GQA toggle -->
     </div>
   </section>
   <!-- ---- 5 · what the cache is, and the straight line it draws ---- -->
   <section class="slide" data-section="5" id="s-kv">
     <div class="slide-inner">
       <div class="eyebrow">05 &mdash; The KV cache</div>
-      <h2>The model re-reads the whole conversation. It refuses to do it twice.</h2>
+      <h2>It re-reads the whole conversation, and refuses to do it twice</h2>
 
       <!-- Live formula: every term is a control below, so the arithmetic on
            screen is the arithmetic being performed. -->
@@ -3004,9 +3776,125 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <div class="num">06</div>
       <div class="eyebrow">Section 06</div>
       <h2>Good at / bad at</h2>
-      <p class="lede">Expectation management. Nobody should leave disappointed that their
-        7B is not a frontier model.</p>
-      <!-- TO BUILD: section content -->
+      <p class="lede">First, honestly, how small the thing on your laptop is. Then why
+        that matters far less than it sounds &mdash; for the right jobs.</p>
+    </div>
+  </section>
+  <!-- ---- 6 · setting the scale ---- -->
+  <!-- Before "what is it good at" can mean anything, the room needs to know
+       what it is being compared TO. Everything here is order-of-magnitude:
+       the open-weight figures are published, the closed ones are contested
+       estimates, and the slide says which is which on its face. -->
+  <section class="slide" data-section="6" id="s-scale">
+    <div class="slide-inner">
+      <div class="eyebrow">06 &mdash; Sense of scale</div>
+      <h2>Your laptop against the rest of the field</h2>
+
+      <div class="sc">
+        <div class="sc-controls">
+          <button type="button" class="sc-add" id="scAdd">Add the next model &#9654;</button>
+          <div class="ctrl">
+            <span class="ctrl-label" id="scViewLabel">View</span>
+            <div class="seg" id="scView" role="group" aria-labelledby="scViewLabel">
+              <button type="button" class="on" aria-pressed="true" data-v="size">By size</button>
+              <button type="button" aria-pressed="false" data-v="time">By year</button>
+            </div>
+          </div>
+          <div class="ctrl sc-axis-ctrl">
+            <span class="ctrl-label" id="scAxisLabel">Axis</span>
+            <div class="seg" id="scAxis" role="group" aria-labelledby="scAxisLabel">
+              <button type="button" class="on" aria-pressed="true" data-a="lin">Linear</button>
+              <button type="button" aria-pressed="false" data-a="log">Log</button>
+            </div>
+          </div>
+          <button type="button" class="sc-reset" id="scReset">Reset</button>
+        </div>
+
+        <div class="sc-panel">
+          <canvas id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
+          <!-- One element, not a text node with a <b> in it: the parent is
+               a centring grid and would make each inline run its own item. -->
+          <div class="sc-empty" id="scEmpty"><span>Press <b>Add the next model</b></span></div>
+        </div>
+
+        <div class="sc-side">
+          <div class="sc-readout">
+            <div class="sc-k">Axis now reaches</div>
+            <div class="sc-num" id="scMax">4B</div>
+            <div class="sc-sub" id="scRatio">&nbsp;</div>
+          </div>
+          <p class="sc-say" id="scSay">We are going to build this chart from the bottom up,
+            starting with the model on your laptop.</p>
+          <div class="sc-legend">
+            <span><i class="sw sw-local"></i>Runs on a laptop</span>
+            <span><i class="sw sw-open"></i>Open weights, too big</span>
+            <span><i class="sw sw-closed"></i>Closed weights</span>
+            <span><i class="sw sw-est"></i>Estimate, disputed</span>
+            <span><i class="sw sw-dot"></i>Active per token</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Nobody outside the lab knows the closed numbers.</strong>
+        Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
+        The white bars are inference, not fact &mdash; the two published attempts to measure
+        them from the outside disagree by roughly <em>six times</em>, which is why they are
+        drawn as ranges. The lesson survives the uncertainty: even the <em>floor</em> of the
+        most conservative estimate is fifty times the largest model a laptop can hold, and
+        over a thousand times the one you downloaded tonight &mdash; and a sparse model
+        only ever <em>runs</em> a small slice of that total at a time
+        &mdash; the dot on each bar.</p>
+    </div>
+  </section>
+  <!-- ---- 6 · what it is for ---- -->
+  <!-- The scale slide just told the room their model is a thousandth the
+       size of the frontier. This is the slide that stops that being
+       demoralising — and a bulleted list could not do it, because the
+       argument is about what using the thing FEELS like. So: a chat
+       window, and nine scenarios played out in it. The lanes, headers
+       and thread are all built by 17-chat.js from the scripts there. -->
+  <section class="slide" data-section="6" id="s-gb">
+    <div class="slide-inner">
+      <div class="eyebrow">06 &mdash; Good at / bad at</div>
+      <h2>A small model is a tool, not a smaller genius</h2>
+
+      <div class="cs-tabs">
+        <div class="cs-group good">
+          <span class="cs-g-k">Give it this</span>
+          <div class="seg" id="csGood" role="group" aria-label="Suitable tasks">
+            <button type="button" class="on" aria-pressed="true" data-s="sum">Summarise</button>
+            <button type="button" aria-pressed="false" data-s="fmt">Transform</button>
+            <button type="button" aria-pressed="false" data-s="rag">My own files</button>
+            <button type="button" aria-pressed="false" data-s="priv">Private</button>
+            <button type="button" aria-pressed="false" data-s="off">Offline</button>
+            <button type="button" aria-pressed="false" data-s="free">Unmetered</button>
+          </div>
+        </div>
+        <div class="cs-group bad">
+          <span class="cs-g-k">Not this</span>
+          <div class="seg" id="csBad" role="group" aria-label="Unsuitable tasks">
+            <button type="button" aria-pressed="false" data-s="reason">Reasoning</button>
+            <button type="button" aria-pressed="false" data-s="agent">Long tasks</button>
+            <button type="button" aria-pressed="false" data-s="fact">Obscure facts</button>
+          </div>
+        </div>
+        <button type="button" class="cs-replay" id="csReplay">Replay &#8635;</button>
+      </div>
+
+      <div class="cs">
+        <div class="cs-lanes" id="csLanes"></div>
+        <p class="cs-why" id="csWhy">&nbsp;</p>
+      </div>
+
+      <p class="caveat"><strong>The pattern is one line: bring the knowledge to the
+        model.</strong> Everything on the left hands it the material; everything on the
+        right asks it to supply the material itself. That is why retrieval over your own
+        files works far better than a 1&nbsp;B model has any right to, and why
+        &ldquo;what do you know about&nbsp;&hellip;&rdquo; disappoints. <strong>The right
+        column is a difference of degree, not of kind</strong> &mdash; frontier models
+        still hallucinate on 3&ndash;19% of fact-seeking questions depending on the model
+        and the task, and error still compounds across a long run for everyone. A small
+        model just reaches the edge sooner, and says nothing when it gets there.</p>
     </div>
   </section>
   <!-- ============ §7 ============ -->
@@ -3015,10 +3903,224 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <div class="num">07</div>
       <div class="eyebrow">Section 07</div>
       <h2>The horizon</h2>
-      <p class="lede">Everything you just learned about bytes&#8209;per&#8209;parameter is already
-        being rewritten. Neither of tonight&rsquo;s examples will load in LM Studio &mdash;
-        that is the point.</p>
-      <!-- TO BUILD: verify figures before presenting -->
+      <p class="lede">One thing you can download tonight, and two you cannot. Everything you
+        just learned about bytes&#8209;per&#8209;parameter is already being rewritten &mdash;
+        that is the point, not a caveat.</p>
+    </div>
+  </section>
+  <!-- ---- 7 · the catch-up ---- -->
+  <!-- The one slide in §7 that is about something already downloadable.
+       Everything after it is horizon tech that will not load tonight, so
+       this has to land the "behind, not standing still" point first.
+       Scores are Artificial Analysis Intelligence Index, read Jul 2026. -->
+  <section class="slide" data-section="7" id="s-catch">
+    <div class="slide-inner">
+      <div class="eyebrow">07 &mdash; Behind, but moving faster</div>
+      <h2>Eight months is roughly one generation</h2>
+
+      <div class="cu">
+        <div class="cu-card cu-closed">
+          <div class="cu-top">
+            <span class="cu-tag">Closed &middot; API only</span>
+            <span class="cu-when">7 Aug 2025</span>
+          </div>
+          <div class="cu-name">GPT&#8209;5 <span>high</span></div>
+          <div class="cu-by">OpenAI &mdash; the frontier, one year ago</div>
+          <div class="cu-score">
+            <span class="cu-n" data-score="35">35</span>
+            <span class="cu-bar"><i style="--w:64%"></i></span>
+          </div>
+          <dl class="cu-specs">
+            <div><dt>Parameters</dt><dd>Undisclosed</dd></div>
+            <div><dt>Weights</dt><dd>None published</dd></div>
+            <div><dt>Runs on</dt><dd>Someone else&rsquo;s datacentre</dd></div>
+            <div><dt>Works offline</dt><dd class="no">No</dd></div>
+          </dl>
+        </div>
+
+        <div class="cu-gap">
+          <span class="cu-gap-n">8</span>
+          <span class="cu-gap-k">months<br>later</span>
+        </div>
+
+        <div class="cu-card cu-open">
+          <div class="cu-top">
+            <span class="cu-tag on">Apache 2.0 &middot; yours</span>
+            <span class="cu-when">Apr 2026</span>
+          </div>
+          <div class="cu-name">Qwen3.6 <span>27B</span></div>
+          <div class="cu-by">Alibaba &mdash; the one from the scale slide</div>
+          <div class="cu-score">
+            <span class="cu-n" data-score="37">37</span>
+            <span class="cu-bar"><i style="--w:68%"></i></span>
+          </div>
+          <dl class="cu-specs">
+            <div><dt>Parameters</dt><dd>27.8&nbsp;B, dense</dd></div>
+            <div><dt>Download</dt><dd>&asymp;17&nbsp;GB at 4&#8209;bit</dd></div>
+            <div><dt>Runs on</dt><dd>A 32&nbsp;GB laptop</dd></div>
+            <div><dt>Works offline</dt><dd class="yes">Yes</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="cu-line">
+        <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; read Jul 2026</span>
+        <span class="cu-line-t">Last year&rsquo;s frontier model, matched by something that
+          fits on a laptop &mdash; carrying <b>one sixty&#8209;fifth</b> of the parameters of
+          the last frontier model whose size we can confirm.</span>
+      </div>
+
+      <p class="caveat"><strong>Do not over&#8209;read one number.</strong> A composite
+        index compresses very different skills into a single score, its makeup changes
+        between versions, and the 27&nbsp;B still loses badly on exactly what §6 predicted
+        &mdash; breadth of world knowledge, which is the thing parameters actually buy.
+        OpenAI did not stand still either; the 2026 frontier is far above both bars here.
+        The claim is only this: <em>the line beneath you is rising fast</em>, and it is
+        rising in the open.</p>
+    </div>
+  </section>
+  <!-- ---- 7 · natively low-bit ---- -->
+  <!-- §4 spent a whole slide proving 2-bit is broken. It is — for post-hoc
+       quantization, which is the only kind that existed when that rule was
+       written. This slide is the exception, and it has to be framed as an
+       exception or it just contradicts the cliff. -->
+  <section class="slide" data-section="7" id="s-bonsai">
+    <div class="slide-inner">
+      <div class="eyebrow">07 &mdash; Three values</div>
+      <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
+
+      <div class="bn-controls">
+        <button type="button" class="bn-step" id="bnStep">Next &#9654;</button>
+        <div class="ctrl">
+          <span class="ctrl-label" id="bnHwLabel">Machine</span>
+          <div class="seg" id="bnHw" role="group" aria-labelledby="bnHwLabel">
+            <button type="button" aria-pressed="false" data-bw="96">DDR5 laptop</button>
+            <button type="button" class="on" aria-pressed="true" data-bw="273">M4 Pro</button>
+            <button type="button" aria-pressed="false" data-bw="60">iPhone 17 Pro</button>
+          </div>
+        </div>
+        <span class="bn-note mono">Same 8&nbsp;B model, four ways of storing it</span>
+      </div>
+
+      <div class="bn">
+        <div class="bn-rows" id="bnRows">
+          <div class="bn-row" data-i="0">
+            <div class="bn-lab"><b>fp16</b><span>as trained</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">16.4 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="1">
+            <div class="bn-lab"><b>Q4_K_M</b><span>squashed after</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">4.9 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="2">
+            <div class="bn-lab"><b>Q2_K</b><span>squashed harder</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.8 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="3">
+            <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+          </div>
+        </div>
+
+        <div class="bn-side">
+          <div class="bn-name" id="bnName">Qwen3 8B &middot; fp16</div>
+          <div class="bn-readout">
+            <span class="bn-num" id="bnSize">16.4</span><span class="bn-unit">GB</span>
+          </div>
+          <dl class="bn-stats">
+            <div><dt>Weights are</dt><dd id="bnAlpha">65,536 values</dd></div>
+            <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
+            <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
+          </dl>
+          <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
+            left it. Nothing on this slide is smarter than this row &mdash; it is only
+            bigger.</p>
+          <!-- Order matters: the headroom figures live in the JS and are
+               matched to these by position. -->
+          <div class="bn-fits" id="bnFits">
+            <span>16 GB laptop</span>
+            <span>8 GB laptop</span>
+            <span>A phone</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
+        &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
+        16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
+        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
+        format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
+        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
+        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
+        roughly half to four fifths of it.</p>
+    </div>
+  </section>
+  <!-- ---- 7 · a different shape of generation ---- -->
+  <!-- The closing beat. Every formula in §3 assumed one token per pass;
+       this is the slide where that assumption stops being free. -->
+  <section class="slide" data-section="7" id="s-diff">
+    <div class="slide-inner">
+      <div class="eyebrow">07 &mdash; Diffusion</div>
+      <h2>What if it stopped writing left to right?</h2>
+
+      <div class="df-controls">
+        <button type="button" class="df-run" id="dfRun">Generate 512 tokens &#9654;</button>
+        <span class="df-note mono">Both lanes at 2.5&times; slow motion &middot; same slowdown, so
+          the ratio on screen is the real one</span>
+      </div>
+
+      <div class="df-grid">
+        <div class="df-lane" data-m="ar">
+          <div class="df-head">
+            <div>
+              <span class="df-name">Autoregressive</span>
+              <span class="df-sub">Every model you ran tonight</span>
+            </div>
+            <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
+          </div>
+          <canvas id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
+          <div class="df-stats">
+            <span><i>Per pass</i><b>1 token</b></span>
+            <span><i>Rate</i><b id="df-r-ar">&asymp;250</b> tok/s</span>
+            <span><i>Passes</i><b id="df-p-ar">0</b></span>
+          </div>
+        </div>
+
+        <div class="df-lane" data-m="df">
+          <div class="df-head">
+            <div>
+              <span class="df-name">Diffusion</span>
+              <span class="df-sub">DiffusionGemma &middot; Google DeepMind, Jun 2026</span>
+            </div>
+            <div class="df-clock"><span id="df-el-df">0.00</span><i>s</i></div>
+          </div>
+          <canvas id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
+          <div class="df-stats">
+            <span><i>Per pass</i><b>256 tokens</b></span>
+            <span><i>Rate</i><b id="df-r-df">&gt;1,000</b> tok/s</span>
+            <span><i>Passes</i><b id="df-p-df">0</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="df-verdict">
+        <span class="df-v-k">Where the bottleneck went</span>
+        <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
+          <b>per token</b>. Diffusion reads them once <b>per block</b> &mdash; so the memory
+          bus stops being the wall, and arithmetic becomes it instead.</span>
+      </div>
+
+      <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
+        <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
+        produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
+        which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
+        compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
+        experts with 3.8&nbsp;B active, wants roughly 18&nbsp;GB even quantized, scores
+        below standard Gemma&nbsp;4, and has no hosted API. Apache 2.0, weights on Hugging
+        Face &mdash; and above tonight&rsquo;s hardware ceiling. Rates are Google&rsquo;s
+        figures on a single H100, not on anything in this room.</p>
     </div>
   </section>
 </div>
@@ -3470,11 +4572,33 @@ if (dkSlide) {
      tok/s × 0.75 × 60. Adults read prose at roughly 240 wpm. */
   var WORDS_PER_TOKEN = 0.75, READING_WPM = 240;
 
+  /* Long on purpose. At the slow end of the slider this passage is the
+     whole demonstration and the room needs time to get uncomfortable
+     watching it; at the fast end it has to still be running when the
+     presenter finishes the sentence about it. Roughly 300 words, which
+     is about eight seconds at 41 tok/s and about two minutes at 3. */
   var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
     'No request leaves the building, no key is billed, and nothing stops working ' +
     'when the wifi does. The speed you are watching right now is not a benchmark ' +
-    'result. It is arithmetic: the weights have to be read out of memory once for ' +
-    'every single token, so the memory bus sets the pace and the rest is detail.'
+    'result and it is not a setting anyone chose. It is arithmetic. To produce one ' +
+    'token — roughly three quarters of a word — the machine has to read every ' +
+    'single weight in the model out of memory, run the arithmetic, and throw the ' +
+    'result away. Then it does exactly the same thing again for the next token, and ' +
+    'the one after that, all the way to the end of this paragraph. Nothing is ' +
+    'cached between tokens, because nothing can be: the weights are all needed ' +
+    'every time. So the question is never how fast the processor is. The question ' +
+    'is how fast the memory can hand the weights over, and how many gigabytes of ' +
+    'them there are to hand over. Divide the second into the first and you have the ' +
+    'number in the readout, which is why a bigger model is slower in almost exact ' +
+    'proportion to how much bigger it is. Halve the file and you double the speed. ' +
+    'Double the file and you halve it. This is also why a machine with modest ' +
+    'compute but very fast memory — a Mac, for instance — writes text far quicker ' +
+    'than its specification sheet suggests, and why a powerful graphics card that ' +
+    'has run out of video memory suddenly feels broken: the moment part of the ' +
+    'model spills into ordinary system RAM, every token has to wait on the slowest ' +
+    'pool it touches. The formula does not care which machine you own. It only ' +
+    'cares about bytes and bandwidth, and it has been the reason behind every ' +
+    'number on the last three slides.'
   ).split(' ');
 
   function rate() {
@@ -3546,6 +4670,9 @@ if (dkSlide) {
     var html = '';
     for (var i = 0; i < shown; i++) html += '<span class="tk">' + PASSAGE[i] + '</span> ';
     dkText.innerHTML = html + '<span class="caret"></span>';
+    /* The box is fixed and the script outruns it. Follow the tail, so
+       what the room watches is always the words being written now. */
+    dkText.scrollTop = dkText.scrollHeight;
   }
 
   function tick(now) {
@@ -4724,7 +5851,11 @@ if (bgSlide) {
    ========================================================== */
 var pfSlide = document.getElementById('s-prefill');
 if (pfSlide) {
-  var PF_REPLY = 120;            /* tokens of answer — a short paragraph */
+  /* Tokens of answer. Long enough that the decode phase is watchable in
+     its own right after prefill ends — at 120 the faster lane finished
+     writing in half a second and the 2.2x decode gap the verdict claims
+     was over before anyone saw it. */
+  var PF_REPLY = 260;
 
   var PF = [
     { id: 'pc',  pp: 10400, tg: 186 },
@@ -4851,6 +5982,1079 @@ if (pfSlide) {
   });
   if (pfSlide.classList.contains('active')) pfRun();
   else pfReset();
+}
+/* ==========================================================
+   SENSE OF SCALE
+   Parameter counts, revealed one model at a time so the axis has to
+   keep rescaling and everything already on screen visibly shrinks.
+   That collapse is the slide: it is very hard to feel "a thousand
+   times bigger" from a table.
+
+   Every figure is order-of-magnitude. Open-weight totals are published
+   by their vendors; the closed ones are inference and are drawn as
+   ranges, because the two public attempts to estimate them from the
+   outside disagree by about 6x (arXiv 2604.24827 vs the LessWrong
+   re-analysis of it). Params are in BILLIONS throughout.
+   ========================================================== */
+var scSlide = document.getElementById('s-scale');
+if (scSlide) {
+
+  /* kind: 'local'  — a laptop can hold it
+           'open'   — weights published, but not on your hardware
+           'closed' — no public weights; `lo`/`hi` mark an estimate range
+     act:  active params per token for a sparse (MoE) model            */
+  var SC_MODELS = [
+    { n: 'Gemma 3 1B',       p: 1,     kind: 'local',
+      say: 'Tonight&rsquo;s download. One billion parameters, about 700&nbsp;MB on ' +
+           'disk, and it answered you in a second.' },
+    { n: 'Qwen3 4B',         p: 4,     kind: 'local',
+      say: 'The one worth taking home. Four times the parameters, still ' +
+           'comfortable on an 8&nbsp;GB laptop.' },
+    { n: 'Qwen3.6 27B',      p: 27.8,  kind: 'local',
+      say: 'About the ceiling for a good laptop &mdash; roughly 17&nbsp;GB at ' +
+           '4&#8209;bit. Hold this one in mind; it comes back in the next section.' },
+    { n: 'GPT&#8209;3.5',    p: 175,   kind: 'closed',
+      say: 'The model that started the fuss, in 2022. The last OpenAI flagship ' +
+           'whose size we actually know &mdash; and six times bigger than your ' +
+           'laptop&rsquo;s ceiling today.' },
+    { n: 'DeepSeek V4 Flash', p: 284,  act: 13, kind: 'open',
+      say: 'Open weights, and the small one of its family. 284&nbsp;B total, but ' +
+           'only 13&nbsp;B fire per token &mdash; that is what sparse means.' },
+    { n: 'GLM&#8209;5.2',    p: 753,   act: 40, kind: 'open',
+      say: 'MIT licensed. You could legally download this tonight. You would need ' +
+           'about 400&nbsp;GB of memory to run it.' },
+    { n: 'MiMo V2.5 Pro',    p: 1020,  act: 42, kind: 'open',
+      say: 'A trillion parameters, published openly, by a phone manufacturer. ' +
+           'That sentence would have been nonsense two years ago.' },
+    { n: 'DeepSeek V4 Pro',  p: 1600,  act: 49, kind: 'open',
+      say: 'Open weights at 1.6&nbsp;trillion &mdash; the scale of the biggest ' +
+           'closed model anyone has ever managed to confirm.' },
+    { n: 'GPT&#8209;4',      p: 1800,  kind: 'closed',
+      say: 'Never officially disclosed; roughly 1.8&nbsp;trillion according to the ' +
+           '2023 leak. Note who has now caught up to it in the open.' },
+    { n: 'Kimi K3',          p: 2800,  act: 104, kind: 'open',
+      say: 'The largest open-weight model ever released. 2.8&nbsp;trillion ' +
+           'parameters that anyone can download &mdash; and nobody in this room can run.' },
+    { n: 'Frontier 2026',    p: 9700,  lo: 1500, hi: 9700, kind: 'closed',
+      say: 'GPT&#8209;5.6, Claude Opus 5, Gemini. Nobody outside those labs knows. ' +
+           'The published estimates span this whole bar &mdash; and its <em>floor</em> ' +
+           'is still a thousand times your download.' }
+  ];
+
+  /* Time view is a fixed picture, not a reveal — the point is when the
+     closed labs stopped publishing, which needs every point at once.
+     `lo`/`hi` again mark an estimate. `la` hand-places the label:
+     six models land inside eight weeks of each other in 2026, and no
+     automatic rule untangles that column. 2025 is empty, so the open
+     cluster labels itself leftwards into that gap. */
+  var SC_TIME = [
+    { n: 'GPT&#8209;3.5',      y: 2022.92, p: 175,  kind: 'closed', la: 'above' },
+    { n: 'GPT&#8209;4',        y: 2023.21, p: 1800, kind: 'closed', la: 'above' },
+    { n: 'Llama 3.1 405B',     y: 2024.58, p: 405,  kind: 'open',   la: 'below' },
+    { n: 'DeepSeek V3',        y: 2024.96, p: 671,  act: 37, kind: 'open', la: 'above' },
+    { n: 'GPT&#8209;5',        y: 2025.60, p: 2000, lo: 800, hi: 5000, kind: 'closed', la: 'above' },
+    { n: 'Qwen3.6 27B',        y: 2026.31, p: 27.8, kind: 'local',  la: 'left' },
+    { n: 'DeepSeek V4 Pro',    y: 2026.31, p: 1600, act: 49, kind: 'open', la: 'left' },
+    { n: 'GLM&#8209;5.2',      y: 2026.45, p: 753,  act: 40, kind: 'open', la: 'left' },
+    { n: 'GPT&#8209;5.6 Sol',  y: 2026.52, p: 3800, lo: 1500, hi: 9700, kind: 'closed', la: 'above' },
+    /* Kimi's dot sits mid-way up Sol's range bar, so its label goes right;
+       Anthropic's needs an extra drop to clear GLM-5.2's. */
+    { n: 'Kimi K3',            y: 2026.55, p: 2800, act: 104, kind: 'open', la: 'right' },
+    { n: 'Opus 5 / Fable 5',   y: 2026.56, p: 2400, lo: 1100, hi: 5300, kind: 'closed', la: 'below', ldy: 2.1 }
+  ];
+
+  var LAPTOP_CEILING = 32;      /* B params a 4-bit model can reach in ~24 GB */
+
+  var scCanvas = document.getElementById('scCanvas');
+  var scAdd    = document.getElementById('scAdd');
+  var scReset  = document.getElementById('scReset');
+  var scEmpty  = document.getElementById('scEmpty');
+  var scMaxEl  = document.getElementById('scMax');
+  var scRatio  = document.getElementById('scRatio');
+  var scSay    = document.getElementById('scSay');
+  var scAxisCtrl = document.querySelector('.sc-axis-ctrl');
+
+  var shownN = 0;               /* how many SIZE-view models are revealed */
+  var view   = 'size';
+  var axis   = 'lin';
+  var axNow  = 4;               /* eased axis maximum, in billions        */
+
+  function scFmt(b) {
+    if (b < 1000) return (b < 10 && b % 1 ? b.toFixed(1) : Math.round(b)) + 'B';
+    var t = b / 1000;
+    return (t < 10 ? t.toFixed(1).replace(/\.0$/, '') : Math.round(t)) + 'T';
+  }
+
+  /* ---- reveal state ---- */
+  function scTargetMax() {
+    var m = 4;
+    for (var i = 0; i < shownN; i++) m = Math.max(m, SC_MODELS[i].p);
+    return m;
+  }
+
+  function scSync() {
+    var last = SC_MODELS[shownN - 1];
+    scAdd.disabled = shownN >= SC_MODELS.length;
+    scAdd.textContent = shownN >= SC_MODELS.length
+      ? 'That is all of them' : 'Add the next model ▶';
+    /* The time view is never empty, so the prompt must not reappear over
+       it — this used to run before the early return below and did. */
+    scEmpty.classList.toggle('gone', view === 'time' || shownN > 0);
+
+    if (view === 'time') {
+      scMaxEl.textContent = '10T';
+      scRatio.innerHTML = 'Disclosure stopped in 2023';
+      scSay.innerHTML = 'The closed labs published parameter counts up to the ' +
+        'GPT&#8209;3 generation, then stopped. Everything solid after 2023 is open weights &mdash; ' +
+        'which is the only reason we can draw this chart at all.';
+      return;
+    }
+    var mx = scTargetMax();
+    scMaxEl.textContent = scFmt(mx);
+    scRatio.innerHTML = shownN < 2 ? '&nbsp;'
+      : Math.round(mx / SC_MODELS[0].p).toLocaleString() +
+        '&times; tonight&rsquo;s download';
+    if (last) scSay.innerHTML = last.say;
+  }
+
+  /* ---- axis helpers ---- */
+  var LOG_MIN = 0.5;
+  function scPos(v, max) {
+    if (axis === 'log') {
+      var a = Math.log(LOG_MIN) / Math.LN10, b = Math.log(Math.max(max, 10)) / Math.LN10;
+      return Math.max(0, (Math.log(Math.max(v, LOG_MIN)) / Math.LN10 - a) / (b - a));
+    }
+    return Math.max(0, v / max);
+  }
+
+  function scStroke(ctx, kind) {
+    return kind === 'closed' ? THEME.ink : THEME.accent;
+  }
+
+  /* ---- SIZE view ---- */
+  function scDrawSize(ctx, W, H, R) {
+    var padL = R * 8.4, padR = R * 5.2, padT = R * 0.6, padB = R * 1.9;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var rows = SC_MODELS.slice(0, shownN).sort(function (a, b) { return b.p - a.p; });
+    var lane = plotH / Math.max(rows.length, 1);
+    var barH = Math.min(lane * 0.56, R * 1.15);
+    var small = Math.max(9, Math.round(R * 0.55));
+    ctx.font = small + 'px ' + THEME.mono;
+
+    /* ---- axis ticks ---- */
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    var ticks = [];
+    if (axis === 'log') {
+      for (var d = 1; d <= 10000; d *= 10) if (d <= axNow * 1.2) ticks.push(d);
+    } else {
+      var st = niceStep(axNow / 5);
+      for (var t = st; t <= axNow * 1.001; t += st) ticks.push(t);
+    }
+    ticks.forEach(function (v) {
+      var x = Math.round(padL + scPos(v, axNow) * plotW) + 0.5;
+      ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH); ctx.stroke();
+      ctx.fillStyle = THEME.inkDim;
+      ctx.fillText(scFmt(v), x, padT + plotH + R * 0.35);
+    });
+    /* baseline */
+    ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL + 0.5, padT); ctx.lineTo(padL + 0.5, padT + plotH); ctx.stroke();
+
+    rows.forEach(function (m, i) {
+      var cy = padT + lane * (i + 0.5);
+      var y  = Math.round(cy - barH / 2);
+      var full = scPos(m.p, axNow) * plotW;
+      /* A 1B bar against a 10T axis is a third of a pixel. Keep a sliver
+         so the row still reads as present-but-invisible, which is the
+         whole point of the linear view. */
+      var w = Math.max(full, 2);
+      var col = scStroke(ctx, m.kind);
+
+      /* label gutter */
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = m.kind === 'local' ? THEME.accent : THEME.inkMid;
+      ctx.font = small + 'px ' + THEME.mono;
+      scLabel(ctx, m.n, padL - R * 0.55, cy);
+
+      /* bar: solid for local, hollow for open, filled white for closed */
+      if (m.kind === 'open') {
+        ctx.fillStyle = col; ctx.globalAlpha = 0.16;
+        ctx.fillRect(padL, y, w, barH); ctx.globalAlpha = 1;
+        ctx.strokeStyle = col; ctx.lineWidth = 1.25;
+        ctx.strokeRect(padL + 0.5, y + 0.5, Math.max(w - 1, 1), barH - 1);
+      } else if (m.lo) {
+        /* An estimate range reads as certainty that runs out: solid up to
+           the lowest published figure, faded across the disputed span. */
+        var xlo = Math.max(scPos(m.lo, axNow) * plotW, 2);
+        ctx.fillStyle = col;
+        ctx.fillRect(padL, y, xlo, barH);
+        ctx.globalAlpha = 0.3;
+        ctx.fillRect(padL + xlo, y, Math.max(w - xlo, 0), barH);
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.fillStyle = col;
+        ctx.fillRect(padL, y, w, barH);
+      }
+
+      /* active-parameter marker — the slice that actually moves per token */
+      if (m.act) {
+        var xa = padL + scPos(m.act, axNow) * plotW;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(xa, cy, Math.max(2, R * 0.2), 0, 6.284); ctx.fill();
+      }
+
+      /* value */
+      ctx.textAlign = 'left';
+      ctx.fillStyle = m.kind === 'closed' ? THEME.ink : THEME.accent;
+      ctx.fillText(m.lo ? scFmt(m.lo) + '–' + scFmt(m.hi) : scFmt(m.p),
+        padL + w + R * 0.45, cy);
+    });
+  }
+
+  /* ---- TIME view ---- */
+  function scDrawTime(ctx, W, H, R) {
+    var padL = R * 2.7, padR = R * 3.4, padT = R * 1.4, padB = R * 1.9;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var Y0 = 2022.6, Y1 = 2026.95, P0 = 10, P1 = 12000;
+    var small = Math.max(9, Math.round(R * 0.55));
+    ctx.font = small + 'px ' + THEME.mono;
+
+    function X(y) { return padL + (y - Y0) / (Y1 - Y0) * plotW; }
+    function Y(p) {
+      var a = Math.log(P0) / Math.LN10, b = Math.log(P1) / Math.LN10;
+      return padT + (1 - (Math.log(Math.max(p, P0)) / Math.LN10 - a) / (b - a)) * plotH;
+    }
+
+    /* the band a laptop can actually reach — everything else is above it */
+    var ceilY = Y(LAPTOP_CEILING);
+    ctx.fillStyle = THEME.accent; ctx.globalAlpha = 0.06;
+    ctx.fillRect(padL, ceilY, plotW, padT + plotH - ceilY);
+    ctx.globalAlpha = 1;
+    ctx.save();
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = THEME.accent; ctx.globalAlpha = 0.55;
+    ctx.beginPath(); ctx.moveTo(padL, ceilY); ctx.lineTo(padL + plotW, ceilY); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = THEME.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('WHAT A LAPTOP HOLDS', padL + R * 0.4, ceilY + R * 0.25);
+
+    /* y gridlines, one per decade */
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    [10, 100, 1000, 10000].forEach(function (p) {
+      var y = Math.round(Y(p)) + 0.5;
+      ctx.strokeStyle = THEME.rule; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+      ctx.fillStyle = THEME.inkDim; ctx.fillText(scFmt(p), padL - R * 0.35, y);
+    });
+
+    /* x labels */
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    [2023, 2024, 2025, 2026].forEach(function (yr) {
+      ctx.fillStyle = THEME.inkDim;
+      ctx.fillText(yr, X(yr), padT + plotH + R * 0.35);
+    });
+
+    SC_TIME.forEach(function (m) {
+      var x = X(m.y), col = scStroke(ctx, m.kind);
+      if (m.lo) {
+        /* a range, not a point — the honest shape for a guess */
+        ctx.strokeStyle = col; ctx.globalAlpha = 0.5; ctx.lineWidth = Math.max(3, R * 0.34);
+        ctx.beginPath(); ctx.moveTo(x, Y(m.lo)); ctx.lineTo(x, Y(m.hi)); ctx.stroke();
+        ctx.globalAlpha = 1;
+        [m.lo, m.hi].forEach(function (v) {
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(x - R * 0.28, Math.round(Y(v)) + 0.5);
+          ctx.lineTo(x + R * 0.28, Math.round(Y(v)) + 0.5);
+          ctx.stroke();
+        });
+      } else {
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(x, Y(m.p), Math.max(3, R * 0.26), 0, 6.284); ctx.fill();
+      }
+      /* Above and below anchor to the END of a range, not its middle —
+         a label parked halfway up a 1.5-to-9.7T bar looks like a reading. */
+      var lx = x, ly = Y(m.p);
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      if (m.la === 'left')       { ctx.textAlign = 'right'; lx = x - R * 0.5; }
+      else if (m.la === 'right') { ctx.textAlign = 'left';  lx = x + R * 0.5; }
+      else if (m.la === 'below') { ly = Y(m.lo || m.p) + R * (m.ldy || 0.85); }
+      else                       { ly = Y(m.hi || m.p) - R * 0.8; }
+      ctx.fillStyle = m.kind === 'local' ? THEME.accent
+                    : m.kind === 'closed' ? THEME.ink : THEME.inkMid;
+      scLabel(ctx, m.n, lx, ly);
+    });
+  }
+
+  /* Canvas has no entity parser and the model names carry &nbsp; and
+     non-breaking hyphens so they wrap correctly in HTML. Decode once,
+     here, rather than keeping two spellings of every name. */
+  var scDec = document.createElement('textarea');
+  function scLabel(ctx, html, x, y) {
+    scDec.innerHTML = html;
+    ctx.fillText(scDec.value, x, y);
+  }
+
+  function scPaint() {
+    var f = fitCanvas(scCanvas);
+    if (!f) return;
+    if (view === 'time') scDrawTime(f.ctx, f.w, f.h, rem());
+    else if (shownN) scDrawSize(f.ctx, f.w, f.h, rem());
+  }
+
+  /* ---- axis easing ---- */
+  var scRaf = 0;
+  function scAnimate() {
+    var target = scTargetMax();
+    if (REDUCED || view === 'time') { axNow = target; scPaint(); return; }
+    cancelAnimationFrame(scRaf);
+    var last = 0;
+    (function step(now) {
+      var dt = last ? Math.min(now - last, 100) / 1000 : 0;
+      last = now;
+      /* Exponential approach in LOG space: a linear ease from 4B to
+         9700B spends most of its time in territory nothing occupies. */
+      var la = Math.log(axNow), lt = Math.log(target);
+      la += (lt - la) * Math.min(1, dt * 5.5);
+      axNow = Math.exp(la);
+      scPaint();
+      if (Math.abs(lt - Math.log(axNow)) > 0.002) scRaf = requestAnimationFrame(step);
+      else { axNow = target; scPaint(); }
+    }(performance.now()));
+  }
+
+  scAdd.addEventListener('click', function () {
+    if (shownN >= SC_MODELS.length) return;
+    shownN++;
+    scSync(); scAnimate();
+  });
+  scReset.addEventListener('click', function () {
+    /* An ease scheduled by scAnimate holds the old target in its closure,
+       so without this the axis crawls back up after a mid-animation reset. */
+    cancelAnimationFrame(scRaf);
+    shownN = 0; axNow = 4;
+    scSync(); scPaint();
+  });
+
+  segGroup('#scView', function (b) {
+    view = b.dataset.v;
+    scAxisCtrl.classList.toggle('off', view === 'time');
+    scSync(); scAnimate();
+  });
+  segGroup('#scAxis', function (b) { axis = b.dataset.a; scPaint(); });
+
+  window.addEventListener('resize', scPaint);
+  document.addEventListener('deck:slide', scPaint);
+  scSync(); scPaint();
+}
+/* ==========================================================
+   NATIVELY LOW-BIT WEIGHTS
+   Four ways to store the same 8B model. Bars are bytes, so they shrink
+   in proportion; the decode figure is §3's formula reapplied, which is
+   the point — a ninth of the file is nine times the tokens per second
+   on the same bus.
+
+   Sizes: fp16 is 8.19B x 2 bytes; Q4_K_M and Q2_K are the usual GGUF
+   effective bit-widths; Ternary Bonsai 8B is PrismML's published 1.75 GB
+   (their GGUF build is 2.03 GiB). Verified Jul 2026.
+   ========================================================== */
+var bnSlide = document.getElementById('s-bonsai');
+if (bnSlide) {
+  var BN = [
+    { gb: 16.4, name: 'Qwen3 8B &middot; fp16', alpha: '65,536 values',
+      qual: 'Reference',
+      say: 'Sixteen bits per weight, exactly as the training run left it. ' +
+           'Nothing on this slide is smarter than this row &mdash; it is only bigger.' },
+    { gb: 4.9,  name: 'Qwen3 8B &middot; Q4_K_M', alpha: '16 values + a scale',
+      qual: '&asymp;98% retained',
+      say: 'The sweet spot from §4. A third of the size and you would struggle ' +
+           'to tell the difference in a blind test.' },
+    { gb: 2.8,  name: 'Qwen3 8B &middot; Q2_K', alpha: '4 values + a scale',
+      qual: 'Falls apart', cliff: true,
+      say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
+           'loops, contradictions, confident nonsense. This is the floor.' },
+    { gb: 1.75, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
+      qual: '75.5 benchmark avg.',
+      say: 'Below the floor, and fine. It was never squashed: every weight was ' +
+           'one of three values throughout training, so there was nothing to round away.' }
+  ];
+
+  var BN_DEVICES = [
+    { need: 15 },   /* 16 GB laptop, minus what the OS is already using */
+    { need: 6.5 },  /* 8 GB laptop  */
+    { need: 3 }     /* a phone      */
+  ];
+  /* No efficiency fudge. A single constant cannot reproduce both published
+     measurements — PrismML's 82 tok/s on an M4 Pro is about half of that
+     machine's ceiling, their 27 on an iPhone is about four fifths of its
+     one — and a readout that contradicts the measurement quoted in the
+     caveat beneath it is worse than no readout. So this is §3's formula
+     unmodified, labelled as the ceiling it is, exactly as §3 taught it. */
+
+  var bnRows  = Array.prototype.slice.call(bnSlide.querySelectorAll('.bn-row'));
+  var bnStep  = document.getElementById('bnStep');
+  var bnGrid  = bnSlide.querySelector('.bn');
+  var bnFits  = Array.prototype.slice.call(document.querySelectorAll('#bnFits span'));
+  var bnOut = {
+    name: document.getElementById('bnName'),
+    size: document.getElementById('bnSize'),
+    alpha: document.getElementById('bnAlpha'),
+    qual: document.getElementById('bnQual'),
+    rate: document.getElementById('bnRate'),
+    say: document.getElementById('bnSay')
+  };
+  var bnI = 0, bnBw = 273;
+
+  function bnDraw() {
+    var m = BN[bnI], max = BN[0].gb;
+    bnRows.forEach(function (r, i) {
+      r.classList.toggle('on', i <= bnI);
+      r.classList.toggle('cliff', !!BN[i].cliff);
+      /* Rows past the current step keep their bar at zero, so stepping
+         forward reads as the file being cut rather than a list appearing. */
+      r.querySelector('.bn-fill').style.setProperty('--w',
+        (i <= bnI ? (BN[i].gb / max) * 100 : 0) + '%');
+    });
+
+    bnGrid.classList.toggle('cliff', !!m.cliff);
+    bnOut.name.innerHTML = m.name;
+    bnOut.size.textContent = m.gb;
+    bnOut.alpha.innerHTML = m.alpha;
+    bnOut.qual.innerHTML = m.qual;
+    bnOut.say.innerHTML = m.say;
+
+    var r = bnBw / m.gb;
+    bnOut.rate.innerHTML = '&asymp;' + (r < 10 ? r.toFixed(1) : Math.round(r)) + ' tok/s';
+
+    bnFits.forEach(function (el, i) {
+      var head = BN_DEVICES[i].need;
+      /* Three states, not two. Without the red one an over-budget model
+          fell back to the neutral chip and read as "no data" rather than
+          "will not load" — fp16 against a 16 GB laptop hits exactly that. */
+      el.classList.toggle('fit', m.gb <= head * 0.8);
+      el.classList.toggle('tight', m.gb > head * 0.8 && m.gb <= head);
+      el.classList.toggle('no', m.gb > head);
+    });
+
+    bnStep.innerHTML = bnI >= BN.length - 1 ? 'Start again &#8635;' : 'Next &#9654;';
+  }
+
+  bnStep.addEventListener('click', function () {
+    bnI = (bnI + 1) % BN.length;
+    bnDraw();
+  });
+  segGroup('#bnHw', function (b) { bnBw = parseInt(b.dataset.bw, 10); bnDraw(); });
+
+  bnDraw();
+}
+/* ==========================================================
+   AUTOREGRESSIVE vs DIFFUSION
+   512 tokens generated twice. The left lane fills one cell per forward
+   pass, strictly in order; the right lane resolves a whole 256-token
+   block at once, a few more cells committing at every denoising step
+   and in no particular order.
+
+   Both lanes share one slow-motion divisor, so the 4x on screen is
+   Google's published 4x. DiffusionGemma: >1,000 tok/s on a single
+   H100, 256 tokens per forward pass (DeepMind, Jun 2026); the
+   autoregressive baseline is the "comparable model" that claim is
+   made against.
+   ========================================================== */
+var dfSlide = document.getElementById('s-diff');
+if (dfSlide) {
+  var DF_N      = 512;    /* tokens generated in both lanes   */
+  var DF_BLOCK  = 256;    /* diffusion tokens per forward pass */
+  var DF_STEPS  = 16;     /* denoising steps per block         */
+  var DF_SLOWMO = 2.5;
+  var DF_AR_RATE = 250;   /* tok/s, autoregressive baseline    */
+  var DF_DF_RATE = 1000;  /* tok/s, diffusion                  */
+
+  var dfRun = document.getElementById('dfRun');
+
+  var DF = [
+    { id: 'ar', rate: DF_AR_RATE },
+    { id: 'df', rate: DF_DF_RATE }
+  ];
+  DF.forEach(function (l) {
+    l.cv = document.getElementById('df-cv-' + l.id);
+    l.el = document.getElementById('df-el-' + l.id);
+    l.pa = document.getElementById('df-p-' + l.id);
+  });
+
+  /* Which denoising step each diffusion cell commits on. Shuffled once
+     per run so the block resolves in scattered order — committing them
+     left to right would draw exactly the picture we are contrasting
+     against. */
+  var dfCommit = new Uint8Array(DF_N);
+  function dfShuffle() {
+    for (var b = 0; b < DF_N; b += DF_BLOCK) {
+      var idx = [];
+      for (var i = 0; i < DF_BLOCK; i++) idx.push(i);
+      for (var j = idx.length - 1; j > 0; j--) {
+        var k = Math.floor(Math.random() * (j + 1));
+        var t = idx[j]; idx[j] = idx[k]; idx[k] = t;
+      }
+      /* Later steps commit more cells than early ones — that is the shape
+         of a real denoising schedule, and it also reads better. */
+      idx.forEach(function (pos, rank) {
+        var f = rank / DF_BLOCK;
+        dfCommit[b + pos] = Math.min(DF_STEPS - 1, Math.floor(Math.pow(f, 0.65) * DF_STEPS));
+      });
+    }
+  }
+  dfShuffle();
+
+  function dfSecs(l) { return DF_N / l.rate * DF_SLOWMO; }
+
+  /* ---- painting ---- */
+  function dfPaint(l, done) {
+    var f = fitCanvas(l.cv);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h;
+    var cols = 32, rows = Math.ceil(DF_N / cols);
+    var gap = Math.max(1, Math.round(rem() * 0.13));
+    var cw = (W - gap * (cols - 1)) / cols;
+    var ch = Math.min((H - gap * (rows - 1)) / rows, cw * 1.35);
+    var top = (H - (ch * rows + gap * (rows - 1))) / 2;
+
+    for (var i = 0; i < DF_N; i++) {
+      var x = (i % cols) * (cw + gap);
+      var y = top + Math.floor(i / cols) * (ch + gap);
+      var st = done(i);                    /* 0 masked · 0..1 settling · 1 done */
+      if (st <= 0) {
+        /* Unwritten cells have to be clearly THERE. Half the point of the
+           right lane is that 256 tokens exist as masked placeholders
+           before any of them is decided; --bg-raise against --bg-panel is
+           too close to read that. */
+        ctx.fillStyle = THEME.inkDim;
+        ctx.globalAlpha = 0.16;
+      } else {
+        ctx.fillStyle = THEME.accent;
+        ctx.globalAlpha = 0.22 + 0.78 * st;
+      }
+      ctx.fillRect(x, y, cw, ch);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---- run state ---- */
+  var dfT = 0, dfRunning = false, dfLast = 0;
+
+  function dfFrame(now) {
+    requestAnimationFrame(dfFrame);
+    if (!dfSlide.classList.contains('active')) { dfLast = now; return; }
+    var dt = Math.min(now - dfLast, 250) / 1000;
+    dfLast = now;
+    if (dfRunning) {
+      dfT += dt;
+      var longest = Math.max(dfSecs(DF[0]), dfSecs(DF[1]));
+      if (dfT >= longest) { dfT = longest; dfRunning = false; dfRun.disabled = false; }
+      dfRender();
+    }
+  }
+
+  function dfRender() {
+    DF.forEach(function (l) {
+      var total = dfSecs(l);
+      var t = Math.min(dfT, total);
+      l.el.textContent = t.toFixed(2);
+
+      if (l.id === 'ar') {
+        var n = Math.min(DF_N, Math.floor(t * l.rate / DF_SLOWMO));
+        l.pa.textContent = n.toLocaleString('en-US');
+        dfPaint(l, function (i) { return i < n ? 1 : 0; });
+      } else {
+        /* One pass per block; within a pass, progress through the steps. */
+        var perBlock = total / (DF_N / DF_BLOCK);
+        var blk = Math.floor(t / perBlock);
+        var within = (t - blk * perBlock) / perBlock;      /* 0..1 */
+        var step = within * DF_STEPS;
+        l.pa.textContent = Math.min(DF_N / DF_BLOCK, Math.ceil(t / perBlock) || 0);
+        dfPaint(l, function (i) {
+          var myBlk = Math.floor(i / DF_BLOCK);
+          if (myBlk < blk) return 1;
+          if (myBlk > blk) return 0;
+          /* A cell fades in over the step it commits on rather than
+             snapping, so 256 cells do not strobe together. */
+          return Math.max(0, Math.min(1, step - dfCommit[i]));
+        });
+      }
+    });
+  }
+
+  function dfStart() {
+    dfShuffle();
+    dfT = 0; dfRunning = true; dfRun.disabled = true;
+    if (REDUCED) { dfT = Math.max(dfSecs(DF[0]), dfSecs(DF[1])); dfRunning = false; dfRun.disabled = false; }
+    dfRender();
+  }
+
+  dfRun.addEventListener('click', dfStart);
+  window.addEventListener('resize', dfRender);
+  document.addEventListener('deck:slide', dfRender);
+
+  dfRender();
+  if (!REDUCED) requestAnimationFrame(dfFrame);
+}
+/* ==========================================================
+   §6 — THE CHAT WINDOW
+   Nine scenarios, played as scripted conversations in a chat UI. A
+   bulleted list can assert that a small model is good at summarising;
+   only watching it read a PDF and answer makes the case.
+
+   Each scenario is one or two LANES. A second lane appears exactly when
+   the comparison is the argument: offline and unmetered put a cloud app
+   beside the local one, and every "not this" case puts a frontier model
+   there. Everything else is a single lane, because a comparison the
+   slide is not making would only muddy it.
+
+   Timeline model: every step carries `t`, its start time in seconds.
+   A step's DOM node is created once, when the clock passes `t`, and
+   only a streaming assistant message is touched after that — rebuilding
+   the thread each frame is what makes a fake chat window stutter.
+
+   Nothing here is a benchmark. The wrong answers are the failure modes
+   the literature actually reports for small models — fabrication over
+   abstention, and multiplicative error compounding across steps — not
+   gotchas invented to make the point.
+   ========================================================== */
+var csSlide = document.getElementById('s-gb');
+if (csSlide) {
+  var csLanes  = document.getElementById('csLanes');
+  var csWhy    = document.getElementById('csWhy');
+  var csReplay = document.getElementById('csReplay');
+
+  var LOCAL = { name: 'Gemma 3 1B', sub: 'on this laptop', kind: 'local' };
+  /* Words/sec. 26 is about what a 1B at 30-odd tok/s actually manages
+     (a token averages ~3/4 of a word), so the streaming is honest as
+     well as quick. The whole slide is nine scenarios a presenter has to
+     click through in a couple of minutes — every beat below is tuned so
+     the answer lands within about two seconds and the scenario is done
+     inside five. Nobody watches a fake chat window politely. */
+  var WPS   = 26;
+
+  /* ---- the scripts ----
+     m: user | sys | ai | err | plan | done
+     Times are seconds from the start of the scenario.                  */
+  var CS = {
+
+    sum: {
+      why: 'The document is <em>in the prompt</em>. Nothing had to be recalled &mdash; ' +
+           'only reshaped, and reshaping is what the small ones are good at.',
+      lanes: [{ model: LOCAL, steps: [
+        { t: 0.15, m: 'user', text: 'Summarise this for the people who missed it. Five bullets, plain English.',
+          file: { name: 'club-agm-minutes.pdf', meta: '18 pages &middot; 2.4 MB' } },
+        { t: 0.8, m: 'sys', text: 'Reading document &mdash; 11,240 tokens', bar: 1.0 },
+        { t: 1.9, m: 'ai', pre: true, text:
+          '• Membership is up 14% on last year, now 212 paid members.\n' +
+          '• The Thursday workshop slot moves to 7pm from September.\n' +
+          '• Treasurer reports $4,180 in hand; equipment fund approved.\n' +
+          '• Two committee seats are unfilled; nominations close 30 Aug.\n' +
+          '• Next AGM provisionally 24 July 2027, same venue.' }
+      ] }]
+    },
+
+    fmt: {
+      why: 'Dull, high&#8209;volume, and exactly repeatable. It never gets bored, ' +
+           'never asks what you meant, and never sends your spreadsheet anywhere.',
+      lanes: [{ model: LOCAL, steps: [
+        /* Kept to four lines on purpose: the thread is 21rem and the
+           instruction has to stay on screen next to the table it
+           produced, or the scenario has no before-and-after. */
+        { t: 0.15, m: 'user', pre: true, mono: true, text:
+          'Turn these into a table — name, part, amount owed.\n' +
+          'dave brought the projector, still owed 40\n' +
+          'priya — snacks + drinks, 62.50, paid already\n' +
+          'sam did the venue deposit 150 outstanding' },
+        { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
+        { t: 1.5, m: 'ai', pre: true, mono: true, text:
+          '| Name  | Part           | Owed    |\n' +
+          '|-------|----------------|---------|\n' +
+          '| Dave  | Projector      | $40.00  |\n' +
+          '| Priya | Snacks, drinks | $0.00   |\n' +
+          '| Sam   | Venue deposit  | $150.00 |' },
+        { t: 3.9, m: 'ai', text: 'Priya is marked paid, so her balance is zero.' }
+      ] }]
+    },
+
+    rag: {
+      why: 'The knowledge lives in the <em>files</em>, not in the weights. This is why ' +
+           'retrieval works far better than a 1&nbsp;B model has any right to.',
+      lanes: [{ model: LOCAL, steps: [
+        { t: 0.15, m: 'user', text: 'Which invoices from March have not been paid yet?' },
+        { t: 0.75, m: 'sys', text: 'Searching 428 indexed files', bar: 0.85 },
+        { t: 1.7, m: 'sys', text: '4 matches &mdash; reading', bar: 0.55 },
+        { t: 2.35, m: 'ai', pre: true, text:
+          'Three are still outstanding:\n\n' +
+          '• INV-0312 — Hartley Signs — $840 — due 14 Apr\n' +
+          '• INV-0318 — Weyland Ltd — $2,150 — overdue 26 days\n' +
+          '• INV-0324 — K. Osei — $310 — due 2 May' },
+        { t: 4.1, m: 'ai', text: 'INV-0316 was marked settled on 2 April, so I left it out.' }
+      ] }]
+    },
+
+    priv: {
+      why: 'Nothing left this machine. There is no cloud service that can offer you ' +
+           'that, at any price, because the file has to arrive for them to read it.',
+      net: 'private',
+      lanes: [{ model: LOCAL, steps: [
+        { t: 0.15, m: 'user', text: 'Explain these numbers to me in plain English. Anything I should ask about?',
+          file: { name: 'blood-results-jul.pdf', meta: '3 pages &middot; private' } },
+        { t: 0.8, m: 'sys', text: 'Reading document &mdash; 1,860 tokens', bar: 0.7 },
+        { t: 1.6, m: 'ai', text: 'Most of the panel is inside the reference range. Two values sit just outside it, both flagged on the report itself, and both are the kind that move with recent diet or a minor infection. Worth asking your GP what they want to recheck and when — I can draft the questions.' },
+        { t: 4.2, m: 'done', text: 'No request was made. 0 bytes sent.' }
+      ] }]
+    },
+
+    off: {
+      why: 'On a plane, in a shed, on a boat, or on club wifi at 7pm. The model does ' +
+           'not know the network is gone, because it never needed it.',
+      net: 'offline',
+      lanes: [
+        { model: { name: 'Cloud assistant', sub: 'needs a network', kind: 'cloud' }, steps: [
+          { t: 0.35, m: 'user', text: 'What is a good substitute for buttermilk?' },
+          { t: 0.9, m: 'sys', text: 'Connecting', bar: 1.3 },
+          { t: 2.3, m: 'err', text: 'No internet connection.<br>Check your network and try again.' },
+          { t: 3.1, m: 'sys', text: 'Retrying', bar: 1.3 },
+          { t: 4.5, m: 'err', text: 'Request failed. You are offline.' }
+        ] },
+        { model: LOCAL, steps: [
+          { t: 0.35, m: 'user', text: 'What is a good substitute for buttermilk?' },
+          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.45 },
+          { t: 1.4, m: 'ai', text: 'A cup of milk with a tablespoon of lemon juice or white vinegar, left to sit for ten minutes. Plain yoghurt thinned with a little water works too, and behaves closer to the real thing in soda bread.' },
+          { t: 3.1, m: 'done', text: 'Answered with the aerial down.' }
+        ] }
+      ]
+    },
+
+    free: {
+      why: 'Run it overnight on ten thousand documents if you like. The only meter ' +
+           'that moves is the electricity one.',
+      lanes: [
+        { model: { name: 'Cloud assistant', sub: 'free tier', kind: 'cloud' }, steps: [
+          { t: 0.2,  m: 'user', text: 'Tag these 500 support emails by topic.' },
+          { t: 0.6,  m: 'sys', text: 'Batch 1 of 25', bar: 0.7 },
+          { t: 1.4,  m: 'ai', text: 'Done — 20 emails tagged.' },
+          { t: 2.0,  m: 'sys', text: 'Batch 2 of 25', bar: 0.7 },
+          { t: 2.8,  m: 'ai', text: 'Done — 40 emails tagged.' },
+          { t: 3.4,  m: 'sys', text: 'Batch 3 of 25', bar: 0.7 },
+          { t: 4.2,  m: 'err', html: true, text:
+            '<b>Rate limit reached.</b><br>0 of 20 requests remaining on this plan.' },
+          /* The countdown is live: a static "resets in 4:37" reads as a
+             screenshot, and the whole point is that you are made to wait. */
+          { t: 4.2,  m: 'tick', from: 277 }
+        ] },
+        { model: LOCAL, steps: [
+          { t: 0.2,  m: 'user', text: 'Tag these 500 support emails by topic.' },
+          { t: 0.6,  m: 'sys', text: 'Working', bar: 0.6 },
+          { t: 1.3,  m: 'ai', text: 'Done — all 500 tagged. Want the same run over last year’s archive?' },
+          { t: 2.9,  m: 'user', text: 'Yes, and do the 12,000 in the archive too.' },
+          { t: 3.4,  m: 'sys', text: 'Working', bar: 0.8 },
+          { t: 4.3,  m: 'ai', text: 'Running. No queue, no quota — leave it going.' }
+        ] }
+      ]
+    },
+
+    /* ---------- not this ---------- */
+
+    reason: {
+      bad: true,
+      why: 'It did not stall or hedge &mdash; it produced a clean, confident, wrong ' +
+           'number. That is the failure mode: <em>fabrication, not omission</em>.',
+      lanes: [
+        { model: LOCAL, steps: [
+          { t: 0.2, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
+          { t: 0.9, m: 'sys', text: 'Thinking', bar: 0.6 },
+          { t: 1.6, m: 'ai', text: 'Three times the parameters means three times the memory traffic per token, so the speed drops to about 20 tok/s.' },
+          { t: 3.4, m: 'verdict', bad: true, text: 'Wrong &mdash; and stated as fact' }
+        ] },
+        { model: { name: 'Frontier model', sub: 'cloud, ~1,000× larger', kind: 'cloud' }, steps: [
+          { t: 0.2, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
+          { t: 0.9, m: 'sys', text: 'Thinking', bar: 1.4 },
+          { t: 2.4, m: 'ai', pre: true, mono: true, text:
+            '3× the parameters, at half the bits each:\n' +
+            '3 × ½ = 1.5× the file → 6 GB.\n\n' +
+            '60 ÷ 1.5 ≈ 40 tok/s.' },
+          { t: 4.0, m: 'verdict', text: 'Correct' }
+        ] }
+      ]
+    },
+
+    agent: {
+      bad: true,
+      why: 'Nothing dramatic goes wrong. One step drifts, and every step after it ' +
+           'trusts the step before &mdash; which is why reliability multiplies.',
+      lanes: [
+        { model: LOCAL, steps: [
+          { t: 0.2, m: 'user', text: 'Go through the 12 supplier PDFs, pull the renewal dates, and put them in the calendar.' },
+          /* 0.26s a step: fast enough to sit through, slow enough that the
+             room sees them tick over one at a time rather than all at once. */
+          { t: 0.9, m: 'plan', fail: 5, per: 0.26, items: [
+            'Open supplier folder', 'Read 01-Hartley.pdf', 'Read 02-Weyland.pdf',
+            'Read 03-Osei.pdf', 'Read 04-Brandt.pdf', 'Read 05-Ferris.pdf',
+            'Read 06-Nakamura.pdf', 'Read 07-Silva.pdf', 'Read 08-Okonkwo.pdf',
+            'Read 09-Petrov.pdf', 'Read 10-Marsh.pdf', 'Write 12 calendar entries'
+          ] },
+          { t: 4.1, m: 'ai', text: 'All done. I added 12 renewal dates to your calendar.' },
+          { t: 5.0, m: 'verdict', bad: true, text: 'Four of them are wrong. It did not notice.' }
+        ] },
+        { model: { name: 'The arithmetic', sub: 'why this is structural', kind: 'math' }, steps: [
+          { t: 0.9, m: 'math' }
+        ] }
+      ]
+    },
+
+    fact: {
+      bad: true,
+      why: 'A 1&nbsp;B model has room for the shape of language and very little else. ' +
+           'Asked something it does not hold, it does not stop &mdash; it invents.',
+      lanes: [
+        { model: LOCAL, steps: [
+          { t: 0.2, m: 'user', text: 'Who published Kimi K3, and how big is it?' },
+          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
+          { t: 1.5, m: 'ai', text: 'Kimi K3 is a large language model released by Baidu in early 2025. It has roughly 300 billion parameters and is available through their cloud platform.' },
+          { t: 3.9, m: 'verdict', bad: true, text: 'Wrong company, wrong year, wrong by 9×. No hedge anywhere.' }
+        ] },
+        { model: { name: 'The answer', sub: 'from the scale slide', kind: 'truth' }, steps: [
+          { t: 2.7, m: 'ai', pre: true, plain: true, text:
+            'Moonshot AI, July 2026.\n' +
+            '2.8 trillion parameters total,\n' +
+            '104 billion active per token.\n\n' +
+            'The largest open-weight release\n' +
+            'to date — you saw it two slides ago.' },
+          { t: 4.1, m: 'verdict', text: 'It was never going to know this. It was trained before it happened.' }
+        ] }
+      ]
+    }
+  };
+
+  /* ---- status-bar icons ---- */
+  var ICON = {
+    wifi: '<path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/>' +
+          '<path d="M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.1" fill="currentColor"/>',
+    cell: '<path d="M3 20v-5"/><path d="M8.5 20v-8"/><path d="M14 20v-11"/><path d="M19.5 20v-14"/>',
+    air:  '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2' +
+          'c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2' +
+          'l3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'
+  };
+
+  function icon(k, state) {
+    return '<span class="cs-ic ' + state + '"><svg viewBox="0 0 24 24">' + ICON[k] +
+      (state === 'cut' ? '<line class="cut" x1="3.5" y1="20.5" x2="20.5" y2="3.5"/>' : '') +
+      '</svg></span>';
+  }
+
+  /* The bar is the whole argument on the offline slide, so it is always
+     present — you cannot notice it change if it only appears when it
+     changes. `private` differs from `offline`: the radios are on and
+     working, and still nothing is sent. */
+  function statusBar(net) {
+    if (net === 'offline') {
+      return icon('air', 'hot') + icon('wifi', 'cut') + icon('cell', 'cut') +
+        '<span class="cs-net">Airplane mode</span>';
+    }
+    if (net === 'private') {
+      return icon('air', 'off') + icon('wifi', 'on') + icon('cell', 'on') +
+        '<span class="cs-net">Online &mdash; and unused</span>';
+    }
+    return icon('air', 'off') + icon('wifi', 'on') + icon('cell', 'on');
+  }
+
+  /* ---- lane + node construction ---- */
+  function laneEl(lane, net) {
+    var el = document.createElement('div');
+    el.className = 'cs-lane k-' + lane.model.kind;
+    var head = '<div class="cs-head"><span class="cs-av"></span>' +
+      '<span class="cs-nm">' + lane.model.name + '<i>' + lane.model.sub + '</i></span>';
+    /* Only the local lane carries the radio cluster: it is the machine
+       whose connection state is being claimed not to matter. */
+    if (lane.model.kind === 'local') head += '<span class="cs-status">' + statusBar(net) + '</span>';
+    head += '</div>';
+    el.innerHTML = head + '<div class="cs-thread"></div>';
+    lane.thread = el.querySelector('.cs-thread');
+    return el;
+  }
+
+  function bubble(cls, inner) {
+    var d = document.createElement('div');
+    d.className = 'cs-msg ' + cls;
+    d.innerHTML = inner;
+    return d;
+  }
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function cls(st) { return (st.pre ? ' pre' : '') + (st.mono ? ' mono' : ''); }
+
+  function makeNode(st, lane, verdictKind) {
+    var d;
+    if (st.m === 'user') {
+      var f = st.file ? '<span class="cs-file"><svg viewBox="0 0 24 24">' +
+        '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+        '<path d="M14 2v6h6"/></svg><b>' + st.file.name + '</b><i>' + st.file.meta +
+        '</i></span>' : '';
+      d = bubble('u ' + verdictKind, f + '<span class="cs-t' + cls(st) + '">' +
+        esc(st.text) + '</span>');
+    } else if (st.m === 'sys') {
+      d = bubble('s', '<span class="cs-spin"></span><span>' + st.text +
+        '</span><span class="cs-prog"><i style="--d:' + st.bar + 's"></i></span>');
+    } else if (st.m === 'ai') {
+      d = bubble('a' + (st.plain ? ' plain' : ''),
+        '<span class="cs-t' + cls(st) + '"></span><span class="cs-caret"></span>');
+      st.body = d.querySelector('.cs-t');
+      st.words = st.text.split(' ');
+    } else if (st.m === 'err') {
+      d = bubble('e', '<svg class="cs-warn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/>' +
+        '<path d="M12 7v6"/><circle cx="12" cy="16.5" r="1.1" fill="currentColor"/></svg>' +
+        '<span>' + st.text + '</span>');
+    } else if (st.m === 'tick') {
+      d = bubble('e tick', '<span>Resets in <b class="cs-count">4:37</b></span>');
+      st.body = d.querySelector('.cs-count');
+    } else if (st.m === 'done') {
+      d = bubble('n', st.text);
+    } else if (st.m === 'verdict') {
+      d = bubble('v' + (st.bad ? ' bad' : ' ok'), st.text);
+    } else if (st.m === 'plan') {
+      var h = '';
+      for (var i = 0; i < st.items.length; i++) {
+        h += '<li><span class="cs-tick"></span>' + st.items[i] + '</li>';
+      }
+      d = bubble('p', '<ol class="cs-plan">' + h + '</ol>');
+      st.rows = Array.prototype.slice.call(d.querySelectorAll('li'));
+    } else if (st.m === 'math') {
+      /* Not a chat bubble. The compounding is the point of the scenario
+         and it deserves to be stated as arithmetic, not as a mood. */
+      d = bubble('m',
+        '<div class="cs-m-eq">success &asymp; <em>p</em><sup>n</sup></div>' +
+        '<p>Every step has to be right for the run to be right, so per-step ' +
+        'reliability <b>multiplies</b>. It does not average.</p>' +
+        '<table class="cs-m-tab"><tr><th>Per step</th><th>12 steps</th></tr>' +
+        '<tr><td>99%</td><td>89%</td></tr>' +
+        '<tr><td>95%</td><td>54%</td></tr>' +
+        '<tr class="hot"><td>90%</td><td>28%</td></tr>' +
+        '<tr class="hot"><td>85%</td><td>14%</td></tr></table>' +
+        '<p class="cs-m-note">A frontier model sits higher up this table. It is on ' +
+        'the same table.</p>');
+    }
+    lane.thread.appendChild(d);
+    return d;
+  }
+
+  /* ---- playback ---- */
+  var cur = null, clock = 0, lastT = 0, playing = false;
+
+  function load(id) {
+    var sc = CS[id];
+    if (!sc) return;
+    cur = sc;
+    csLanes.innerHTML = '';
+    csLanes.className = 'cs-lanes' + (sc.lanes.length > 1 ? ' two' : '');
+    sc.lanes.forEach(function (lane) {
+      lane.steps.forEach(function (st) { st.node = null; });
+      csLanes.appendChild(laneEl(lane, sc.net));
+    });
+    csWhy.innerHTML = sc.why;
+    csWhy.className = 'cs-why' + (sc.bad ? ' bad' : ' good');
+    clock = 0; playing = true;
+    if (REDUCED) { clock = 999; playing = false; }
+    step();
+  }
+
+  function fmtClock(s) {
+    s = Math.max(0, s);                 /* reduced motion parks the clock
+                                           past the end of the scenario */
+    return Math.floor(s / 60) + ':' + ('0' + Math.floor(s % 60)).slice(-2);
+  }
+
+  function step() {
+    var vk = cur.bad ? 'bad' : 'good';
+    var busy = false;
+    cur.lanes.forEach(function (lane) {
+      lane.steps.forEach(function (st) {
+        if (clock < st.t) { busy = true; return; }
+        if (!st.node) st.node = makeNode(st, lane, vk);
+
+        var el = clock - st.t;
+        if (st.m === 'ai') {
+          var n = REDUCED ? st.words.length : Math.floor(el * WPS);
+          if (n < st.words.length) busy = true;
+          st.body.innerHTML = esc(st.words.slice(0, Math.min(n, st.words.length)).join(' '));
+          st.node.classList.toggle('typing', n < st.words.length);
+        } else if (st.m === 'tick') {
+          st.body.textContent = fmtClock(st.from - el);
+          busy = true;                       /* the wait never resolves  */
+        } else if (st.m === 'plan') {
+          var done = Math.floor(el / st.per);
+          if (done <= st.rows.length) busy = true;
+          st.rows.forEach(function (r, i) {
+            r.classList.toggle('on', i < done);
+            r.classList.toggle('run', i === done);
+            /* The drifted step ticks green like every other one while the
+               run is happening. It only goes amber once the run has
+               finished and the verdict lands — nothing announced it at
+               the time, which is exactly what makes a long run
+               untrustworthy. */
+            r.classList.toggle('slip', i === st.fail && done >= st.rows.length);
+          });
+        }
+      });
+      /* Follow the tail, like any chat window. */
+      lane.thread.scrollTop = lane.thread.scrollHeight;
+    });
+    playing = busy;
+  }
+
+  /* A timer, not requestAnimationFrame — deliberately, and unlike every
+     other animated slide in this deck.
+
+     Those slides paint canvases, so they have to be in step with the
+     compositor. This one only inserts DOM nodes and grows a text run,
+     which needs no paint synchronisation at all. What it does need is to
+     keep running: rAF is suspended outright whenever the browser decides
+     the page is not visible, and "not visible" covers cases that turn up
+     in a real presentation — a mirrored or extended display the OS
+     considers occluded, a backgrounded window, remote desktop. When that
+     happens rAF gives you a chat window that never says anything, with
+     no error and nothing to debug. A timer keeps its clock. */
+  var TICK_MS = 33;
+  function frame() {
+    var now = performance.now();
+    if (!csSlide.classList.contains('active')) { lastT = now; return; }
+    var dt = Math.min(now - lastT, 250) / 1000;   /* clamp throttled gaps */
+    lastT = now;
+    if (!playing) return;
+    clock += dt;
+    step();
+  }
+
+  /* ---- tabs: two visual groups, one exclusive set ---- */
+  var tabs = Array.prototype.slice.call(
+    csSlide.querySelectorAll('.cs-tabs .seg button'));
+
+  function pick(b) {
+    tabs.forEach(function (o) {
+      var on = o === b;
+      o.classList.toggle('on', on);
+      o.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    load(b.dataset.s);
+  }
+  tabs.forEach(function (b) { b.addEventListener('click', function () { pick(b); }); });
+  csReplay.addEventListener('click', function () {
+    load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+  });
+
+  /* Restart on entry: a chat that is already over when the slide appears
+     has thrown away the only thing it had to show. */
+  document.addEventListener('deck:slide', function () {
+    if (csSlide.classList.contains('active')) {
+      load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+    }
+  });
+
+  load('sum');
+  lastT = performance.now();
+  setInterval(frame, TICK_MS);
 }
 })();
 </script>

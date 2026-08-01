@@ -1,0 +1,78 @@
+  <!-- ---- 7 · natively low-bit ---- -->
+  <!-- §4 spent a whole slide proving 2-bit is broken. It is — for post-hoc
+       quantization, which is the only kind that existed when that rule was
+       written. This slide is the exception, and it has to be framed as an
+       exception or it just contradicts the cliff. -->
+  <section class="slide" data-section="7" id="s-bonsai">
+    <div class="slide-inner">
+      <div class="eyebrow">07 &mdash; Three values</div>
+      <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
+
+      <div class="bn-controls">
+        <button type="button" class="bn-step" id="bnStep">Next &#9654;</button>
+        <div class="ctrl">
+          <span class="ctrl-label" id="bnHwLabel">Machine</span>
+          <div class="seg" id="bnHw" role="group" aria-labelledby="bnHwLabel">
+            <button type="button" aria-pressed="false" data-bw="96">DDR5 laptop</button>
+            <button type="button" class="on" aria-pressed="true" data-bw="273">M4 Pro</button>
+            <button type="button" aria-pressed="false" data-bw="60">iPhone 17 Pro</button>
+          </div>
+        </div>
+        <span class="bn-note mono">Same 8&nbsp;B model, four ways of storing it</span>
+      </div>
+
+      <div class="bn">
+        <div class="bn-rows" id="bnRows">
+          <div class="bn-row" data-i="0">
+            <div class="bn-lab"><b>fp16</b><span>as trained</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">16.4 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="1">
+            <div class="bn-lab"><b>Q4_K_M</b><span>squashed after</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">4.9 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="2">
+            <div class="bn-lab"><b>Q2_K</b><span>squashed harder</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.8 GB</span></div>
+          </div>
+          <div class="bn-row" data-i="3">
+            <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+          </div>
+        </div>
+
+        <div class="bn-side">
+          <div class="bn-name" id="bnName">Qwen3 8B &middot; fp16</div>
+          <div class="bn-readout">
+            <span class="bn-num" id="bnSize">16.4</span><span class="bn-unit">GB</span>
+          </div>
+          <dl class="bn-stats">
+            <div><dt>Weights are</dt><dd id="bnAlpha">65,536 values</dd></div>
+            <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
+            <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
+          </dl>
+          <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
+            left it. Nothing on this slide is smarter than this row &mdash; it is only
+            bigger.</p>
+          <!-- Order matters: the headroom figures live in the JS and are
+               matched to these by position. -->
+          <div class="bn-fits" id="bnFits">
+            <span>16 GB laptop</span>
+            <span>8 GB laptop</span>
+            <span>A phone</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
+        &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
+        16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
+        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
+        format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
+        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
+        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
+        roughly half to four fifths of it.</p>
+    </div>
+  </section>
