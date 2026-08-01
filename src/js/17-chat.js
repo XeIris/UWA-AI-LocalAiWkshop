@@ -27,7 +27,13 @@ if (csSlide) {
   var csReplay = document.getElementById('csReplay');
 
   var LOCAL = { name: 'Gemma 3 1B', sub: 'on this laptop', kind: 'local' };
-  var WPS   = 15;          /* words/sec — readable, not a speed claim   */
+  /* Words/sec. 26 is about what a 1B at 30-odd tok/s actually manages
+     (a token averages ~3/4 of a word), so the streaming is honest as
+     well as quick. The whole slide is nine scenarios a presenter has to
+     click through in a couple of minutes — every beat below is tuned so
+     the answer lands within about two seconds and the scenario is done
+     inside five. Nobody watches a fake chat window politely. */
+  var WPS   = 26;
 
   /* ---- the scripts ----
      m: user | sys | ai | err | plan | done
@@ -38,10 +44,10 @@ if (csSlide) {
       why: 'The document is <em>in the prompt</em>. Nothing had to be recalled &mdash; ' +
            'only reshaped, and reshaping is what the small ones are good at.',
       lanes: [{ model: LOCAL, steps: [
-        { t: 0.2, m: 'user', text: 'Summarise this for the people who missed it. Five bullets, plain English.',
+        { t: 0.15, m: 'user', text: 'Summarise this for the people who missed it. Five bullets, plain English.',
           file: { name: 'club-agm-minutes.pdf', meta: '18 pages &middot; 2.4 MB' } },
-        { t: 1.4, m: 'sys', text: 'Reading document &mdash; 11,240 tokens', bar: 2.0 },
-        { t: 3.6, m: 'ai', pre: true, text:
+        { t: 0.8, m: 'sys', text: 'Reading document &mdash; 11,240 tokens', bar: 1.0 },
+        { t: 1.9, m: 'ai', pre: true, text:
           '• Membership is up 14% on last year, now 212 paid members.\n' +
           '• The Thursday workshop slot moves to 7pm from September.\n' +
           '• Treasurer reports $4,180 in hand; equipment fund approved.\n' +
@@ -57,19 +63,19 @@ if (csSlide) {
         /* Kept to four lines on purpose: the thread is 21rem and the
            instruction has to stay on screen next to the table it
            produced, or the scenario has no before-and-after. */
-        { t: 0.2, m: 'user', pre: true, mono: true, text:
+        { t: 0.15, m: 'user', pre: true, mono: true, text:
           'Turn these into a table — name, part, amount owed.\n' +
           'dave brought the projector, still owed 40\n' +
           'priya — snacks + drinks, 62.50, paid already\n' +
           'sam did the venue deposit 150 outstanding' },
-        { t: 1.5, m: 'sys', text: 'Thinking', bar: 0.9 },
-        { t: 2.6, m: 'ai', pre: true, mono: true, text:
+        { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
+        { t: 1.5, m: 'ai', pre: true, mono: true, text:
           '| Name  | Part           | Owed    |\n' +
           '|-------|----------------|---------|\n' +
           '| Dave  | Projector      | $40.00  |\n' +
           '| Priya | Snacks, drinks | $0.00   |\n' +
           '| Sam   | Venue deposit  | $150.00 |' },
-        { t: 6.2, m: 'ai', text: 'Priya is marked paid, so her balance is zero.' }
+        { t: 3.9, m: 'ai', text: 'Priya is marked paid, so her balance is zero.' }
       ] }]
     },
 
@@ -77,15 +83,15 @@ if (csSlide) {
       why: 'The knowledge lives in the <em>files</em>, not in the weights. This is why ' +
            'retrieval works far better than a 1&nbsp;B model has any right to.',
       lanes: [{ model: LOCAL, steps: [
-        { t: 0.2, m: 'user', text: 'Which invoices from March have not been paid yet?' },
-        { t: 1.2, m: 'sys', text: 'Searching 428 indexed files', bar: 1.6 },
-        { t: 2.9, m: 'sys', text: '4 matches &mdash; reading', bar: 1.0 },
-        { t: 4.1, m: 'ai', pre: true, text:
+        { t: 0.15, m: 'user', text: 'Which invoices from March have not been paid yet?' },
+        { t: 0.75, m: 'sys', text: 'Searching 428 indexed files', bar: 0.85 },
+        { t: 1.7, m: 'sys', text: '4 matches &mdash; reading', bar: 0.55 },
+        { t: 2.35, m: 'ai', pre: true, text:
           'Three are still outstanding:\n\n' +
           '• INV-0312 — Hartley Signs — $840 — due 14 Apr\n' +
           '• INV-0318 — Weyland Ltd — $2,150 — overdue 26 days\n' +
           '• INV-0324 — K. Osei — $310 — due 2 May' },
-        { t: 8.4, m: 'ai', text: 'INV-0316 was marked settled on 2 April, so I left it out.' }
+        { t: 4.1, m: 'ai', text: 'INV-0316 was marked settled on 2 April, so I left it out.' }
       ] }]
     },
 
@@ -94,11 +100,11 @@ if (csSlide) {
            'that, at any price, because the file has to arrive for them to read it.',
       net: 'private',
       lanes: [{ model: LOCAL, steps: [
-        { t: 0.2, m: 'user', text: 'Explain these numbers to me in plain English. Anything I should ask about?',
+        { t: 0.15, m: 'user', text: 'Explain these numbers to me in plain English. Anything I should ask about?',
           file: { name: 'blood-results-jul.pdf', meta: '3 pages &middot; private' } },
-        { t: 1.4, m: 'sys', text: 'Reading document &mdash; 1,860 tokens', bar: 1.2 },
-        { t: 2.9, m: 'ai', text: 'Most of the panel is inside the reference range. Two values sit just outside it, both flagged on the report itself, and both are the kind that move with recent diet or a minor infection. Worth asking your GP what they want to recheck and when — I can draft the questions.' },
-        { t: 8.6, m: 'done', text: 'No request was made. 0 bytes sent.' }
+        { t: 0.8, m: 'sys', text: 'Reading document &mdash; 1,860 tokens', bar: 0.7 },
+        { t: 1.6, m: 'ai', text: 'Most of the panel is inside the reference range. Two values sit just outside it, both flagged on the report itself, and both are the kind that move with recent diet or a minor infection. Worth asking your GP what they want to recheck and when — I can draft the questions.' },
+        { t: 4.2, m: 'done', text: 'No request was made. 0 bytes sent.' }
       ] }]
     },
 
@@ -108,17 +114,17 @@ if (csSlide) {
       net: 'offline',
       lanes: [
         { model: { name: 'Cloud assistant', sub: 'needs a network', kind: 'cloud' }, steps: [
-          { t: 0.6, m: 'user', text: 'What is a good substitute for buttermilk?' },
-          { t: 1.6, m: 'sys', text: 'Connecting', bar: 2.4 },
-          { t: 4.2, m: 'err', text: 'No internet connection.<br>Check your network and try again.' },
-          { t: 6.0, m: 'sys', text: 'Retrying', bar: 2.4 },
-          { t: 8.6, m: 'err', text: 'Request failed. You are offline.' }
+          { t: 0.35, m: 'user', text: 'What is a good substitute for buttermilk?' },
+          { t: 0.9, m: 'sys', text: 'Connecting', bar: 1.3 },
+          { t: 2.3, m: 'err', text: 'No internet connection.<br>Check your network and try again.' },
+          { t: 3.1, m: 'sys', text: 'Retrying', bar: 1.3 },
+          { t: 4.5, m: 'err', text: 'Request failed. You are offline.' }
         ] },
         { model: LOCAL, steps: [
-          { t: 0.6, m: 'user', text: 'What is a good substitute for buttermilk?' },
-          { t: 1.4, m: 'sys', text: 'Thinking', bar: 0.7 },
-          { t: 2.3, m: 'ai', text: 'A cup of milk with a tablespoon of lemon juice or white vinegar, left to sit for ten minutes. Plain yoghurt thinned with a little water works too, and behaves closer to the real thing in soda bread.' },
-          { t: 7.4, m: 'done', text: 'Answered with the aerial down.' }
+          { t: 0.35, m: 'user', text: 'What is a good substitute for buttermilk?' },
+          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.45 },
+          { t: 1.4, m: 'ai', text: 'A cup of milk with a tablespoon of lemon juice or white vinegar, left to sit for ten minutes. Plain yoghurt thinned with a little water works too, and behaves closer to the real thing in soda bread.' },
+          { t: 3.1, m: 'done', text: 'Answered with the aerial down.' }
         ] }
       ]
     },
@@ -128,25 +134,25 @@ if (csSlide) {
            'that moves is the electricity one.',
       lanes: [
         { model: { name: 'Cloud assistant', sub: 'free tier', kind: 'cloud' }, steps: [
-          { t: 0.3,  m: 'user', text: 'Tag these 500 support emails by topic.' },
-          { t: 1.0,  m: 'sys', text: 'Batch 1 of 25', bar: 1.2 },
-          { t: 2.4,  m: 'ai', text: 'Done — 20 emails tagged.' },
-          { t: 3.4,  m: 'sys', text: 'Batch 2 of 25', bar: 1.2 },
-          { t: 4.8,  m: 'ai', text: 'Done — 40 emails tagged.' },
-          { t: 5.8,  m: 'sys', text: 'Batch 3 of 25', bar: 1.2 },
-          { t: 7.2,  m: 'err', html: true, text:
+          { t: 0.2,  m: 'user', text: 'Tag these 500 support emails by topic.' },
+          { t: 0.6,  m: 'sys', text: 'Batch 1 of 25', bar: 0.7 },
+          { t: 1.4,  m: 'ai', text: 'Done — 20 emails tagged.' },
+          { t: 2.0,  m: 'sys', text: 'Batch 2 of 25', bar: 0.7 },
+          { t: 2.8,  m: 'ai', text: 'Done — 40 emails tagged.' },
+          { t: 3.4,  m: 'sys', text: 'Batch 3 of 25', bar: 0.7 },
+          { t: 4.2,  m: 'err', html: true, text:
             '<b>Rate limit reached.</b><br>0 of 20 requests remaining on this plan.' },
           /* The countdown is live: a static "resets in 4:37" reads as a
              screenshot, and the whole point is that you are made to wait. */
-          { t: 7.2,  m: 'tick', from: 277 }
+          { t: 4.2,  m: 'tick', from: 277 }
         ] },
         { model: LOCAL, steps: [
-          { t: 0.3,  m: 'user', text: 'Tag these 500 support emails by topic.' },
-          { t: 1.0,  m: 'sys', text: 'Working', bar: 1.0 },
-          { t: 2.2,  m: 'ai', text: 'Done — all 500 tagged. Want the same run over last year’s archive?' },
-          { t: 6.4,  m: 'user', text: 'Yes, and do the 12,000 in the archive too.' },
-          { t: 7.4,  m: 'sys', text: 'Working', bar: 1.4 },
-          { t: 9.0,  m: 'ai', text: 'Running. No queue, no quota — leave it going.' }
+          { t: 0.2,  m: 'user', text: 'Tag these 500 support emails by topic.' },
+          { t: 0.6,  m: 'sys', text: 'Working', bar: 0.6 },
+          { t: 1.3,  m: 'ai', text: 'Done — all 500 tagged. Want the same run over last year’s archive?' },
+          { t: 2.9,  m: 'user', text: 'Yes, and do the 12,000 in the archive too.' },
+          { t: 3.4,  m: 'sys', text: 'Working', bar: 0.8 },
+          { t: 4.3,  m: 'ai', text: 'Running. No queue, no quota — leave it going.' }
         ] }
       ]
     },
@@ -159,19 +165,19 @@ if (csSlide) {
            'number. That is the failure mode: <em>fabrication, not omission</em>.',
       lanes: [
         { model: LOCAL, steps: [
-          { t: 0.3, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
-          { t: 1.6, m: 'sys', text: 'Thinking', bar: 1.1 },
-          { t: 2.9, m: 'ai', text: 'Three times the parameters means three times the memory traffic per token, so the speed drops to about 20 tok/s.' },
-          { t: 7.2, m: 'verdict', bad: true, text: 'Wrong &mdash; and stated as fact' }
+          { t: 0.2, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
+          { t: 0.9, m: 'sys', text: 'Thinking', bar: 0.6 },
+          { t: 1.6, m: 'ai', text: 'Three times the parameters means three times the memory traffic per token, so the speed drops to about 20 tok/s.' },
+          { t: 3.4, m: 'verdict', bad: true, text: 'Wrong &mdash; and stated as fact' }
         ] },
         { model: { name: 'Frontier model', sub: 'cloud, ~1,000× larger', kind: 'cloud' }, steps: [
-          { t: 0.3, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
-          { t: 1.6, m: 'sys', text: 'Thinking', bar: 2.6 },
-          { t: 4.4, m: 'ai', pre: true, mono: true, text:
+          { t: 0.2, m: 'user', text: 'A 4 GB model runs at 60 tok/s. I swap to a model with 3× the parameters, but quantized from 8-bit to 4-bit. New speed?' },
+          { t: 0.9, m: 'sys', text: 'Thinking', bar: 1.4 },
+          { t: 2.4, m: 'ai', pre: true, mono: true, text:
             '3× the parameters, at half the bits each:\n' +
             '3 × ½ = 1.5× the file → 6 GB.\n\n' +
             '60 ÷ 1.5 ≈ 40 tok/s.' },
-          { t: 8.4, m: 'verdict', text: 'Correct' }
+          { t: 4.0, m: 'verdict', text: 'Correct' }
         ] }
       ]
     },
@@ -182,18 +188,20 @@ if (csSlide) {
            'trusts the step before &mdash; which is why reliability multiplies.',
       lanes: [
         { model: LOCAL, steps: [
-          { t: 0.3, m: 'user', text: 'Go through the 12 supplier PDFs, pull the renewal dates, and put them in the calendar.' },
-          { t: 1.4, m: 'plan', fail: 5, per: 0.62, items: [
+          { t: 0.2, m: 'user', text: 'Go through the 12 supplier PDFs, pull the renewal dates, and put them in the calendar.' },
+          /* 0.26s a step: fast enough to sit through, slow enough that the
+             room sees them tick over one at a time rather than all at once. */
+          { t: 0.9, m: 'plan', fail: 5, per: 0.26, items: [
             'Open supplier folder', 'Read 01-Hartley.pdf', 'Read 02-Weyland.pdf',
             'Read 03-Osei.pdf', 'Read 04-Brandt.pdf', 'Read 05-Ferris.pdf',
             'Read 06-Nakamura.pdf', 'Read 07-Silva.pdf', 'Read 08-Okonkwo.pdf',
             'Read 09-Petrov.pdf', 'Read 10-Marsh.pdf', 'Write 12 calendar entries'
           ] },
-          { t: 9.6, m: 'ai', text: 'All done. I added 12 renewal dates to your calendar.' },
-          { t: 13.0, m: 'verdict', bad: true, text: 'Four of them are wrong. It did not notice.' }
+          { t: 4.1, m: 'ai', text: 'All done. I added 12 renewal dates to your calendar.' },
+          { t: 5.0, m: 'verdict', bad: true, text: 'Four of them are wrong. It did not notice.' }
         ] },
         { model: { name: 'The arithmetic', sub: 'why this is structural', kind: 'math' }, steps: [
-          { t: 1.4, m: 'math' }
+          { t: 0.9, m: 'math' }
         ] }
       ]
     },
@@ -204,19 +212,19 @@ if (csSlide) {
            'Asked something it does not hold, it does not stop &mdash; it invents.',
       lanes: [
         { model: LOCAL, steps: [
-          { t: 0.3, m: 'user', text: 'Who published Kimi K3, and how big is it?' },
-          { t: 1.5, m: 'sys', text: 'Thinking', bar: 0.9 },
-          { t: 2.6, m: 'ai', text: 'Kimi K3 is a large language model released by Baidu in early 2025. It has roughly 300 billion parameters and is available through their cloud platform.' },
-          { t: 8.0, m: 'verdict', bad: true, text: 'Wrong company, wrong year, wrong by 9×. No hedge anywhere.' }
+          { t: 0.2, m: 'user', text: 'Who published Kimi K3, and how big is it?' },
+          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
+          { t: 1.5, m: 'ai', text: 'Kimi K3 is a large language model released by Baidu in early 2025. It has roughly 300 billion parameters and is available through their cloud platform.' },
+          { t: 3.9, m: 'verdict', bad: true, text: 'Wrong company, wrong year, wrong by 9×. No hedge anywhere.' }
         ] },
         { model: { name: 'The answer', sub: 'from the scale slide', kind: 'truth' }, steps: [
-          { t: 3.0, m: 'ai', pre: true, plain: true, text:
+          { t: 2.7, m: 'ai', pre: true, plain: true, text:
             'Moonshot AI, July 2026.\n' +
             '2.8 trillion parameters total,\n' +
             '104 billion active per token.\n\n' +
             'The largest open-weight release\n' +
             'to date — you saw it two slides ago.' },
-          { t: 8.0, m: 'verdict', text: 'It was never going to know this. It was trained before it happened.' }
+          { t: 4.1, m: 'verdict', text: 'It was never going to know this. It was trained before it happened.' }
         ] }
       ]
     }
