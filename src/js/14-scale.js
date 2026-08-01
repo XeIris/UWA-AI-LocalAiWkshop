@@ -119,8 +119,8 @@ if (scSlide) {
     if (view === 'time') {
       scMaxEl.textContent = '10T';
       scRatio.innerHTML = 'Disclosure stopped in 2023';
-      scSay.innerHTML = 'The closed labs published parameter counts right up to ' +
-        'GPT&#8209;3, then stopped. Everything solid after 2023 is open weights &mdash; ' +
+      scSay.innerHTML = 'The closed labs published parameter counts up to the ' +
+        'GPT&#8209;3 generation, then stopped. Everything solid after 2023 is open weights &mdash; ' +
         'which is the only reason we can draw this chart at all.';
       return;
     }
@@ -345,6 +345,9 @@ if (scSlide) {
     scSync(); scAnimate();
   });
   scReset.addEventListener('click', function () {
+    /* An ease scheduled by scAnimate holds the old target in its closure,
+       so without this the axis crawls back up after a mid-animation reset. */
+    cancelAnimationFrame(scRaf);
     shownN = 0; axNow = 4;
     scSync(); scPaint();
   });

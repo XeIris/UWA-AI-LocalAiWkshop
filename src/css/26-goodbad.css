@@ -244,7 +244,7 @@
 .cs-plan li.on { color: var(--ink-mid); }
 .cs-tick {
   width: 0.62rem; height: 0.62rem; flex: none;
-  border: 1px solid var(--rule); border-radius: 2px;
+  border: 1px solid var(--rule); border-radius: var(--r-xs);
 }
 .cs-plan li.on .cs-tick { background: var(--ok); border-color: var(--ok); }
 .cs-plan li.run .cs-tick { border-color: var(--accent); animation: cs-pulse 800ms ease-in-out infinite; }

@@ -5,7 +5,7 @@
        exception or it just contradicts the cliff. -->
   <section class="slide" data-section="7" id="s-bonsai">
     <div class="slide-inner">
-      <div class="eyebrow">07 &mdash; One bit</div>
+      <div class="eyebrow">07 &mdash; Three values</div>
       <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
 
       <div class="bn-controls">
@@ -49,7 +49,7 @@
           <dl class="bn-stats">
             <div><dt>Weights are</dt><dd id="bnAlpha">65,536 values</dd></div>
             <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
-            <div><dt>Decode, this machine</dt><dd id="bnRate">&asymp;8 tok/s</dd></div>
+            <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
           </dl>
           <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
             left it. Nothing on this slide is smarter than this row &mdash; it is only
@@ -70,8 +70,9 @@
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
         1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
         format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
-        MLX build, and will not appear in LM Studio tonight. Decode figures are §3&rsquo;s
-        formula on a published bandwidth, halved: PrismML measure 82&nbsp;tok/s on an
-        M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max.</p>
+        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
+        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
+        roughly half to four fifths of it.</p>
     </div>
   </section>

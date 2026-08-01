@@ -51,6 +51,7 @@
      hard-edged draughting look, 1 for the app-like rounding below, or
      anything between. Every rounded thing in the deck derives from it. */
   --r-scale: 1;
+  --r-xs:   calc(3px  * var(--r-scale));   /* tick boxes, swatches    */
   --r-sm:   calc(7px  * var(--r-scale));   /* chips, controls, bars   */
   --r-md:   calc(14px * var(--r-scale));   /* panels, tiles, cards    */
   --r-lg:   calc(20px * var(--r-scale));   /* large feature panels    */
@@ -1891,7 +1892,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
 }
 .sc-legend span { display: flex; align-items: center; gap: 0.55rem; }
-.sw { width: 0.85rem; height: 0.85rem; border-radius: 2px; flex: none; }
+.sw { width: 0.85rem; height: 0.85rem; border-radius: var(--r-xs); flex: none; }
 /* The three categories are one hue plus the deck's third state: solid
    cyan for what you can run, hollow cyan for open-but-out-of-reach,
    filled white for closed. No fourth colour — warm stays semantic. */
@@ -2156,7 +2157,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .cs-plan li.on { color: var(--ink-mid); }
 .cs-tick {
   width: 0.62rem; height: 0.62rem; flex: none;
-  border: 1px solid var(--rule); border-radius: 2px;
+  border: 1px solid var(--rule); border-radius: var(--r-xs);
 }
 .cs-plan li.on .cs-tick { background: var(--ok); border-color: var(--ok); }
 .cs-plan li.run .cs-tick { border-color: var(--accent); animation: cs-pulse 800ms ease-in-out infinite; }
@@ -2458,6 +2459,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 .bn-fits span.fit  { color: var(--ok);  border-color: rgba(74,222,128,0.45);  background: rgba(74,222,128,0.09); }
 .bn-fits span.tight{ color: var(--warn);border-color: rgba(251,191,36,0.45);  background: rgba(251,191,36,0.09); }
+.bn-fits span.no   { color: var(--bad);  border-color: rgba(248,113,113,0.45); background: rgba(248,113,113,0.09); }
 
 @media (max-width: 900px) {
   .bn { grid-template-columns: 1fr; }
@@ -3837,9 +3839,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
         The white bars are inference, not fact &mdash; the two published attempts to measure
         them from the outside disagree by roughly <em>six times</em>, which is why they are
-        drawn as ranges. The lesson survives the uncertainty: even the most conservative
-        estimate is two orders of magnitude above anything you can hold in a laptop, and
-        a sparse model only ever <em>runs</em> a small slice of that total at a time
+        drawn as ranges. The lesson survives the uncertainty: even the <em>floor</em> of the
+        most conservative estimate is fifty times the largest model a laptop can hold, and
+        over a thousand times the one you downloaded tonight &mdash; and a sparse model
+        only ever <em>runs</em> a small slice of that total at a time
         &mdash; the dot on each bar.</p>
     </div>
   </section>
@@ -3886,7 +3889,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <p class="caveat"><strong>The pattern is one line: bring the knowledge to the
         model.</strong> Everything on the left hands it the material; everything on the
         right asks it to supply the material itself. That is why retrieval over your own
-        files works far better than a 4&nbsp;B model has any right to, and why
+        files works far better than a 1&nbsp;B model has any right to, and why
         &ldquo;what do you know about&nbsp;&hellip;&rdquo; disappoints. <strong>The right
         column is a difference of degree, not of kind</strong> &mdash; frontier models
         still hallucinate on 3&ndash;19% of fact-seeking questions depending on the model
@@ -3961,7 +3964,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       </div>
 
       <div class="cu-line">
-        <span class="cu-line-k">Artificial Analysis Intelligence Index</span>
+        <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; read Jul 2026</span>
         <span class="cu-line-t">Last year&rsquo;s frontier model, matched by something that
           fits on a laptop &mdash; carrying <b>one sixty&#8209;fifth</b> of the parameters of
           the last frontier model whose size we can confirm.</span>
@@ -3983,7 +3986,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
        exception or it just contradicts the cliff. -->
   <section class="slide" data-section="7" id="s-bonsai">
     <div class="slide-inner">
-      <div class="eyebrow">07 &mdash; One bit</div>
+      <div class="eyebrow">07 &mdash; Three values</div>
       <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
 
       <div class="bn-controls">
@@ -4027,7 +4030,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <dl class="bn-stats">
             <div><dt>Weights are</dt><dd id="bnAlpha">65,536 values</dd></div>
             <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
-            <div><dt>Decode, this machine</dt><dd id="bnRate">&asymp;8 tok/s</dd></div>
+            <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
           </dl>
           <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
             left it. Nothing on this slide is smarter than this row &mdash; it is only
@@ -4048,9 +4051,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
         1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
         format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
-        MLX build, and will not appear in LM Studio tonight. Decode figures are §3&rsquo;s
-        formula on a published bandwidth, halved: PrismML measure 82&nbsp;tok/s on an
-        M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max.</p>
+        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
+        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
+        roughly half to four fifths of it.</p>
     </div>
   </section>
   <!-- ---- 7 · a different shape of generation ---- -->
@@ -6100,8 +6104,8 @@ if (scSlide) {
     if (view === 'time') {
       scMaxEl.textContent = '10T';
       scRatio.innerHTML = 'Disclosure stopped in 2023';
-      scSay.innerHTML = 'The closed labs published parameter counts right up to ' +
-        'GPT&#8209;3, then stopped. Everything solid after 2023 is open weights &mdash; ' +
+      scSay.innerHTML = 'The closed labs published parameter counts up to the ' +
+        'GPT&#8209;3 generation, then stopped. Everything solid after 2023 is open weights &mdash; ' +
         'which is the only reason we can draw this chart at all.';
       return;
     }
@@ -6326,6 +6330,9 @@ if (scSlide) {
     scSync(); scAnimate();
   });
   scReset.addEventListener('click', function () {
+    /* An ease scheduled by scAnimate holds the old target in its closure,
+       so without this the axis crawls back up after a mid-animation reset. */
+    cancelAnimationFrame(scRaf);
     shownN = 0; axNow = 4;
     scSync(); scPaint();
   });
@@ -6378,7 +6385,12 @@ if (bnSlide) {
     { need: 6.5 },  /* 8 GB laptop  */
     { need: 3 }     /* a phone      */
   ];
-  var BN_EFF = 0.5;   /* measured fraction of paper bandwidth, per PrismML */
+  /* No efficiency fudge. A single constant cannot reproduce both published
+     measurements — PrismML's 82 tok/s on an M4 Pro is about half of that
+     machine's ceiling, their 27 on an iPhone is about four fifths of its
+     one — and a readout that contradicts the measurement quoted in the
+     caveat beneath it is worse than no readout. So this is §3's formula
+     unmodified, labelled as the ceiling it is, exactly as §3 taught it. */
 
   var bnRows  = Array.prototype.slice.call(bnSlide.querySelectorAll('.bn-row'));
   var bnStep  = document.getElementById('bnStep');
@@ -6412,13 +6424,17 @@ if (bnSlide) {
     bnOut.qual.innerHTML = m.qual;
     bnOut.say.innerHTML = m.say;
 
-    var r = bnBw / m.gb * BN_EFF;
+    var r = bnBw / m.gb;
     bnOut.rate.innerHTML = '&asymp;' + (r < 10 ? r.toFixed(1) : Math.round(r)) + ' tok/s';
 
     bnFits.forEach(function (el, i) {
       var head = BN_DEVICES[i].need;
+      /* Three states, not two. Without the red one an over-budget model
+          fell back to the neutral chip and read as "no data" rather than
+          "will not load" — fp16 against a 16 GB laptop hits exactly that. */
       el.classList.toggle('fit', m.gb <= head * 0.8);
       el.classList.toggle('tight', m.gb > head * 0.8 && m.gb <= head);
+      el.classList.toggle('no', m.gb > head);
     });
 
     bnStep.innerHTML = bnI >= BN.length - 1 ? 'Start again &#8635;' : 'Next &#9654;';

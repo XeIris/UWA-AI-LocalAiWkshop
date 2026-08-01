@@ -106,7 +106,7 @@
   letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
 }
 .sc-legend span { display: flex; align-items: center; gap: 0.55rem; }
-.sw { width: 0.85rem; height: 0.85rem; border-radius: 2px; flex: none; }
+.sw { width: 0.85rem; height: 0.85rem; border-radius: var(--r-xs); flex: none; }
 /* The three categories are one hue plus the deck's third state: solid
    cyan for what you can run, hollow cyan for open-but-out-of-reach,
    filled white for closed. No fourth colour — warm stays semantic. */

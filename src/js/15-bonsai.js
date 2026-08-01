@@ -35,7 +35,12 @@ if (bnSlide) {
     { need: 6.5 },  /* 8 GB laptop  */
     { need: 3 }     /* a phone      */
   ];
-  var BN_EFF = 0.5;   /* measured fraction of paper bandwidth, per PrismML */
+  /* No efficiency fudge. A single constant cannot reproduce both published
+     measurements — PrismML's 82 tok/s on an M4 Pro is about half of that
+     machine's ceiling, their 27 on an iPhone is about four fifths of its
+     one — and a readout that contradicts the measurement quoted in the
+     caveat beneath it is worse than no readout. So this is §3's formula
+     unmodified, labelled as the ceiling it is, exactly as §3 taught it. */
 
   var bnRows  = Array.prototype.slice.call(bnSlide.querySelectorAll('.bn-row'));
   var bnStep  = document.getElementById('bnStep');
@@ -69,13 +74,17 @@ if (bnSlide) {
     bnOut.qual.innerHTML = m.qual;
     bnOut.say.innerHTML = m.say;
 
-    var r = bnBw / m.gb * BN_EFF;
+    var r = bnBw / m.gb;
     bnOut.rate.innerHTML = '&asymp;' + (r < 10 ? r.toFixed(1) : Math.round(r)) + ' tok/s';
 
     bnFits.forEach(function (el, i) {
       var head = BN_DEVICES[i].need;
+      /* Three states, not two. Without the red one an over-budget model
+          fell back to the neutral chip and read as "no data" rather than
+          "will not load" — fp16 against a 16 GB laptop hits exactly that. */
       el.classList.toggle('fit', m.gb <= head * 0.8);
       el.classList.toggle('tight', m.gb > head * 0.8 && m.gb <= head);
+      el.classList.toggle('no', m.gb > head);
     });
 
     bnStep.innerHTML = bnI >= BN.length - 1 ? 'Start again &#8635;' : 'Next &#9654;';
