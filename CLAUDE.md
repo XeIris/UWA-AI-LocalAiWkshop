@@ -101,7 +101,49 @@ word is spoken.
    slide's contents rows are `[data-goto]` buttons handled by a delegated
    listener in `00-deck.js`, so any future slide can carry a jump target with
    no JS of its own.
-6. §6 / §7 content, cover art polish.
+6. ~~§6 / §7 content.~~ §6 opens with a **scale chart** before any
+   good-at/bad-at claim, because "your model is small" has to be *felt*
+   before it can be reframed. Models are revealed one at a time and the
+   axis rescales, so each press visibly shrinks everything already on
+   screen; LINEAR is the drama and LOG is where you read the numbers.
+   A second BY YEAR view carries the disclosure story — OpenAI and
+   Google published parameter counts up to 2022/23 and then stopped, so
+   every solid point after 2023 is open weights. Closed models are drawn
+   as **ranges**, not points: the two public attempts to estimate them
+   from the outside (arXiv 2604.24827 and the LessWrong re-analysis)
+   disagree by roughly 6x, and pretending otherwise would be the one
+   dishonest thing on the slide. Category is coded by fill — solid cyan
+   runs on a laptop, hollow cyan is open-but-out-of-reach, filled `--ink`
+   is closed. That is the same third-state rule as the PRESENTER DEMO
+   badge, and it is what keeps the warm range free.
+   §6's second slide is a **chat window**, not a list. Nine scenarios
+   play as scripted conversations — the good ones show the model doing
+   the job (a PDF arrives, it is read, an answer streams), the bad ones
+   put a frontier model or the arithmetic in a second lane beside it.
+   A second lane appears *only* where the comparison is the argument
+   (offline, unmetered, and all three failures); everything else is one
+   lane, because a comparison the slide is not making just muddies it.
+   The wrong answers are the failure modes the literature actually
+   reports — fabrication rather than abstention, and multiplicative
+   error compounding (p^n: 90% per step over 12 steps is a 28% chance of
+   a clean run) — not gotchas invented to win the point. The reasoning
+   example is deliberately the deck's own tok/s formula, so the room can
+   check the model's answer themselves.
+   **Its clock is a `setInterval`, not `requestAnimationFrame`, and that
+   is deliberate** &mdash; the one slide in the deck that breaks the rule.
+   Every other animated slide paints a canvas and has to be in step with
+   the compositor; this one only inserts DOM nodes, so it gains nothing
+   from rAF and loses a great deal: rAF is suspended whenever the browser
+   decides the page is not visible, which in a presentation can mean a
+   mirrored or extended display the OS thinks is occluded, a backgrounded
+   window, or remote desktop. The failure is silent and total &mdash; a
+   chat window that never says a word, with no error to find. Do not
+   "tidy" this back to rAF.
+   §7 leads with the **catch-up** case study (Qwen3.6 27B, Apr 2026, AA
+   Intelligence Index 37, Apache 2.0, ~17 GB at 4-bit vs GPT-5 high,
+   7 Aug 2025, index 35) before either un-runnable horizon example, so
+   the section starts with something the room can actually download.
+7. Cover art polish.
 
 ## Tech constraints
 
@@ -219,9 +261,21 @@ A visual showing quality holding up reasonably down to ~4-bit, then falling off 
 at 3-bit and 2-bit. The takeaway is "4-bit is the sweet spot," **not** "compress
 infinitely." Q2 is not a free lunch.
 
-### 7. Autoregressive vs diffusion animation (closing section)
+§7's Bonsai slide is the deliberate exception to this, and has to be *framed* as one or
+it simply contradicts the cliff. The cliff is a fact about **squashing a 16-bit model
+after the fact**; Bonsai is trained at {-1, 0, +1} from the start, so there is nothing to
+round away. Same 8B, four rows: fp16 16.4 GB, Q4_K_M 4.9 GB, Q2_K 2.8 GB (still red,
+still the cliff), Ternary Bonsai 1.75 GB.
+
+### 7. Autoregressive vs diffusion animation (closing section) — BUILT
 Side-by-side: tokens appearing left-to-right one at a time, versus a block of masked
 tokens being denoised in parallel over a few steps. Supports the DiffusionGemma segment.
+
+512 tokens in both lanes, one shared 2.5x slow-motion divisor so the 4x on screen is
+Google's published 4x. The diffusion block commits its cells in **shuffled** order over
+16 denoise steps — resolving them left to right would draw exactly the picture the slide
+is arguing against — and masked cells must read as clearly present, since "256 tokens
+exist before any of them is decided" is half the point.
 
 ## Section structure (2 hours, in order)
 
@@ -322,6 +376,28 @@ This is the linear-vs-nonlinear relationships section. Include the GQA nuance as
 Purpose is expectation management — nobody should leave disappointed that their 7B isn't
 a frontier cloud model.
 
+The organising line for both columns is **bring the knowledge to the model**: everything
+on the "good" list hands it the material, everything on the "bad" list asks it to supply
+the material itself. That is one sentence a beginner can carry out of the room, and it
+also explains why RAG over your own files beats "what do you know about …" by so much
+more than the parameter count would suggest.
+
+**Do not soften the right-hand column into a strawman, and do not let it become a dunk.**
+Frontier models hallucinate on roughly 3–19% of fact-seeking questions depending on model
+and task (2026 figures), and error compounds across a long run for everyone — a small
+model just reaches the edge sooner and says nothing when it does. The slide's caveat says
+this, and it is the difference between expectation management and discouragement.
+
+**Scale-slide figures, verified Aug 2026.** Open weights, all vendor-published totals
+with active-per-token in brackets: DeepSeek V4 Flash 284B (13B) and V4 Pro 1.6T (49B),
+both Apr 2026; MiMo V2.5 Pro 1.02T (42B), Apr 2026; GLM-5.2 753B (40B), MIT, Jun 2026;
+Kimi K3 2.8T (104B), Jul 2026, the largest open-weight release to date; earlier anchors
+Llama 3.1 405B (Jul 2024) and DeepSeek V3 671B/37B (Dec 2024). Closed: GPT-3.5 175B
+(from the GPT-3 paper) and GPT-4 ≈1.8T (2023 SemiAnalysis leak) are the only two
+anywhere near confirmed. Everything after that is a band, not a number — see the build
+order note above. **Do not turn the bands back into point estimates before presenting,
+however tempting a single figure looks on a slide.**
+
 ### 7. The horizon (10 min)
 Two examples, **both presenter-demo only** (see accuracy notes below):
 
@@ -333,7 +409,14 @@ Two examples, **both presenter-demo only** (see accuracy notes below):
   for only ~600MB more (1.75 GB vs 1.15 GB). Apache 2.0.
 - A 27B generation exists with vision and tool calling.
 - **Catch:** mainstream engines don't support 1-bit weights yet — it will *not* load in
-  LM Studio or stock llama.cpp. Requires PrismML's own demo repo.
+  LM Studio or stock llama.cpp. Requires PrismML's own demo repo. Re-checked Aug 2026:
+  the `prism-ml/*-gguf` repos now exist and their card names LM Studio and Ollama, but
+  the quant they ship is `Q2_0`, which is **not in mainline llama.cpp** — it needs the
+  `PrismML-Eng/llama.cpp` fork. Read the card carefully; the app names on it are
+  aspirational and an attendee who tries this in LM Studio tonight will fail.
+- Published throughput, for the §7 slide's honesty note: 82 tok/s on an M4 Pro, 27 tok/s
+  on an iPhone 17 Pro Max — about half of what `bandwidth ÷ size` predicts, which is the
+  normal ratio and worth saying out loud.
 
 **DiffusionGemma (Google DeepMind, 10 Jun 2026)** — generates text by denoising blocks of
 256 tokens in parallel rather than one token at a time. Reported >1,000 tok/s on a single

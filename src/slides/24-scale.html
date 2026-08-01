@@ -1,0 +1,65 @@
+  <!-- ---- 6 · setting the scale ---- -->
+  <!-- Before "what is it good at" can mean anything, the room needs to know
+       what it is being compared TO. Everything here is order-of-magnitude:
+       the open-weight figures are published, the closed ones are contested
+       estimates, and the slide says which is which on its face. -->
+  <section class="slide" data-section="6" id="s-scale">
+    <div class="slide-inner">
+      <div class="eyebrow">06 &mdash; Sense of scale</div>
+      <h2>Your laptop against the rest of the field</h2>
+
+      <div class="sc">
+        <div class="sc-controls">
+          <button type="button" class="sc-add" id="scAdd">Add the next model &#9654;</button>
+          <div class="ctrl">
+            <span class="ctrl-label" id="scViewLabel">View</span>
+            <div class="seg" id="scView" role="group" aria-labelledby="scViewLabel">
+              <button type="button" class="on" aria-pressed="true" data-v="size">By size</button>
+              <button type="button" aria-pressed="false" data-v="time">By year</button>
+            </div>
+          </div>
+          <div class="ctrl sc-axis-ctrl">
+            <span class="ctrl-label" id="scAxisLabel">Axis</span>
+            <div class="seg" id="scAxis" role="group" aria-labelledby="scAxisLabel">
+              <button type="button" class="on" aria-pressed="true" data-a="lin">Linear</button>
+              <button type="button" aria-pressed="false" data-a="log">Log</button>
+            </div>
+          </div>
+          <button type="button" class="sc-reset" id="scReset">Reset</button>
+        </div>
+
+        <div class="sc-panel">
+          <canvas id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
+          <!-- One element, not a text node with a <b> in it: the parent is
+               a centring grid and would make each inline run its own item. -->
+          <div class="sc-empty" id="scEmpty"><span>Press <b>Add the next model</b></span></div>
+        </div>
+
+        <div class="sc-side">
+          <div class="sc-readout">
+            <div class="sc-k">Axis now reaches</div>
+            <div class="sc-num" id="scMax">4B</div>
+            <div class="sc-sub" id="scRatio">&nbsp;</div>
+          </div>
+          <p class="sc-say" id="scSay">We are going to build this chart from the bottom up,
+            starting with the model on your laptop.</p>
+          <div class="sc-legend">
+            <span><i class="sw sw-local"></i>Runs on a laptop</span>
+            <span><i class="sw sw-open"></i>Open weights, too big</span>
+            <span><i class="sw sw-closed"></i>Closed weights</span>
+            <span><i class="sw sw-est"></i>Estimate, disputed</span>
+            <span><i class="sw sw-dot"></i>Active per token</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Nobody outside the lab knows the closed numbers.</strong>
+        Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
+        The white bars are inference, not fact &mdash; the two published attempts to measure
+        them from the outside disagree by roughly <em>six times</em>, which is why they are
+        drawn as ranges. The lesson survives the uncertainty: even the most conservative
+        estimate is two orders of magnitude above anything you can hold in a laptop, and
+        a sparse model only ever <em>runs</em> a small slice of that total at a time
+        &mdash; the dot on each bar.</p>
+    </div>
+  </section>

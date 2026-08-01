@@ -1,0 +1,51 @@
+  <!-- ---- 6 · what it is for ---- -->
+  <!-- The scale slide just told the room their model is a thousandth the
+       size of the frontier. This is the slide that stops that being
+       demoralising — and a bulleted list could not do it, because the
+       argument is about what using the thing FEELS like. So: a chat
+       window, and nine scenarios played out in it. The lanes, headers
+       and thread are all built by 17-chat.js from the scripts there. -->
+  <section class="slide" data-section="6" id="s-gb">
+    <div class="slide-inner">
+      <div class="eyebrow">06 &mdash; Good at / bad at</div>
+      <h2>A small model is a tool, not a smaller genius</h2>
+
+      <div class="cs-tabs">
+        <div class="cs-group good">
+          <span class="cs-g-k">Give it this</span>
+          <div class="seg" id="csGood" role="group" aria-label="Suitable tasks">
+            <button type="button" class="on" aria-pressed="true" data-s="sum">Summarise</button>
+            <button type="button" aria-pressed="false" data-s="fmt">Transform</button>
+            <button type="button" aria-pressed="false" data-s="rag">My own files</button>
+            <button type="button" aria-pressed="false" data-s="priv">Private</button>
+            <button type="button" aria-pressed="false" data-s="off">Offline</button>
+            <button type="button" aria-pressed="false" data-s="free">Unmetered</button>
+          </div>
+        </div>
+        <div class="cs-group bad">
+          <span class="cs-g-k">Not this</span>
+          <div class="seg" id="csBad" role="group" aria-label="Unsuitable tasks">
+            <button type="button" aria-pressed="false" data-s="reason">Reasoning</button>
+            <button type="button" aria-pressed="false" data-s="agent">Long tasks</button>
+            <button type="button" aria-pressed="false" data-s="fact">Obscure facts</button>
+          </div>
+        </div>
+        <button type="button" class="cs-replay" id="csReplay">Replay &#8635;</button>
+      </div>
+
+      <div class="cs">
+        <div class="cs-lanes" id="csLanes"></div>
+        <p class="cs-why" id="csWhy">&nbsp;</p>
+      </div>
+
+      <p class="caveat"><strong>The pattern is one line: bring the knowledge to the
+        model.</strong> Everything on the left hands it the material; everything on the
+        right asks it to supply the material itself. That is why retrieval over your own
+        files works far better than a 4&nbsp;B model has any right to, and why
+        &ldquo;what do you know about&nbsp;&hellip;&rdquo; disappoints. <strong>The right
+        column is a difference of degree, not of kind</strong> &mdash; frontier models
+        still hallucinate on 3&ndash;19% of fact-seeking questions depending on the model
+        and the task, and error still compounds across a long run for everyone. A small
+        model just reaches the edge sooner, and says nothing when it gets there.</p>
+    </div>
+  </section>

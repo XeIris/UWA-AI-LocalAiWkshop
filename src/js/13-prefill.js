@@ -12,7 +12,11 @@
    ========================================================== */
 var pfSlide = document.getElementById('s-prefill');
 if (pfSlide) {
-  var PF_REPLY = 120;            /* tokens of answer — a short paragraph */
+  /* Tokens of answer. Long enough that the decode phase is watchable in
+     its own right after prefill ends — at 120 the faster lane finished
+     writing in half a second and the 2.2x decode gap the verdict claims
+     was over before anyone saw it. */
+  var PF_REPLY = 260;
 
   var PF = [
     { id: 'pc',  pp: 10400, tg: 186 },

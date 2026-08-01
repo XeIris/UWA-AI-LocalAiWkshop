@@ -20,11 +20,33 @@ if (dkSlide) {
      tok/s × 0.75 × 60. Adults read prose at roughly 240 wpm. */
   var WORDS_PER_TOKEN = 0.75, READING_WPM = 240;
 
+  /* Long on purpose. At the slow end of the slider this passage is the
+     whole demonstration and the room needs time to get uncomfortable
+     watching it; at the fast end it has to still be running when the
+     presenter finishes the sentence about it. Roughly 300 words, which
+     is about eight seconds at 41 tok/s and about two minutes at 3. */
   var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
     'No request leaves the building, no key is billed, and nothing stops working ' +
     'when the wifi does. The speed you are watching right now is not a benchmark ' +
-    'result. It is arithmetic: the weights have to be read out of memory once for ' +
-    'every single token, so the memory bus sets the pace and the rest is detail.'
+    'result and it is not a setting anyone chose. It is arithmetic. To produce one ' +
+    'token — roughly three quarters of a word — the machine has to read every ' +
+    'single weight in the model out of memory, run the arithmetic, and throw the ' +
+    'result away. Then it does exactly the same thing again for the next token, and ' +
+    'the one after that, all the way to the end of this paragraph. Nothing is ' +
+    'cached between tokens, because nothing can be: the weights are all needed ' +
+    'every time. So the question is never how fast the processor is. The question ' +
+    'is how fast the memory can hand the weights over, and how many gigabytes of ' +
+    'them there are to hand over. Divide the second into the first and you have the ' +
+    'number in the readout, which is why a bigger model is slower in almost exact ' +
+    'proportion to how much bigger it is. Halve the file and you double the speed. ' +
+    'Double the file and you halve it. This is also why a machine with modest ' +
+    'compute but very fast memory — a Mac, for instance — writes text far quicker ' +
+    'than its specification sheet suggests, and why a powerful graphics card that ' +
+    'has run out of video memory suddenly feels broken: the moment part of the ' +
+    'model spills into ordinary system RAM, every token has to wait on the slowest ' +
+    'pool it touches. The formula does not care which machine you own. It only ' +
+    'cares about bytes and bandwidth, and it has been the reason behind every ' +
+    'number on the last three slides.'
   ).split(' ');
 
   function rate() {
@@ -96,6 +118,9 @@ if (dkSlide) {
     var html = '';
     for (var i = 0; i < shown; i++) html += '<span class="tk">' + PASSAGE[i] + '</span> ';
     dkText.innerHTML = html + '<span class="caret"></span>';
+    /* The box is fixed and the script outruns it. Follow the tail, so
+       what the room watches is always the words being written now. */
+    dkText.scrollTop = dkText.scrollHeight;
   }
 
   function tick(now) {

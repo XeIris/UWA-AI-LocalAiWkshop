@@ -1,0 +1,127 @@
+/* --- sense of scale ------------------------------------------ */
+.sc {
+  display: grid;
+  grid-template-columns: 1fr 17rem;
+  grid-template-areas: "controls controls" "chart side";
+  /* An explicit row height, not auto. Both panels then have a definite
+     height, which is what lets the canvas below resolve height:100% —
+     with an auto row the canvas falls back to its own width/height
+     attributes, which fitCanvas writes from the measured size, and the
+     two chase each other. */
+  grid-template-rows: auto 23rem;
+  gap: 0.9rem 1.1rem;
+  margin-top: 1.1rem;
+}
+.sc-controls {
+  grid-area: controls;
+  display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+}
+.sc-controls .ctrl { margin-top: 0; }
+
+.sc-add {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.5rem 1.1rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  transition: filter 160ms ease, opacity 160ms ease;
+}
+.sc-add:hover { filter: brightness(1.12); }
+/* Exhausted rather than hidden — a control that vanishes mid-demo makes
+   the presenter hunt for it. */
+.sc-add[disabled] {
+  background: transparent; color: var(--ink-dim);
+  border-color: var(--rule-soft); cursor: default; opacity: 0.6;
+}
+.sc-reset {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill); cursor: pointer; margin-left: auto;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.sc-reset:hover { color: var(--ink-mid); border-color: var(--rule); }
+/* The linear/log dial is meaningless against a time axis, where y is
+   always log — dim it rather than reflow the toolbar. */
+.sc-axis-ctrl { transition: opacity 160ms ease; }
+.sc-axis-ctrl.off { opacity: 0.3; pointer-events: none; }
+
+.sc-panel {
+  grid-area: chart; position: relative; overflow: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.9rem 1rem;
+}
+/* height:100%, not stretch. A canvas is a replaced element: with height
+   auto it falls back to its own `height` attribute — which fitCanvas
+   writes from the measured size, so anything that leaves the height
+   unresolved feeds back on itself and runs away to 16 million pixels.
+   The percentage resolves because the grid row gives the panel a
+   definite height, and the side panel is what sets that row. */
+.sc-panel canvas { display: block; width: 100%; height: 100%; }
+.sc-empty {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-dim);
+  transition: opacity 200ms ease;
+}
+.sc-empty.gone { opacity: 0; }
+.sc-empty b { color: var(--accent); font-weight: inherit; }
+
+.sc-side {
+  grid-area: side;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1rem 1.05rem 1.05rem;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.sc-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
+}
+.sc-num {
+  font-family: var(--mono); font-size: 2.7rem; line-height: 1;
+  color: var(--accent); letter-spacing: -0.05em; margin-top: 0.35rem;
+  text-shadow: 0 0 2.2rem var(--accent-glow);
+  font-variant-numeric: tabular-nums;
+}
+.sc-sub {
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-mid); margin-top: 0.45rem;
+}
+.sc-say {
+  margin: 0.85rem 0 0; font-size: 0.92rem; color: var(--ink-mid);
+  border-top: 1px solid var(--rule-soft); padding-top: 0.8rem;
+}
+.sc-legend {
+  margin-top: auto; padding-top: 0.8rem;
+  border-top: 1px solid var(--rule-soft);
+  /* Two columns: five stacked rows pushed the panel past its grid row
+     and the legend spilled over the caveat below. */
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem;
+  font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim);
+}
+.sc-legend span { display: flex; align-items: center; gap: 0.55rem; }
+.sw { width: 0.85rem; height: 0.85rem; border-radius: 2px; flex: none; }
+/* The three categories are one hue plus the deck's third state: solid
+   cyan for what you can run, hollow cyan for open-but-out-of-reach,
+   filled white for closed. No fourth colour — warm stays semantic. */
+.sw-local  { background: var(--accent); }
+.sw-open   { border: 1.5px solid var(--accent); }
+.sw-closed { background: var(--ink); }
+.sw-est    { background: var(--ink); opacity: 0.3; }
+.sw-dot    { background: var(--accent); border-radius: 50%; width: 0.5rem; height: 0.5rem; margin: 0 0.18rem; }
+
+@media (max-width: 900px) {
+  .sc {
+    grid-template-columns: 1fr;
+    grid-template-areas: "controls" "chart" "side";
+    grid-template-rows: auto 15rem auto;
+  }
+  .sc-num { font-size: 2.4rem; }
+  .sc-reset { margin-left: 0; }
+}
