@@ -215,16 +215,17 @@ word is spoken.
    7 Aug 2025, index 35) before either un-runnable horizon example, so
    the section starts with something the room can actually download.
 
-   > **UNRESOLVED — settle this before presenting it.** Re-verified Aug 2026:
-   > Qwen3.6 27B at **37** is confirmed, as are its date, licence and dense 27B
-   > architecture. **GPT-5 high at 35 is not.** Artificial Analysis publishes
-   > **GPT-5 (medium) at 42**, and *high* cannot sit below *medium* — so the two
-   > numbers on that slide were almost certainly read from different index
-   > versions, which is precisely the mistake the slide's own caveat warns the
-   > room about. AA rebases between versions. **Re-read both scores from one
-   > snapshot on one day**, record the index version in the provenance line, and
-   > if the gap has closed or inverted, rewrite the "eight months is roughly one
-   > generation" framing to match. Do not patch one number and leave the other.
+   > **Verified Aug 2026 against Artificial Analysis directly** — both scores
+   > read from AA's own model pages: GPT-5 (high) **35** (proprietary, released
+   > Aug 2025) and Qwen3.6 27B (Reasoning) **37** (open weights, Apr 2026). The
+   > 27B does exceed it, so the slide's framing stands.
+   >
+   > A caution for the next refresh: an AA post quoting **GPT-5 (medium) at 42**
+   > looks like it contradicts this, and does not — it is a different variant on
+   > a differently-scoped leaderboard. AA rebases the index between versions and
+   > scopes its rankings differently per page, so **read both numbers from one
+   > snapshot on one day** and never mix a figure from a post with one from a
+   > model page. The 37 is the *reasoning-mode* score; the slide says so.
 7. ~~Post-run polish (Aug 2026), from feedback on the first delivery: the §0
    **definition slide**, the **glossary**, and the **light theme**.~~ The
    feedback that mattered was that the room could recite five reasons to run a
