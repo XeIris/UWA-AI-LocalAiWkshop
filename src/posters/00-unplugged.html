@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, Unplugged — poster A3</title>
+<style>
+<!--#include css/00-tokens.css -->
+<!--#include posters/_poster.css -->
+
+/* ---- poster A: the cover, on paper -------------------------- */
+.hero { padding: 12mm 0 9mm; }
+.hero .wm { margin-bottom: 4.5mm; }
+.hero .tagline { max-width: 150mm; }
+
+.trio {
+  flex: 1;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 6mm; align-content: center;
+  padding: 5mm 0 3mm;
+}
+.cfg { display: flex; flex-direction: column; gap: 2.6mm; }
+.cfg .art {
+  width: 100%; display: block;
+  border: 0.25mm solid var(--rule-soft);
+  border-radius: var(--r-md);
+  background: #060a0e;
+}
+.cfg .row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em;
+}
+.cfg .row .c { color: var(--accent); }
+.cfg .row .g { color: var(--ink-mid); }
+/* The bar is identical under all three columns on purpose — the whole
+   argument is that it does not move. Do not scale it per config. */
+.cfg .bar {
+  height: 1.5mm; border-radius: var(--r-pill); overflow: hidden;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent));
+  opacity: 0.85;
+}
+.trio-cap {
+  grid-column: 1 / -1; margin: 1mm 0 0;
+  font-size: 1.02rem; color: var(--ink-mid); text-align: center;
+}
+.trio-cap b { color: var(--ink); font-weight: 620; }
+
+.leave {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm;
+  padding: 9mm 0 9mm;
+}
+.leave .item { display: grid; gap: 1.6mm; }
+.leave .n {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.18em;
+  color: var(--accent);
+}
+.leave .t { font-size: 1.02rem; font-weight: 620; letter-spacing: -0.01em; }
+.leave .d { font-size: 0.82rem; color: var(--ink-dim); }
+
+.logostrip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 5mm; padding-top: 5mm; margin-top: 5mm;
+  border-top: 0.25mm solid var(--rule-soft);
+}
+.logostrip .k { max-width: 80mm; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<!--#include assets/logos/*.svg -->
+</defs></svg>
+
+<div class="page">
+  <div class="sheet">
+
+    <div class="topbar">
+      <span>UWA AI Club &middot; Beginners&rsquo; Workshop</span>
+      <span class="right">2 Hours &middot; Bring your laptop</span>
+    </div>
+
+    <div class="hero">
+      <h1 class="wm">AI,<br><span class="lit">Unplugged</span></h1>
+      <p class="tagline">Real language models, running on the hardware you
+        already own.</p>
+    </div>
+
+    <div class="strap">
+      <span>No cloud</span><span>No subscription</span><span>No wi&#8209;fi required</span>
+    </div>
+
+    <!-- The cover art, laid out as three columns instead of three frames.
+         Denser grid = more parameters, coarser shading = fewer bits, and
+         the bar underneath is the same width in all three. -->
+    <div class="trio">
+      <div class="cfg">
+        <svg class="art" viewBox="0 0 760 1060" data-params="7.5" data-shades="26"
+             preserveAspectRatio="none" aria-label="7.5 billion parameters at 16-bit"></svg>
+        <div class="row"><span class="c">7.5B &middot; 16-BIT</span><span class="g">15.0 GB</span></div>
+        <div class="bar"></div>
+      </div>
+      <div class="cfg">
+        <svg class="art" viewBox="0 0 760 1060" data-params="15" data-shades="11"
+             preserveAspectRatio="none" aria-label="15 billion parameters at 8-bit"></svg>
+        <div class="row"><span class="c">15B &middot; 8-BIT</span><span class="g">15.0 GB</span></div>
+        <div class="bar"></div>
+      </div>
+      <div class="cfg">
+        <svg class="art" viewBox="0 0 760 1060" data-params="30" data-shades="5"
+             preserveAspectRatio="none" aria-label="30 billion parameters at 4-bit"></svg>
+        <div class="row"><span class="c">30B &middot; 4-BIT</span><span class="g">15.0 GB</span></div>
+        <div class="bar"></div>
+      </div>
+      <p class="trio-cap">More parameters, fewer bits each &mdash;
+        <b>and the same 15&nbsp;GB every time.</b></p>
+    </div>
+
+    <div class="leave">
+      <div class="item">
+        <span class="n">01</span>
+        <span class="t">A model on your machine</span>
+        <span class="d">Installed, downloaded and answering, before we explain a thing.</span>
+      </div>
+      <div class="item">
+        <span class="n">02</span>
+        <span class="t">One formula that explains it</span>
+        <span class="d">tok/s &asymp; bandwidth &divide; model size. Everything else follows.</span>
+      </div>
+      <div class="item">
+        <span class="n">03</span>
+        <span class="t">Honest expectations</span>
+        <span class="d">What a 4&nbsp;GB model is genuinely good at, and where it stops.</span>
+      </div>
+    </div>
+
+    <!-- ====== EVENT DETAILS — edit these three rows ====== -->
+    <div class="foot">
+      <div class="details">
+        <div class="drow"><span class="k">When</span>
+          <span class="dv">THU 00 MONTH &middot; 18:00&ndash;20:00</span></div>
+        <div class="drow"><span class="k">Where</span>
+          <span class="dv">ROOM &amp; BUILDING, UWA <em>&mdash; Crawley</em></span></div>
+        <div class="drow"><span class="k">Who</span>
+          <span class="dv">Total beginners welcome <em>&mdash; no prior AI experience needed</em></span></div>
+      </div>
+
+      <div class="install">
+        <div class="qr"><!--#include assets/qr-lmstudio.svg --></div>
+        <div class="txt">
+          <span class="k">Install beforehand</span>
+          <span class="url">lmstudio.ai/download</span>
+          <p class="why">Club wi&#8209;fi cannot feed thirty downloads at once.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="logostrip">
+      <span class="k">Models you will run on the night &mdash;<br>free, open weights, yours to keep</span>
+      <div class="logos">
+        <span class="chip"><svg><use href="#lg-gemma"/></svg></span>
+        <span class="chip"><svg><use href="#lg-liquid"/></svg></span>
+        <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
+        <span class="chip"><svg><use href="#lg-lmstudio"/></svg></span>
+        <span class="chip"><svg><use href="#lg-hf"/></svg></span>
+        <span class="chip"><svg><use href="#lg-llamacpp"/></svg></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* The cover's weight field, rendered once as vector rects rather than
+   animated on a canvas. Same posterisation: shade count is the precision,
+   cell size is the parameter count. t is fixed at 0 — a poster has one
+   frame, and it should be the same frame every time it is printed. */
+(function () {
+  'use strict';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function field(wx, wy) {
+    var v = Math.sin(wx * 1.9)
+          + Math.sin(wy * 2.3)
+          + Math.sin((wx + wy) * 1.25)
+          + 0.6 * Math.sin((wx - wy * 1.4) * 3.1);
+    return (v / 3.6 + 1) / 2;
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.art'), function (svg) {
+    var box = svg.getAttribute('viewBox').split(/\s+/);
+    var W = +box[2], H = +box[3];
+    var params = +svg.dataset.params, shades = +svg.dataset.shades;
+    var cell = 74 / Math.sqrt(params) * (W / 760) * 1.9;
+    var cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
+    var frag = document.createDocumentFragment();
+
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var v = field((x * cell) / W * 6, (y * cell) / H * 6);
+        var q = Math.round(v * (shades - 1)) / (shades - 1);
+        var r = document.createElementNS(SVGNS, 'rect');
+        r.setAttribute('x', (x * cell).toFixed(2));
+        r.setAttribute('y', (y * cell).toFixed(2));
+        r.setAttribute('width', (cell - cell * 0.055).toFixed(2));
+        r.setAttribute('height', (cell - cell * 0.055).toFixed(2));
+        r.setAttribute('fill', 'hsl(187,' + (46 + q * 30) + '%,' + (6 + q * 52) + '%)');
+        frag.appendChild(r);
+      }
+    }
+    svg.appendChild(frag);
+  });
+}());
+</script>
+</body>
+</html>

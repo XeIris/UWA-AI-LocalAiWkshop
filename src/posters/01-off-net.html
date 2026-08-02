@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, Unplugged — poster A3 (off-net)</title>
+<style>
+<!--#include css/00-tokens.css -->
+<!--#include posters/_poster.css -->
+
+/* ---- poster B: the one formula ------------------------------ */
+.head { padding: 11mm 0 8mm; display: grid; gap: 4mm; }
+.head .wm { font-size: 3.4rem; }
+.head .tagline { font-size: 1.72rem; color: var(--ink); max-width: 170mm; }
+.head .tagline .lit { color: var(--accent); }
+
+/* The equation is the poster. It gets the room the deck gives it. */
+.eq {
+  margin: 0; padding: 16mm 8mm;
+  border-top: 0.25mm solid var(--rule);
+  border-bottom: 0.25mm solid var(--rule);
+  font-family: var(--mono);
+  text-align: center;
+  display: grid; gap: 5mm; justify-items: center;
+}
+.eq .line {
+  font-size: 2.5rem; letter-spacing: -0.02em; color: var(--ink);
+  display: flex; align-items: center; gap: 3.5mm; flex-wrap: wrap;
+  justify-content: center;
+}
+.eq .op { color: var(--ink-dim); }
+.eq .num { color: var(--accent); }   /* no glow — see _poster.css */
+.eq .cap { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--ink-dim); }
+.eq .second {
+  margin-top: 3mm; padding-top: 6mm; width: 100%;
+  border-top: 0.25mm solid var(--rule-soft);
+  display: grid; gap: 2mm; justify-items: center;
+}
+.eq .second .line { font-size: 1.34rem; color: var(--ink-mid); }
+
+.tbl { flex: 1; align-content: center; display: grid; gap: 0; padding: 6mm 0; }
+.tr {
+  display: grid;
+  grid-template-columns: 17mm 1fr 32mm 1fr 26mm;
+  align-items: center; gap: 4mm;
+  padding: 9.5mm 0;
+  border-bottom: 0.25mm solid var(--rule-soft);
+}
+.tr.hd {
+  padding: 0 0 2.6mm; border-bottom: 0.25mm solid var(--rule);
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.tr .pool {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  color: var(--accent); border: 0.25mm solid var(--rule);
+  border-radius: var(--r-sm); padding: 1.2mm 0; text-align: center;
+}
+.tr .nm { font-size: 1.14rem; font-weight: 620; letter-spacing: -0.012em; }
+.tr .sub { font-size: 0.76rem; color: var(--ink-dim); }
+.tr .bw { font-family: var(--mono); font-size: 1.06rem; color: var(--ink-mid); }
+/* Bandwidth as a length, so the 19x spread is seen and not just read. */
+.tr .track {
+  height: 2.4mm; border-radius: var(--r-pill);
+  background: var(--bg-raise); border: 0.25mm solid var(--rule-soft);
+  overflow: hidden;
+}
+.tr .track i {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent));
+}
+.tr .out {
+  font-family: var(--mono); font-size: 1.5rem; color: var(--accent);
+  text-align: right; letter-spacing: -0.02em;
+}
+.tr .out small { font-size: 0.6rem; color: var(--ink-dim); letter-spacing: 0.1em; }
+
+.honest {
+  font-size: 0.86rem; color: var(--ink-dim); margin: 7mm 0 0; max-width: 195mm;
+}
+.honest b { color: var(--ink-mid); font-weight: 600; }
+
+.pillars {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 5mm;
+  padding: 12mm 0 8mm;
+}
+.logostrip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 5mm; padding: 5mm 0 6mm;
+  border-top: 0.25mm solid var(--rule-soft);
+}
+.logostrip .k { max-width: 84mm; line-height: 1.6; }
+.pillars .c { display: grid; gap: 1.4mm; }
+.pillars .ct { font-size: 0.98rem; font-weight: 620; letter-spacing: -0.01em; }
+.pillars .cd { font-size: 0.78rem; color: var(--ink-dim); }
+.pillars .cn {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.18em;
+  color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<!--#include assets/logos/*.svg -->
+</defs></svg>
+
+<div class="page">
+  <div class="sheet">
+
+    <div class="topbar">
+      <span>UWA AI Club &middot; Beginners&rsquo; Workshop</span>
+      <span class="right">2 Hours &middot; Bring your laptop</span>
+    </div>
+
+    <div class="head">
+      <h1 class="wm">AI, <span class="lit">Unplugged</span></h1>
+      <p class="tagline">Intelligence, served <span class="lit">off&#8209;net</span> &mdash;
+        and one formula that tells you how fast it will run.</p>
+    </div>
+
+    <p class="eq">
+      <span class="line">
+        <span class="num">tok/s</span>
+        <span class="op">&asymp;</span>
+        <span>memory bandwidth</span>
+        <span class="op">&divide;</span>
+        <span>model size</span>
+      </span>
+      <span class="cap">Decode reads every weight, once, per token</span>
+
+      <span class="second">
+        <span class="line">
+          <span>the wait before the first word</span>
+          <span class="op">&asymp;</span>
+          <span>how much compute you have</span>
+        </span>
+        <span class="cap">Prefill is a different bottleneck &mdash; and a different machine wins it</span>
+      </span>
+    </p>
+
+    <div class="tbl">
+      <div class="tr hd">
+        <span>Pool</span><span>Where the weights sit</span><span>Bandwidth</span>
+        <span></span><span style="text-align:right">Ceiling</span>
+      </div>
+
+      <div class="tr">
+        <span class="pool">DRAM</span>
+        <span><span class="nm">Plain DDR5 system RAM</span><br>
+          <span class="sub">Dual channel, DDR5&#8209;6000 &mdash; a laptop with no dGPU</span></span>
+        <span class="bw">96 GB/s</span>
+        <span class="track"><i style="width:5.4%"></i></span>
+        <span class="out">20 <small>TOK/S</small></span>
+      </div>
+
+      <div class="tr">
+        <span class="pool">UMA</span>
+        <span><span class="nm">Unified memory &mdash; M5 Max</span><br>
+          <span class="sub">One pool, shared by CPU and GPU &mdash; 64 GB of it</span></span>
+        <span class="bw">614 GB/s</span>
+        <span class="track"><i style="width:34.3%"></i></span>
+        <span class="out">125 <small>TOK/S</small></span>
+      </div>
+
+      <div class="tr">
+        <span class="pool">VRAM</span>
+        <span><span class="nm">Discrete GPU VRAM &mdash; RTX 5090</span><br>
+          <span class="sub">Far faster, and only 32 GB of it &mdash; capacity is the catch</span></span>
+        <span class="bw">1792 GB/s</span>
+        <span class="track"><i style="width:100%"></i></span>
+        <span class="out">366 <small>TOK/S</small></span>
+      </div>
+
+      <p class="honest"><b>Estimates, not benchmarks.</b> Every row is the same 8B model
+        at 4&#8209;bit &mdash; 4.9&nbsp;GB &mdash; divided into the bandwidth beside it.
+        Measured on llama.cpp the two fast machines hit 186 and 85&nbsp;tok/s: about half.
+        Bandwidth sets the ceiling, not the number, and that is still the only thing on
+        the page that predicts the answer.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="c"><span class="cn">01</span><span class="ct">Private</span>
+        <span class="cd">Nothing typed leaves the machine. No terms to read.</span></div>
+      <div class="c"><span class="cn">02</span><span class="ct">Offline</span>
+        <span class="cd">Aeroplane, basement lab, dead wi&#8209;fi. Same speed.</span></div>
+      <div class="c"><span class="cn">03</span><span class="ct">Unmetered</span>
+        <span class="cd">No quota, no per&#8209;token bill, no monthly seat.</span></div>
+      <div class="c"><span class="cn">04</span><span class="ct">Yours</span>
+        <span class="cd">Swap the model, keep the weights. It cannot be revoked.</span></div>
+    </div>
+
+    <div class="logostrip">
+      <span class="k">Open weights you will actually run &mdash;<br>Gemma, LFM2.5, Qwen, in LM&nbsp;Studio</span>
+      <div class="logos">
+        <span class="chip"><svg><use href="#lg-gemma"/></svg></span>
+        <span class="chip"><svg><use href="#lg-liquid"/></svg></span>
+        <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
+        <span class="chip"><svg><use href="#lg-lmstudio"/></svg></span>
+        <span class="chip"><svg><use href="#lg-hf"/></svg></span>
+      </div>
+    </div>
+
+    <!-- ====== EVENT DETAILS — edit these three rows ====== -->
+    <div class="foot">
+      <div class="details">
+        <div class="drow"><span class="k">When</span>
+          <span class="dv">THU 00 MONTH &middot; 18:00&ndash;20:00</span></div>
+        <div class="drow"><span class="k">Where</span>
+          <span class="dv">ROOM &amp; BUILDING, UWA <em>&mdash; Crawley</em></span></div>
+        <div class="drow"><span class="k">Bring</span>
+          <span class="dv">A laptop and ~5 GB free <em>&mdash; any OS, any age</em></span></div>
+      </div>
+
+      <div class="install">
+        <div class="qr"><!--#include assets/qr-lmstudio.svg --></div>
+        <div class="txt">
+          <span class="k">Install beforehand</span>
+          <span class="url">lmstudio.ai/download</span>
+          <p class="why">Club wi&#8209;fi cannot feed thirty downloads at once.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

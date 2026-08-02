@@ -1,3 +1,7 @@
 # Release build. The committed deck is index.html at the repo root; dist/ is
 # only produced on demand by `python3 build.py --release`.
 dist/
+
+# Poster PDFs are rendered on demand by `python3 build.py --pdf`; the HTML
+# they come from is committed, so the PDFs are not.
+posters/*.pdf

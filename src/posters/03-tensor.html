@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, Unplugged — poster A3 (tensor)</title>
+<style>
+<!--#include css/00-tokens.css -->
+<!--#include posters/_poster.css -->
+
+/* ---- poster D: the tensor stack -----------------------------
+   Almost no words. The composition is the isometric one every
+   accelerator vendor draws — two operands feeding a core, a
+   result plate, and the stack it produces underneath.
+
+   Note what is NOT here: the vendor version of this picture is
+   green, and green in this deck means "it fits". So the operands
+   are neutral, the core is filled --ink (the same third state as
+   the PRESENTER DEMO badge), and only the output is cyan. Do not
+   recolour the stack to match the reference.
+   -------------------------------------------------------------- */
+.sheet { padding: 18mm 16mm 14mm; }
+
+.mark { text-align: center; padding: 2mm 0 0; }
+/* Sized to fill the measure. The wordmark is the only large type on the
+   poster, so anything smaller reads as an afterthought under the art. */
+.mark .wm { font-size: 10.4rem; letter-spacing: -0.05em; }
+.mark .tagline {
+  margin: 5mm auto 0; max-width: 180mm; font-size: 1.34rem;
+}
+
+/* The drawing gets a fixed height and derives its width from the viewBox,
+   so it is a known size on the sheet rather than "whatever is left". The
+   box around it takes flex:1 and absorbs the slack, which is what keeps
+   the bands below from bunching at the top. Sized in normal flow the SVG
+   would do the opposite — its intrinsic viewBox size would set the box
+   height and walk the footer off the page. */
+.art {
+  flex: 1; min-height: 0;
+  /* Bottom-aligned, not centred: the slack belongs above the drawing, so
+     the wordmark sits right under it instead of across a gap. */
+  display: grid; place-items: end center;
+  margin: 5mm 0 6mm;
+}
+.art svg { display: block; height: 168mm; width: auto; max-width: 100%; }
+
+/* PRIVATE / OFFLINE / UNMETERED / YOURS — same ruled treatment as
+   the strap above the art, one size up. They are the poster's only
+   claim, so they get the weight. */
+.four {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  border-top: 0.25mm solid var(--rule);
+  border-bottom: 0.25mm solid var(--rule);
+  font-family: var(--mono); text-transform: uppercase;
+  font-size: 1.12rem; letter-spacing: 0.16em; color: var(--ink);
+}
+.four span { padding: 5mm 0; text-align: center; }
+.four span + span { border-left: 0.25mm solid var(--rule-soft); }
+
+.weights {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6mm; padding: 9mm 0 8mm;
+}
+.weights .k { font-size: 0.78rem; letter-spacing: 0.2em; color: var(--ink-mid); }
+
+/* Everything else on this poster is centred, so the footer is too — the
+   left-aligned label column the other three use would be the only thing
+   off-axis. */
+/* Placeholder, and it has to look like one — a real-looking code that
+   scans to nothing is worse than an obvious gap. Generate the real SVG the
+   same way as assets/qr-lmstudio.svg (segno, then decode it to check) and
+   drop it in here. */
+.signup {
+  display: flex; align-items: center; gap: 4mm;
+  padding: 4mm; border-radius: var(--r-md);
+  background: var(--bg-panel); border: 0.25mm solid var(--rule-soft);
+}
+.qr-slot {
+  width: 26mm; height: 26mm; flex: none;
+  border-radius: var(--r-sm);
+  border: 0.5mm dashed var(--accent-lo);
+  display: grid; place-items: center; text-align: center;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
+  color: var(--accent-lo); text-transform: uppercase; line-height: 1.5;
+}
+.signup .url {
+  font-family: var(--mono); font-size: 0.92rem; color: var(--accent);
+  letter-spacing: -0.01em; display: block; margin-top: 1.4mm;
+}
+.signup .why { font-size: 0.74rem; color: var(--ink-dim); margin: 1.6mm 0 0; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<!--#include assets/logos/*.svg -->
+</defs></svg>
+
+<div class="page">
+  <div class="sheet">
+
+    <div class="strap">
+      <span>No cloud</span><span>No subscription</span><span>No wi&#8209;fi required</span>
+    </div>
+
+    <div class="art">
+      <svg id="iso" preserveAspectRatio="xMidYMid meet"
+           aria-label="Two operands feeding a compute core, and the stack of results underneath"></svg>
+    </div>
+
+    <div class="mark">
+      <h1 class="wm">AI, <span class="lit">Unplugged</span></h1>
+      <p class="tagline">Real language models, running on the hardware you
+        already own.</p>
+    </div>
+
+    <div class="four">
+      <span>Private</span><span>Offline</span><span>Unmetered</span><span>Yours</span>
+    </div>
+
+    <div class="weights">
+      <span class="k">Free, open weights &mdash;</span>
+      <span class="chip"><svg><use href="#lg-gemma"/></svg></span>
+      <span class="chip"><svg><use href="#lg-liquid"/></svg></span>
+      <span class="chip"><svg><use href="#lg-qwen"/></svg></span>
+    </div>
+
+    <!-- ====== EVENT DETAILS — edit these three rows ====== -->
+    <div class="foot">
+      <div class="details">
+        <div class="drow"><span class="k">When</span>
+          <span class="dv">THU 00 MONTH &middot; 18:00&ndash;20:00</span></div>
+        <div class="drow"><span class="k">Where</span>
+          <span class="dv">ROOM &amp; BUILDING, UWA <em>&mdash; Crawley</em></span></div>
+        <div class="drow"><span class="k">Install</span>
+          <span class="dv">lmstudio.ai/download <em>&mdash; before you come</em></span></div>
+      </div>
+
+      <div class="signup">
+        <div class="qr-slot">QR<br>goes<br>here</div>
+        <div class="txt">
+          <span class="k">Sign up</span>
+          <span class="url">SIGN-UP URL</span>
+          <p class="why">Places are limited by the room.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* Isometric block renderer. One projection, one painter's sort, three
+   face shades per block — that is the whole thing. Positions are in block
+   units; floats are allowed so a 3-wide core can centre over a 4-wide
+   plate without a half-block hack. */
+(function () {
+  'use strict';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('iso');
+  if (!svg) return;
+
+  var U = 34, V = 19, H = 30;      /* half-width, half-depth, block height */
+  var OX = 450, OY = 545;
+  var S = 0.86;                    /* block inset — this is the mortar gap */
+
+  function p(i, j, k) {
+    return [OX + (i - j) * U, OY + (i + j) * V - k * H];
+  }
+  /* The viewBox is fitted to the drawing rather than guessed, so changing
+     the stack depth or the panel height re-frames the art instead of
+     leaving a band of dead space inside the SVG. */
+  var bb = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+
+  function poly(pts, fill) {
+    pts.forEach(function (q) {
+      if (q[0] < bb.x0) bb.x0 = q[0];
+      if (q[0] > bb.x1) bb.x1 = q[0];
+      if (q[1] < bb.y0) bb.y0 = q[1];
+      if (q[1] > bb.y1) bb.y1 = q[1];
+    });
+    var el = document.createElementNS(SVGNS, 'polygon');
+    el.setAttribute('points', pts.map(function (q) {
+      return q[0].toFixed(1) + ',' + q[1].toFixed(1);
+    }).join(' '));
+    el.setAttribute('fill', fill);
+    el.setAttribute('stroke', 'rgba(5,8,11,0.85)');
+    el.setAttribute('stroke-width', '1.1');
+    el.setAttribute('stroke-linejoin', 'round');
+    return el;
+  }
+
+  var blocks = [];
+  function add(i, j, k, hue, sat, lum) {
+    blocks.push({ i: i, j: j, k: k, d: i + j + k, hue: hue, sat: sat, lum: lum });
+  }
+
+  /* --- the two operands: flat panels standing above and to each side --- */
+  var HI = 8;                                   /* panel height in blocks */
+  for (var n = 0; n < HI; n++) {
+    for (var w = 0; w < 4; w++) {
+      add(-4.4, w, 4 + n, 187, 10, 34);         /* left  operand */
+      add(w, -4.4, 4 + n, 187, 10, 34);         /* right operand */
+    }
+  }
+
+  /* --- the core: filled --ink, the deck's third state --- */
+  for (var ci = 0; ci < 3; ci++)
+    for (var cj = 0; cj < 3; cj++)
+      for (var ck = 0; ck < 3; ck++)
+        add(0.5 + ci, 0.5 + cj, 4 + ck, 190, 6, 84);
+
+  /* --- the result plate, then everything it produces --- */
+  var DEPTH = 7;
+  for (var k = 0; k > -DEPTH; k--) {
+    var t = -k / DEPTH;                         /* 0 at the plate, 1 at the floor */
+    for (var i = 0; i < 4; i++)
+      for (var j = 0; j < 4; j++)
+        add(i, j, k, 187, 70 - t * 22, 54 - t * 20);
+  }
+
+  /* Painter's algorithm: in this projection a block is in front of another
+     exactly when i + j + k is larger. No z-buffer, no per-face sorting. */
+  blocks.sort(function (a, b) { return a.d - b.d; });
+
+  var frag = document.createDocumentFragment();
+  blocks.forEach(function (b) {
+    var i = b.i, j = b.j, k = b.k;
+    var top = 'hsl(' + b.hue + ',' + b.sat + '%,' + b.lum + '%)';
+    var rgt = 'hsl(' + b.hue + ',' + b.sat + '%,' + (b.lum * 0.66).toFixed(1) + '%)';
+    var lft = 'hsl(' + b.hue + ',' + b.sat + '%,' + (b.lum * 0.42).toFixed(1) + '%)';
+
+    frag.appendChild(poly([p(i, j + S, k + S), p(i + S, j + S, k + S),
+                           p(i + S, j + S, k), p(i, j + S, k)], lft));
+    frag.appendChild(poly([p(i + S, j, k + S), p(i + S, j + S, k + S),
+                           p(i + S, j + S, k), p(i + S, j, k)], rgt));
+    frag.appendChild(poly([p(i, j, k + S), p(i + S, j, k + S),
+                           p(i + S, j + S, k + S), p(i, j + S, k + S)], top));
+  });
+  svg.appendChild(frag);
+
+  var pad = 8;
+  svg.setAttribute('viewBox', [
+    (bb.x0 - pad).toFixed(1), (bb.y0 - pad).toFixed(1),
+    (bb.x1 - bb.x0 + pad * 2).toFixed(1), (bb.y1 - bb.y0 + pad * 2).toFixed(1)
+  ].join(' '));
+}());
+</script>
+</body>
+</html>

@@ -166,8 +166,12 @@ src/css/NN-name.css     one file per component
 src/js/NN-name.js       one file per feature
 src/slides/NN-name.html one file per slide
 src/assets/             logos/*.svg (one <symbol> each), mlx.png
+src/posters/NN-name.html  one file per promo poster (A3)
+src/posters/_poster.css   shared poster base; the _ keeps it out of the glob
 build.py                stdlib only
 index.html              BUILT, committed — never edit by hand
+posters/*.html          BUILT, committed — never edit by hand
+posters/*.pdf           BUILT on demand (--pdf), gitignored
 dist/index.html         BUILT release, gitignored
 ```
 
@@ -188,6 +192,67 @@ already happened once, when `01-sampling-cuts` sorted ahead of `01-temperature`.
 The JS files are concatenated inside a single shared IIFE, so they behave exactly as
 one script: `softmax` and friends are defined once and used across features. Don't add
 a per-file IIFE, and don't assume a file is independently loadable.
+
+## Posters
+
+Three A3 promo posters for the event, built by the same script from
+`src/posters/`. They are **not deck slides** and must never live in
+`src/slides/` — that include is a glob, so a poster dropped there would be
+spliced straight into the presentation as slide N.
+
+```bash
+python3 build.py --pdf
+```
+
+Each is a standalone single file, same as the deck, and they pull the deck's
+tokens (`css/00-tokens.css`) and its inlined logos through the same
+`#include` directives — so a palette or radius change lands on the posters
+too, and nothing is fetched at runtime.
+
+- `00-unplugged` — the cover, on paper. The three flagship configurations
+  side by side instead of cross-fading, so the invariance (same 15 GB) is a
+  comparison you can make with your eyes rather than your memory. The weight
+  field is generated as **vector rects at load**, at `t = 0`: one frame,
+  the same frame every print.
+- `01-off-net` — "Intelligence, served off-net". Leads with the decode
+  formula and prices it out on three memory pools (DRAM 96 / UMA 614 /
+  VRAM 1792 GB/s ÷ the same 4.9 GB 8B). The measured-vs-ceiling gap is
+  stated on the poster, not hidden.
+- `02-in-your-lap` — the fit indicator, on paper. **The one poster where the
+  warm range appears**, doing exactly the job it is reserved for: green
+  fits, amber spills, red will not load. Nothing else on it is warm — which
+  is why the 70B row gets a mono `70B` chip and not the (yellow) Hugging
+  Face mark.
+
+- `03-tensor` — near-wordless. The isometric composition every accelerator
+  vendor draws: two operands, a core, and the stack of results underneath,
+  built by a ~60-line block renderer (one projection, one painter's sort by
+  `i + j + k`, three face shades). **The vendor version of this picture is
+  green, and green here means "it fits"** — so the operands are neutral,
+  the core is filled `--ink`, and only the output stack is cyan. Do not
+  recolour it to match the reference. The SVG gets an explicit height and
+  derives its width from the viewBox; left to size itself, its intrinsic
+  viewBox size sets the box height instead of the reverse and the footer
+  walks off the sheet. The wordmark sits *below* the art on this one.
+
+Sizing is in **mm, not vw/vh** — a poster has exactly one size. `rem` is
+pinned to `4.05mm` in `_poster.css`; that is the single dial for the lot.
+The page box comes from CSS `@page`, so `--pdf` needs no paper-size flag to
+keep in sync, and printing from a browser only needs *Background graphics*
+ticked. Chrome is the renderer either way; `--pdf` just skips the dialog.
+
+**No blurred `text-shadow` on a poster.** The deck's wordmark glows; the
+posters' does not. Past a certain size Chrome's print-to-PDF stops
+rasterising a blurred shadow and paints a **filled rectangle** over the type
+instead — and it appears only in the PDF, never on screen or in a
+`--screenshot`. It hit the 10.4rem wordmark on `03-tensor` while the smaller
+ones on the other three came out fine, so there is no safe radius to tune to.
+When checking a poster, look at the **PDF**, not just a screenshot of the
+HTML (`sips -s format png x.pdf --out x.png`).
+
+**Event details are placeholders** (`THU 00 MONTH`, `ROOM & BUILDING`) and
+sit under a marked comment in each source. Edit those, rebuild, do not
+hand-edit `posters/*.html`.
 
 **Release mode does only provably-safe things:** strip comments, collapse CSS whitespace
 to single spaces. It deliberately leaves JavaScript untouched. No-npm means any minifier

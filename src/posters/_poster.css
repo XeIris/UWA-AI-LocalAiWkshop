@@ -1,0 +1,183 @@
+/* ============================================================
+   POSTER BASE — shared by every src/posters/*.html
+   Same theme as the deck: hardware blueprint, cyan owns all
+   chrome, the warm range stays semantic.
+
+   Sizing is in mm, not vw/vh. The deck scales to whatever
+   screen it lands on; a poster has exactly one size — A3
+   portrait, 297 x 420 — and everything on it is a fixed
+   physical measurement. rem is pinned to a mm value below so
+   the same numbers hold on screen and on paper.
+   ============================================================ */
+
+@page { size: A3 portrait; margin: 0; }
+
+* { box-sizing: border-box; }
+
+html {
+  font-size: 4.05mm;          /* the one dial every size derives from */
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+}
+
+body {
+  margin: 0;
+  background: #14181c;        /* screen surround only; the page is darker */
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 8mm;
+}
+
+.page {
+  position: relative;
+  width: 297mm;
+  height: 420mm;
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: 0 2mm 12mm rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* The measurement grid, at poster scale. Unmasked at the edges would
+   fight the trim; the same radial mask as the deck keeps it a substrate. */
+.page::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 0.25mm, transparent 0.25mm),
+    linear-gradient(90deg, var(--grid-line) 0.25mm, transparent 0.25mm);
+  background-size: 12mm 12mm;
+  mask-image: radial-gradient(ellipse 115% 90% at 50% 45%, #000 40%, transparent 100%);
+}
+.page::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 85% 60% at 50% 32%,
+              rgba(53, 214, 232, 0.055), transparent 70%);
+}
+
+.sheet {
+  position: relative; z-index: 1;
+  flex: 1;
+  display: flex; flex-direction: column;
+  padding: 16mm 16mm 14mm;
+}
+
+/* --- shared parts ------------------------------------------- */
+
+.rule { height: 0.25mm; background: var(--rule); border: 0; margin: 0; }
+
+.topbar {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 2rem;
+  font-family: var(--mono);
+  font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 2.2mm;
+  border-bottom: 0.25mm solid var(--rule);
+}
+.topbar .right { color: var(--ink-dim); letter-spacing: 0.16em; }
+
+.wm {
+  font-size: 5.4rem; line-height: 0.94; letter-spacing: -0.04em;
+  font-weight: 650; margin: 0;
+}
+/* No glow, deliberately. The deck's wordmark carries a blurred text-shadow;
+   in Chrome's print-to-PDF a blurred shadow past a certain size stops being
+   rasterised and comes out as a FILLED RECTANGLE over the type — and it only
+   shows up in the PDF, never on screen. It bit the 10.4rem wordmark on the
+   tensor poster and not the smaller ones, so there is no safe size to tune
+   it to. Do not reintroduce text-shadow anywhere on a poster. */
+.wm .lit { color: var(--accent); }
+
+.tagline {
+  font-size: 1.5rem; color: var(--ink-mid); margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* NO CLOUD / NO SUBSCRIPTION / NO WI-FI — mono, ruled, evenly split */
+.strap {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.18em;
+  color: var(--ink-mid); text-transform: uppercase;
+  border-top: 0.25mm solid var(--rule);
+  border-bottom: 0.25mm solid var(--rule);
+}
+.strap span { padding: 2.6mm 0; text-align: center; }
+.strap span + span { border-left: 0.25mm solid var(--rule-soft); }
+
+.k {
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.accent { color: var(--accent); }
+
+.panel {
+  background: var(--bg-panel);
+  border: 0.25mm solid var(--rule-soft);
+  border-radius: var(--r-md);
+}
+
+/* --- brand chips, poster scale ------------------------------ */
+.chip {
+  width: 11mm; height: 11mm; flex: none;
+  border-radius: var(--r-md);
+  background: var(--bg-raise);
+  border: 0.25mm solid var(--rule-soft);
+  display: grid; place-items: center;
+  color: var(--ink);
+}
+.chip svg { width: 58%; height: 58%; display: block; fill: currentColor; }
+.chip.sm { width: 8.5mm; height: 8.5mm; border-radius: var(--r-sm); }
+
+.logos {
+  display: flex; align-items: center; gap: 3.5mm; flex-wrap: wrap;
+}
+
+/* --- footer: what/when/where + install QR ------------------- */
+.foot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8mm;
+  align-items: end;
+  padding-top: 5mm;
+  border-top: 0.25mm solid var(--rule);
+}
+.details { display: grid; gap: 3.4mm; }
+.drow { display: grid; grid-template-columns: 26mm 1fr; align-items: baseline; gap: 4mm; }
+.drow .dv { font-size: 1.06rem; color: var(--ink); letter-spacing: -0.005em; }
+.drow .dv em { font-style: normal; color: var(--ink-mid); }
+
+.install {
+  display: flex; align-items: center; gap: 4mm;
+  padding: 4mm; border-radius: var(--r-md);
+  background: var(--bg-panel);
+  border: 0.25mm solid var(--rule-soft);
+}
+.install .qr {
+  width: 26mm; height: 26mm; flex: none;
+  background: #fff; border-radius: var(--r-sm);
+  padding: 1.6mm; color: #05080b;
+  display: grid; place-items: center;
+}
+.install .qr svg { width: 100%; height: 100%; display: block; }
+.install .txt { max-width: 58mm; }
+.install .url {
+  font-family: var(--mono); font-size: 0.92rem; color: var(--accent);
+  letter-spacing: -0.01em; display: block; margin-top: 1.4mm;
+}
+.install .why { font-size: 0.74rem; color: var(--ink-dim); margin: 1.6mm 0 0; }
+
+/* Screen preview only — never printed. */
+@media screen {
+  .page { outline: 0.25mm solid rgba(53, 214, 232, 0.14); }
+}
+@media print {
+  body { background: #fff; padding: 0; display: block; min-height: 0; }
+  .page { box-shadow: none; outline: 0; }
+}
