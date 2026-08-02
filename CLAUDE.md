@@ -88,6 +88,25 @@ deck is legible both projected at 1080p and on an attendee's 13" laptop.
 **an animation must encode a variable, never decorate one** — if it moves, it is showing
 a quantity changing. Respect `prefers-reduced-motion`.
 
+**Every animation loop is wound on arrival and stopped on departure.** Not merely
+skipped: a `requestAnimationFrame` loop that early-returns when its slide is inactive
+still pays a callback every frame, and the two `setInterval` clocks (§2's template, §6's
+chat) were firing 30 times a second on all 38 slides. Six loops ran for the whole talk on
+a laptop that is probably on battery. Each module now starts its loop from its own
+`deck:slide` handler and clears it otherwise, with a guard against double-starting —
+`deck:slide` arrives twice when the theme toggle fires. This does not weaken the
+timer-not-rAF argument in `17-chat.js`: that is about which *clock* to use, not about
+running one all evening.
+
+**Pin every canvas to a resolved height.** A `<canvas>` is a replaced element, so if its
+height stays unresolved it falls back to its own `height` attribute — which `fitCanvas`
+writes from the measured size, so the two chase each other and the canvas runs away by
+the device pixel ratio on every repaint. **This has now bitten twice**, on §6's scale
+grid and on §5's KV chart, and both times it was invisible at dpr 1 and explosive on the
+Retina laptop you present from. Give the container a definite height (an explicit grid
+row) and let the canvas take `height: 100%` or `flex: 1 1 0; min-height: 0`. Never leave
+a canvas sized by its own content.
+
 **Corner radius is a single dial.** `--r-scale` in `:root` drives every rounded corner
 in the deck (`--r-sm` / `--r-md` / `--r-lg` / `--r-pill` all derive from it). `1` is the
 current app-like rounding; `0` returns the whole deck to the original hard-edged
@@ -155,7 +174,12 @@ word is spoken.
    screen; LINEAR is the drama and LOG is where you read the numbers.
    A second BY YEAR view carries the disclosure story — OpenAI and
    Google published parameter counts up to 2022/23 and then stopped, so
-   every solid point after 2023 is open weights. Closed models are drawn
+   every solid point after 2023 is open weights. Say that precisely on
+   the slide: OpenAI's last real number was GPT-3's and Google's was
+   PaLM's, both superseded in 2023 by releases that gave no figure, and
+   **Anthropic never published one at all**. "OpenAI stopped after 2023"
+   is wrong (GPT-4 is where they stopped, not where they last disclosed)
+   and "Google never started" is wrong the other way. Closed models are drawn
    as **ranges**, not points: the two public attempts to estimate them
    from the outside (arXiv 2604.24827 and the LessWrong re-analysis)
    disagree by roughly 6x, and pretending otherwise would be the one
@@ -190,6 +214,18 @@ word is spoken.
    Intelligence Index 37, Apache 2.0, ~17 GB at 4-bit vs GPT-5 high,
    7 Aug 2025, index 35) before either un-runnable horizon example, so
    the section starts with something the room can actually download.
+
+   > **Verified Aug 2026 against Artificial Analysis directly** — both scores
+   > read from AA's own model pages: GPT-5 (high) **35** (proprietary, released
+   > Aug 2025) and Qwen3.6 27B (Reasoning) **37** (open weights, Apr 2026). The
+   > 27B does exceed it, so the slide's framing stands.
+   >
+   > A caution for the next refresh: an AA post quoting **GPT-5 (medium) at 42**
+   > looks like it contradicts this, and does not — it is a different variant on
+   > a differently-scoped leaderboard. AA rebases the index between versions and
+   > scopes its rankings differently per page, so **read both numbers from one
+   > snapshot on one day** and never mix a figure from a post with one from a
+   > model page. The 37 is the *reasoning-mode* score; the slide says so.
 7. ~~Post-run polish (Aug 2026), from feedback on the first delivery: the §0
    **definition slide**, the **glossary**, and the **light theme**.~~ The
    feedback that mattered was that the room could recite five reasons to run a
@@ -314,9 +350,19 @@ sit under a marked comment in each source. Edit those, rebuild, do not
 hand-edit `posters/*.html`.
 
 **Release mode does only provably-safe things:** strip comments, collapse CSS whitespace
-to single spaces. It deliberately leaves JavaScript untouched. No-npm means any minifier
-would be hand-rolled without a parser, and the classic failure — an ASI bug or an eaten
-regex literal — would appear *only* in the build you present from. Not worth ~6KB.
+to single spaces, and remove leading indentation from the JS. It deliberately leaves JS
+*tokens and comments* untouched. No-npm means any minifier would be hand-rolled without a
+parser, and the classic failure — an ASI bug or an eaten regex literal — would appear
+*only* in the build you present from. Stripping JS comments would save a further ~35KB
+and is not worth that risk.
+
+De-indenting is safe for one specific reason, stated in `slim_js`: **no token in `src/js/`
+spans a line boundary.** There are no template literals (every backtick in the tree sits
+inside a comment) and no backslash line-continuations, so the start of a line is always
+either whitespace or the start of a token, and newlines are preserved so ASI sees the
+same line structure. **If you ever add a template literal to `src/js/`, delete `slim_js`**
+— a multi-line `` `...` `` would have its indentation silently rewritten. Verify a release
+by normalising leading whitespace on both builds' JS and diffing; they must be identical.
 Release also leaves `--sans`/`--mono` differing from debug by whitespace inside the
 custom-property token stream; every resolved property, including `font-family`, is
 identical.
@@ -388,8 +434,13 @@ infinitely." Q2 is not a free lunch.
 §7's Bonsai slide is the deliberate exception to this, and has to be *framed* as one or
 it simply contradicts the cliff. The cliff is a fact about **squashing a 16-bit model
 after the fact**; Bonsai is trained at {-1, 0, +1} from the start, so there is nothing to
-round away. Same 8B, four rows: fp16 16.4 GB, Q4_K_M 4.9 GB, Q2_K 2.8 GB (still red,
+round away. Same 8B, four rows: fp16 16.4 GB, Q4_K_M 4.9 GB, Q2_K **3.4 GB** (still red,
 still the cliff), Ternary Bonsai 1.75 GB.
+
+Every row there must reconcile with the deck's own bits-per-weight table (§4's calculator
+and the cliff chart): 8.19 B weights × bpw ÷ 8. Q2_K is 3.35 bpw, so it is 3.4 GB. It
+said 2.8 GB until Aug 2026, which quietly undercut the arithmetic on the one slide whose
+whole argument is that the arithmetic holds.
 
 ### 7. Autoregressive vs diffusion animation (closing section) — BUILT
 Side-by-side: tokens appearing left-to-right one at a time, versus a block of masked
@@ -456,8 +507,11 @@ makes bandwidth the top live risk (N people downloading a multi-GB model over cl
 simultaneously will not work; plan for USB sticks or a local mirror).
 
 **This is where 80% of live failures happen.** Budget the buffer here and never cut it.
-Include a slide with a pre-workshop "install this beforehand" checklist that can be sent
-out in advance.
+
+The pre-workshop "install this beforehand" checklist is **deliberately not a slide**
+(decided Aug 2026). It has to reach people days before they are in the room, which is not
+a job a slide in the deck can do — send it with the event reminder. §1's section card
+carries a comment saying so, in place of the old `TO BUILD` marker.
 
 Sampling (temperature, top-p, min-p) gets a ~2 minute aside here — where the knobs are
 and what temperature does. Nothing deeper.
@@ -598,6 +652,15 @@ Two examples, **both presenter-demo only** (see accuracy notes below):
     Whether a given LM Studio ships a new-enough llama.cpp is a version question — check
     the machine you will present from, and check it again on the night.
 
+  **Corrected again, Aug 2026 — and this time the vendor contradicts itself.** PrismML's
+  own `docs.prismml.com/download/formats` now states that ternary `Q2_0` **requires the
+  fork**, that **Vulkan is not available at all**, and that "current Ollama releases
+  cannot run ternary Q2_0 yet" — while the `Bonsai-demo` README still claims group-64 is
+  merged into mainline. Only **1-bit `Q1_0` is unambiguously upstream** (CPU, Metal, CUDA
+  and Vulkan). The slide now says exactly that: 1-bit runs anywhere recent, ternary is
+  unsettled, and the two vendor pages disagree. Do not "resolve" the disagreement in
+  either direction without a fresh check — that is the third time this fact has moved.
+
   The teaching point survives the correction and is better for it: the catch is no longer
   "impossible", it is "which build, which backend, which version" — which is a truer
   picture of running frontier formats than the original absolute was.
@@ -611,11 +674,17 @@ Two examples, **both presenter-demo only** (see accuracy notes below):
 256 tokens in parallel rather than one token at a time. Reported >1,000 tok/s on a single
 H100. A 26B-class MoE with ~3.8B active parameters per step. Apache 2.0, weights on
 Hugging Face.
-- **Catch:** quality below standard Gemma 4 and no hosted API to try it on. On memory,
-  say *whose* ceiling: Google put the quantized model inside the **24 GB** of an RTX 5090
-  or 4090, which is a graphics card, not a laptop — and §3's demo PC has 32 GB of VRAM,
-  so "above tonight's hardware ceiling" is only true of the room's laptops. Name them, or
-  an attentive attendee will catch the contradiction with the slide two sections back.
+- **Catch — corrected Aug 2026.** Two of the three original claims did not survive
+  checking. There *is* a hosted way to try it (Vertex AI Model Garden, plus Kaggle and
+  Hugging Face, and native vLLM support), so "no hosted API" is gone. "Quality below
+  standard Gemma 4" is **unsourced** — Google's own page makes no such claim and
+  third-party coverage reports parity with Gemma 4 26B-A4B at 4x the speed; the slide no
+  longer asserts it. What remains, and is the real catch, is the hardware.
+- On memory, say *whose* ceiling. The **24 GB** figure is a direct quote of Google
+  ("the 24GB VRAM limits of a consumer RTX 5090 or 4090 when quantized") and Google are
+  loose there: a 5090 actually ships **32 GB**, which is what §3's demo PC has. So the
+  slide says "a 4090-class card" rather than naming the 5090, or an attentive attendee
+  catches the contradiction with the slide two sections back.
 
 **The closing beat:** *both* examples being un-runnable in LM Studio today is the point —
 "everything you learned about bytes-per-parameter is already being rewritten; come back
@@ -633,9 +702,14 @@ in six months." Framed as inspiring horizon tech, explicitly **not** tonight's d
 
 ## Cut order if running long
 
-1. Trim §5 (KV cache) to just the one-line formula.
-2. Make §4's math a live demo rather than worked through by hand.
-3. **Never cut §1's buffer.** Install problems are the single biggest schedule risk.
+1. **Cut §7's Bonsai slide.** §7 carries seven slides for ten minutes, at the end of a
+   two-hour session — it is where the overrun actually lands, and Bonsai is the one beat
+   §7 can lose without breaking: the catch-up slide already makes the "open is closing
+   the gap" case, and diffusion is the closing image. §5, by contrast, is already the
+   thinnest section in the deck at three slides for fifteen minutes.
+2. Trim §5 (KV cache) to just the one-line formula.
+3. Make §4's math a live demo rather than worked through by hand.
+4. **Never cut §1's buffer.** Install problems are the single biggest schedule risk.
 
 Explicitly deferred to "further reading," not built into the main flow:
 **speculative decoding** (conceptually heavy, doesn't earn its minutes for beginners),
@@ -649,7 +723,9 @@ deep sampling internals, runtime internals beyond the one-sentence llama.cpp/MLX
 LFM2.5 1.2B, both flagged RECOMMENDED. Both are under 750MB, which downloads in minutes
 over shared wifi and leaves the laptop responsive. **Qwen3.5 9B is presenter-demo only**
 and badged as such, so the room sees what a bigger model buys without thirty people
-trying to pull 5.6GB at once. Qwen3 4B stays on the slide as an unbadged middle option
+trying to pull 5.6GB at once. Note that its **reasoning is off by default** (it needs
+`enable_thinking`) — the slide used to say it "thinks before answering", which described
+something a fresh download does not do. Qwen3 4B stays on the slide as an unbadged middle option
 to take home. This overrides the older "safe default: a 4B or 7B at Q4" note — bandwidth
 in the room beat model quality.
 - Whether the presenter is solo or co-teaching with someone whose hardware covers the

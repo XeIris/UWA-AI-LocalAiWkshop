@@ -36,12 +36,20 @@ function field(wx, wy, t) {
   return (v / 3.6 + 1) / 2;                       /* -> 0..1 */
 }
 
+/* ~2000 fillRects a frame, so the loop is not merely skipped while the
+   cover is off screen — it is stopped, and wound again on arrival. A rAF
+   that early-returns still costs a callback every frame for two hours. */
+var coverRaf = null;
+function coverStart() {
+  if (coverRaf === null) coverRaf = requestAnimationFrame(draw);
+}
+function coverStop() {
+  if (coverRaf !== null) { cancelAnimationFrame(coverRaf); coverRaf = null; }
+}
+
 function draw(now) {
-  /* ~2000 fillRects a frame; no reason to pay that for the 18 slides where
-     the cover is not on screen. Hold t0 so the cycle resumes, not jumps. */
-  if (coverSlide && !coverSlide.classList.contains('active')) {
-    t0 = now; requestAnimationFrame(draw); return;
-  }
+  coverRaf = null;                                /* this frame has fired */
+  if (coverSlide && !coverSlide.classList.contains('active')) { t0 = now; return; }
   var elapsed = now - t0;
   if (elapsed > HOLD + XFADE) { t0 = now; elapsed = 0; swapped = false; }
 
@@ -82,20 +90,19 @@ function draw(now) {
   }
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
-  if (!reduced) requestAnimationFrame(draw);
+  if (!reduced) coverStart();
 }
-requestAnimationFrame(draw);
+coverStart();
 
-/* A running loop repaints itself on the next frame anyway. Reduced motion
-   drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops.
+/* Arriving at the cover winds the loop; leaving it stops it. This also
+   covers the repaint a theme change needs, under reduced motion as much
+   as without it: the toggle fires deck:theme and then deck:slide, so the
+   palette is refilled before this asks for a frame.
 
-   Registered ONCE, here at module level. This block briefly lived inside
-   draw() as well, which under reduced motion added a listener per repaint
-   and turned every later theme toggle into a growing burst of frames. */
-if (reduced) {
-  document.addEventListener('deck:theme', function () {
-    requestAnimationFrame(draw);
-  });
-}
+   Registered ONCE, here at module level — coverStart's own guard is what
+   keeps a second deck:slide from leaving two loops running. */
+document.addEventListener('deck:slide', function () {
+  if (coverSlide && coverSlide.classList.contains('active')) coverStart();
+  else coverStop();
+});
 }

@@ -31,7 +31,18 @@
 .kv-res b { color: var(--accent); text-shadow: 0 0 1.6rem var(--accent-glow); }
 .kv-res em { color: var(--accent); }
 
-.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 0.8rem; }
+.kv {
+  display: grid; grid-template-columns: 1fr 1.35fr;
+  /* An explicit row height, for exactly the reason §6's scale grid has one.
+     The canvas below is a replaced element: leave its height unresolved and
+     it falls back to its own height attribute, which fitCanvas writes from
+     the measured size — so the two chase each other upward. This one was the
+     last unpinned canvas in the deck, and it grew by the device pixel ratio
+     every time the slide was re-entered. Invisible at 1x; runaway on the
+     Retina laptop you are presenting from. */
+  grid-template-rows: 21rem;
+  gap: 1.1rem; margin-top: 0.8rem;
+}
 .kv-panel {
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
@@ -65,15 +76,17 @@
   border-bottom: 1px solid var(--rule-soft);
 }
 .kv-head-hi { color: var(--accent); text-transform: none; letter-spacing: 0.05em; font-size: 0.66rem; }
-.kv-chart canvas { display: block; width: 100%; flex: 1; min-height: 13rem; }
+/* flex-basis 0 and min-height 0, so the canvas takes the row's leftover
+   height rather than contributing its own content height back to it. */
+.kv-chart canvas { display: block; width: 100%; flex: 1 1 0; min-height: 0; }
 
 @media (max-width: 900px) {
-  .kv { grid-template-columns: 1fr; gap: 0.7rem; }
+  .kv { grid-template-columns: 1fr; grid-template-rows: auto 15rem; gap: 0.7rem; }
   .kv-panel { padding: 0.85rem 0.9rem; }
   .kv-eq { padding: 0.8rem 0.7rem; gap: 0.35rem 0.4rem; }
   .kv-t b { font-size: 1.15rem; }
   .kv-t { min-width: 2.6rem; }
   .kv-x { padding-bottom: 0.9rem; font-size: 0.9rem; }
   .kv-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-  .kv-chart canvas { min-height: 11rem; }
+
 }

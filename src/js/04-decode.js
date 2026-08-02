@@ -123,9 +123,20 @@ if (dkSlide) {
     dkText.scrollTop = dkText.scrollHeight;
   }
 
+  /* Stopped rather than skipped while the slide is off screen: a loop that
+     early-returns still pays a callback every frame for the whole talk. */
+  var dkRaf = null;
+  function dkStart() {
+    if (dkRaf === null) { last = performance.now(); dkRaf = requestAnimationFrame(tick); }
+  }
+  function dkStop() {
+    if (dkRaf !== null) { cancelAnimationFrame(dkRaf); dkRaf = null; }
+  }
+
   function tick(now) {
-    requestAnimationFrame(tick);
-    if (!dkSlide.classList.contains('active')) { last = now; return; }
+    dkRaf = null;
+    if (!dkSlide.classList.contains('active')) return;
+    dkRaf = requestAnimationFrame(tick);
     var dt = Math.min(now - last, 250) / 1000;   /* clamp tab-switch jumps */
     last = now;
 
@@ -149,6 +160,9 @@ if (dkSlide) {
     render();
   } else {
     render();
-    requestAnimationFrame(tick);
+    document.addEventListener('deck:slide', function () {
+      if (dkSlide.classList.contains('active')) dkStart(); else dkStop();
+    });
+    if (dkSlide.classList.contains('active')) dkStart();
   }
 }

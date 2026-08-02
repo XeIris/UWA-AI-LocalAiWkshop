@@ -434,11 +434,31 @@ if (csSlide) {
      in a real presentation — a mirrored or extended display the OS
      considers occluded, a backgrounded window, remote desktop. When that
      happens rAF gives you a chat window that never says anything, with
-     no error and nothing to debug. A timer keeps its clock. */
+     no error and nothing to debug. A timer keeps its clock.
+
+     It is still only wound while this slide is on screen. The argument
+     above is about which CLOCK to use, not about running one for the
+     whole two hours — a 30 Hz wakeup on all 38 slides keeps the CPU out
+     of its idle states on a laptop that is probably on battery. */
   var TICK_MS = 33;
+  var csTimer = null;
+
+  function csStart() {
+    if (csTimer) return;              /* deck:slide can fire twice — the
+                                         theme toggle sends one after
+                                         deck:theme — so this must not
+                                         leave a second interval running */
+    lastT = performance.now();
+    csTimer = setInterval(frame, TICK_MS);
+  }
+  function csStop() {
+    if (!csTimer) return;
+    clearInterval(csTimer);
+    csTimer = null;
+  }
+
   function frame() {
     var now = performance.now();
-    if (!csSlide.classList.contains('active')) { lastT = now; return; }
     var dt = Math.min(now - lastT, 250) / 1000;   /* clamp throttled gaps */
     lastT = now;
     if (!playing) return;
@@ -465,13 +485,26 @@ if (csSlide) {
 
   /* Restart on entry: a chat that is already over when the slide appears
      has thrown away the only thing it had to show. */
+  /* ...on ARRIVAL. deck:slide fires on a theme change too, and restarting
+     there would wipe a scenario mid-explanation for no reason — this slide
+     paints no canvas, so it has nothing to repaint for the new palette. */
+  var csWasActive = false;
   document.addEventListener('deck:slide', function () {
-    if (csSlide.classList.contains('active')) {
-      load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+    var on = csSlide.classList.contains('active');
+    if (on) {
+      if (!csWasActive) {
+        load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+      }
+      csStart();
+    } else {
+      csStop();
     }
+    csWasActive = on;
   });
 
+  /* Built now so the slide is never blank for a frame, but the clock only
+     starts if we happen to have opened straight onto this slide (a deep
+     link can). Otherwise deck:slide winds it on arrival. */
   load('sum');
-  lastT = performance.now();
-  setInterval(frame, TICK_MS);
+  if (csSlide.classList.contains('active')) csStart();
 }

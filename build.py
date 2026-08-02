@@ -18,10 +18,13 @@ Directives, usable anywhere in any source file:
 Paths are relative to src/, never to the including file — one rule, no
 surprises when a partial moves.
 
-Release mode does only provably-safe things: strip comments and collapse
-CSS whitespace to single spaces. It deliberately does NOT touch JavaScript.
-Hand-rolling a JS minifier without a parser is how you get an ASI bug that
-appears only in the build you present from.
+Release mode does only provably-safe things: strip comments, collapse CSS
+whitespace to single spaces, and remove leading indentation from the JS.
+It deliberately does NOT strip JS comments or rewrite JS tokens. Hand-rolling
+a minifier without a parser is how you get an ASI bug — or an eaten regex
+literal — that appears only in the build you present from. See slim_js for
+why de-indenting specifically is safe here, and for the one change to src/js/
+that would make it unsafe.
 """
 
 import base64
@@ -115,6 +118,35 @@ def slim_css(css):
     return "".join(out).strip()
 
 
+def slim_js(js):
+    """Strip leading indentation from each line. Nothing else.
+
+    This is the ONLY transform on JavaScript that can be justified without a
+    parser, and it is safe for one specific reason: no token in this codebase
+    spans a line boundary. There are no template literals (every backtick in
+    src/js/ sits inside a comment) and no backslash line-continuations, so
+    the only thing at the start of a line is either whitespace or the start
+    of a token. Newlines are preserved, so automatic semicolon insertion sees
+    exactly the line structure it saw before.
+
+    Blank lines are kept, deliberately. Dropping them would save a little more
+    and cost the invariant: line N of the release build is line N of the debug
+    build, so a stack trace from the machine you are presenting from still
+    points at the right source line — and the verification in CLAUDE.md (strip
+    leading whitespace from both builds, diff, expect identical) stays a real
+    check rather than one that normalises away the same thing the transform
+    did.
+
+    Comments are deliberately NOT stripped. That needs a lexer that can tell
+    a regex literal from a division, and the classic failure — an eaten
+    regex — would appear only in the build you present from.
+
+    If a template literal is ever added to src/js/, DELETE THIS FUNCTION.
+    A multi-line `...` would have its indentation silently rewritten.
+    """
+    return "\n".join(line.lstrip(" \t") for line in js.split("\n"))
+
+
 def release(html):
     html = re.sub(
         r"<style>(.*?)</style>",
@@ -126,6 +158,9 @@ def release(html):
     # otherwise make the regex eat live code.
     head, sep, tail = html.partition("<script>")
     head = re.sub(r"<!--.*?-->", "", head, flags=re.S)
+    if sep:
+        js, close, rest = tail.rpartition("</script>")
+        tail = slim_js(js) + close + rest
     return head + sep + tail
 
 

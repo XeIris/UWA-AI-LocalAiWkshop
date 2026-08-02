@@ -29,7 +29,7 @@
         </div>
 
         <div class="sc-panel">
-          <canvas id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
+          <canvas role="img" id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
           <!-- One element, not a text node with a <b> in it: the parent is
                a centring grid and would make each inline run its own item. -->
           <div class="sc-empty" id="scEmpty"><span>Press <b>Add the next model</b></span></div>
@@ -54,13 +54,16 @@
       </div>
 
       <p class="caveat"><strong>Nobody outside the lab knows the closed numbers.</strong>
-        Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
-        The closed-weight bars are inference, not fact &mdash; the two published attempts to measure
-        them from the outside disagree by roughly <em>six times</em>, which is why they are
-        drawn as ranges. The lesson survives the uncertainty: even the <em>floor</em> of the
-        most conservative estimate is fifty times the largest model a laptop can hold, and
-        over a thousand times the one you downloaded tonight &mdash; and a sparse model
-        only ever <em>runs</em> a small slice of that total at a time
-        &mdash; the dot on each bar.</p>
+        Open-weight vendors publish theirs. The closed labs stopped: OpenAI&rsquo;s last
+        real number was GPT&#8209;3&rsquo;s and Google&rsquo;s was PaLM&rsquo;s, both
+        superseded by 2023 releases that gave no figure at all &mdash; and Anthropic
+        never published one.
+        The closed-weight bars are inference rather than fact: the two published attempts
+        to measure them from the outside disagree by roughly <em>six times</em>, which is
+        why they are drawn as ranges. The lesson survives the uncertainty. Even the
+        <em>floor</em> of the most conservative estimate is fifty times the largest model
+        a laptop can hold, and over a thousand times the one you downloaded tonight. Note
+        too that a sparse model only ever <em>runs</em> a small slice of that total at a
+        time, which is the dot on each bar.</p>
     </div>
   </section>

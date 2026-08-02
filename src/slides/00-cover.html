@@ -10,7 +10,9 @@
         </div>
       </div>
       <div class="cover-art">
-        <canvas id="art" width="760" height="470"></canvas>
+        <!-- Decorative: the readout beneath it carries every word this
+             says, so announcing it twice would only be noise. -->
+        <canvas id="art" width="760" height="470" aria-hidden="true"></canvas>
         <div class="art-readout">
           <span class="cfg" id="artCfg">7.5B &middot; 16-bit</span>
           <span class="gb" id="artGb">15.0 GB</span>

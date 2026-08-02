@@ -265,13 +265,23 @@ if (mxSlide) {
     ctx.globalAlpha = 1;
   }
 
-  /* ---- animation ---- */
-  var lastT = 0;
+  /* ---- animation ----
+     Two canvases repainted every frame, so the loop is stopped while the
+     slide is off screen rather than merely skipping its body. */
+  var lastT = 0, mxRaf = null;
+  function mxStart() {
+    if (mxRaf === null) { lastT = performance.now(); mxRaf = requestAnimationFrame(frame); }
+  }
+  function mxStop() {
+    if (mxRaf !== null) { cancelAnimationFrame(mxRaf); mxRaf = null; }
+  }
+
   function frame(now) {
-    requestAnimationFrame(frame);
+    mxRaf = null;
+    if (!mxSlide.classList.contains('active')) return;
+    mxRaf = requestAnimationFrame(frame);
     var dt = Math.min(now - lastT, 250) / 1000;
     lastT = now;
-    if (!mxSlide.classList.contains('active')) return;
 
     views.forEach(function (v) {
       var toobig = v.alloc.over > 0.001;
@@ -318,11 +328,14 @@ if (mxSlide) {
 
   recompute();
   window.addEventListener('resize', function () { views.forEach(drawMachine); });
-  document.addEventListener('deck:slide', function () { views.forEach(drawMachine); });
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  var mxReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('deck:slide', function () {
     views.forEach(drawMachine);
-  } else {
-    requestAnimationFrame(frame);
-  }
+    if (mxReduced) return;
+    if (mxSlide.classList.contains('active')) mxStart(); else mxStop();
+  });
+
+  views.forEach(drawMachine);
+  if (!mxReduced && mxSlide.classList.contains('active')) mxStart();
 }

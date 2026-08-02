@@ -49,10 +49,13 @@
 .bg-o { background: var(--ink-dim); opacity: 0.35; }
 /* Over capacity the cache is the thing that broke it, so the cache is what
    goes red — the weights were always going to fit. */
+/* The hatch has to follow the fill it sits on. Hardcoded white read as a
+   crisp stripe over the light theme's dark red and all but vanished over
+   the dark theme's light one — --on-bad is the token that flips with it. */
 .bg-bar.over .bg-k {
   background-color: var(--bad);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);
+    -45deg, color-mix(in srgb, var(--on-bad) 22%, transparent) 0 4px, transparent 4px 9px);
 }
 .bg-bar.over .bg-k span { color: var(--on-bad); }
 

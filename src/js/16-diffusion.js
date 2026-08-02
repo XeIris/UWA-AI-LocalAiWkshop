@@ -89,11 +89,21 @@ if (dfSlide) {
   }
 
   /* ---- run state ---- */
-  var dfT = 0, dfRunning = false, dfLast = 0;
+  var dfT = 0, dfRunning = false, dfLast = 0, dfRaf = null;
+
+  /* Wound on arrival, stopped on departure. The body only does work while
+     a generation is playing, but the callback itself is not free. */
+  function dfWind() {
+    if (dfRaf === null) { dfLast = performance.now(); dfRaf = requestAnimationFrame(dfFrame); }
+  }
+  function dfHalt() {
+    if (dfRaf !== null) { cancelAnimationFrame(dfRaf); dfRaf = null; }
+  }
 
   function dfFrame(now) {
-    requestAnimationFrame(dfFrame);
-    if (!dfSlide.classList.contains('active')) { dfLast = now; return; }
+    dfRaf = null;
+    if (!dfSlide.classList.contains('active')) return;
+    dfRaf = requestAnimationFrame(dfFrame);
     var dt = Math.min(now - dfLast, 250) / 1000;
     dfLast = now;
     if (dfRunning) {
@@ -142,8 +152,12 @@ if (dfSlide) {
 
   dfRun.addEventListener('click', dfStart);
   window.addEventListener('resize', dfRender);
-  document.addEventListener('deck:slide', dfRender);
+  document.addEventListener('deck:slide', function () {
+    dfRender();
+    if (REDUCED) return;
+    if (dfSlide.classList.contains('active')) dfWind(); else dfHalt();
+  });
 
   dfRender();
-  if (!REDUCED) requestAnimationFrame(dfFrame);
+  if (!REDUCED && dfSlide.classList.contains('active')) dfWind();
 }

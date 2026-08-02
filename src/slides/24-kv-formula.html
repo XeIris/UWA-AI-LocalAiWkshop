@@ -22,11 +22,13 @@
             <span class="ctrl-label" id="kvModelLabel">Model</span>
             <!-- data-kv is the shared-KV count, data-q the query-head count the
                  same model would need without GQA. Representative configs, not
-                 any one checkpoint's config.json. -->
+                 any one checkpoint's config.json. data-w is the weights figure
+                 at Q4_K_M, and must match what §4's cliff chart shows for the
+                 same model — 30B lands at 18.1 GB in both places. -->
             <div class="seg" id="kvModel" role="group" aria-labelledby="kvModelLabel">
               <button type="button" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8">1B&#8209;class</button>
               <button type="button" data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
-              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="17.5">30B&#8209;class</button>
+              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="18.1">30B&#8209;class</button>
             </div>
           </div>
 
@@ -58,7 +60,7 @@
             <span>Memory against context length</span>
             <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
           </div>
-          <canvas id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
+          <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
         </div>
       </div>
 
