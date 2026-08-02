@@ -40,7 +40,7 @@
   margin-top: 1.5rem; padding: 0.7rem 1rem;
   border-left: 2px solid var(--warn);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: rgba(251, 191, 36, 0.05);
+  background: color-mix(in srgb, var(--warn) 7%, transparent);
   font-size: 0.98rem; color: var(--ink-mid);
 }
 

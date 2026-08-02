@@ -208,23 +208,38 @@ if (csSlide) {
 
     fact: {
       bad: true,
-      why: 'A 1&nbsp;B model has room for the shape of language and very little else. ' +
-           'Asked something it does not hold, it does not stop &mdash; it invents.',
+      why: 'Half of this is right, and that is what makes it dangerous &mdash; the ' +
+           'invented half arrives in exactly the same tone as the true half.',
       lanes: [
         { model: LOCAL, steps: [
-          { t: 0.2, m: 'user', text: 'Who published Kimi K3, and how big is it?' },
-          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
-          { t: 1.5, m: 'ai', text: 'Kimi K3 is a large language model released by Baidu in early 2025. It has roughly 300 billion parameters and is available through their cloud platform.' },
-          { t: 3.9, m: 'verdict', bad: true, text: 'Wrong company, wrong year, wrong by 9×. No hedge anywhere.' }
+          { t: 0.2, m: 'user', text: 'What happened in 1888? Give me the highlights.' },
+          { t: 0.8, m: 'sys', text: 'Thinking', bar: 0.5 },
+          { t: 1.4, m: 'ai', pre: true, text:
+            '• The Great Blizzard buried the US East Coast in March — around 400 dead.\n' +
+            '• George Eastman put the first Kodak camera on sale: the Brownie, $25.\n' +
+            '• Nikola Tesla patented his alternating-current induction motor.\n' +
+            '• The Eiffel Tower opened in Paris for the World\u2019s Fair.\n' +
+            '• Van Gogh painted The Starry Night in Arles.\n' +
+            '• Germany had three emperors in one year, ending with Wilhelm II.' },
+          { t: 5.6, m: 'verdict', bad: true, text: 'Six claims, one voice. Three of them are wrong.' }
         ] },
-        { model: { name: 'The answer', sub: 'from the scale slide', kind: 'truth' }, steps: [
-          { t: 2.7, m: 'ai', pre: true, plain: true, text:
-            'Moonshot AI, July 2026.\n' +
-            '2.8 trillion parameters total,\n' +
-            '104 billion active per token.\n\n' +
-            'The largest open-weight release\n' +
-            'to date — you saw it two slides ago.' },
-          { t: 4.1, m: 'verdict', text: 'It was never going to know this. It was trained before it happened.' }
+        /* The corrections are the SECOND lane rather than annotations on the
+           first, because the whole point is that nothing in the answer marks
+           itself. You need an outside source to tell the halves apart — which
+           is the argument for retrieval, one slide early. */
+        { model: { name: 'The record', sub: 'what actually happened', kind: 'truth' }, steps: [
+          { t: 2.6, m: 'ai', pre: true, plain: true, text:
+            'RIGHT\n' +
+            '11–14 March. ~400 dead, Chesapeake to Maine.\n' +
+            'Tesla\u2019s induction-motor patent, 1 May 1888.\n' +
+            'Wilhelm I, Frederick III, Wilhelm II — all in 1888.' },
+          { t: 4.6, m: 'ai', pre: true, plain: true, tone: 'wrong', text:
+            'WRONG\n' +
+            'The 1888 camera is the Kodak No. 1, $25. The Brownie is 1900.\n' +
+            'The Eiffel Tower was finished 31 March 1889.\n' +
+            'The Starry Night: June 1889, Saint-Rémy. In Arles that\n' +
+            'December he cut off part of his ear.' },
+          { t: 7.6, m: 'verdict', text: 'Each one is a year out, or the right story about the wrong thing.' }
         ] }
       ]
     }
@@ -300,7 +315,10 @@ if (csSlide) {
       d = bubble('s', '<span class="cs-spin"></span><span>' + st.text +
         '</span><span class="cs-prog"><i style="--d:' + st.bar + 's"></i></span>');
     } else if (st.m === 'ai') {
-      d = bubble('a' + (st.plain ? ' plain' : ''),
+      /* tone marks an assistant message that is making a judgement rather
+         than answering — used by the corrections lane, and warm because a
+         correction is a genuine wrong/right call, not decoration. */
+      d = bubble('a' + (st.plain ? ' plain' : '') + (st.tone ? ' ' + st.tone : ''),
         '<span class="cs-t' + cls(st) + '"></span><span class="cs-caret"></span>');
       st.body = d.querySelector('.cs-t');
       st.words = st.text.split(' ');

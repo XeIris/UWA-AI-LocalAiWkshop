@@ -20,16 +20,22 @@ if (mxSlide) {
     mac: { pools: [{ label: 'Unified memory', gb: 64, bw: 614 }] }
   };
 
-  var css = getComputedStyle(document.documentElement);
-  var C = {
-    fast: css.getPropertyValue('--accent').trim(),
-    slow: css.getPropertyValue('--warn').trim(),
-    bad:  css.getPropertyValue('--bad').trim(),
-    empty: css.getPropertyValue('--bg-raise').trim(),
-    rule: css.getPropertyValue('--rule-soft').trim(),
-    dim:  css.getPropertyValue('--ink-dim').trim(),
-    mono: css.getPropertyValue('--mono').trim()
-  };
+  /* Named for what they MEAN here (fast pool, slow pool, spilled), not
+     for the token behind them. Refilled in place on a theme change for
+     the same reason THEME is — the draw loop captured this object. */
+  var C = {};
+  function mxColours() {
+    var css = getComputedStyle(document.documentElement);
+    C.fast = css.getPropertyValue('--accent').trim();
+    C.slow = css.getPropertyValue('--warn').trim();
+    C.bad  = css.getPropertyValue('--bad').trim();
+    C.empty = css.getPropertyValue('--bg-raise').trim();
+    C.rule = css.getPropertyValue('--rule-soft').trim();
+    C.dim  = css.getPropertyValue('--ink-dim').trim();
+    C.mono = css.getPropertyValue('--mono').trim();
+  }
+  mxColours();
+  document.addEventListener('deck:theme', mxColours);
 
   var paramsEl = document.getElementById('mxParams');
   var paramsOut = document.getElementById('mxParamsOut');

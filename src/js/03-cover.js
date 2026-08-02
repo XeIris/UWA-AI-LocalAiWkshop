@@ -62,7 +62,7 @@ function draw(now) {
   var cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
   var t    = reduced ? 0 : now / 1000;
 
-  ctx.fillStyle = '#060a0e';
+  ctx.fillStyle = THEME.artBg;
   ctx.fillRect(0, 0, W, H);
   ctx.globalAlpha = 0.15 + 0.85 * fade;
 
@@ -72,14 +72,35 @@ function draw(now) {
       var v  = field(wx * 6, wy * 6, t);
       /* posterize to the configuration's shade count */
       var q  = Math.round(v * (cfg.shades - 1)) / (cfg.shades - 1);
-      var l  = 6 + q * 52;
-      ctx.fillStyle = 'hsl(187, ' + (46 + q * 30) + '%, ' + l + '%)';
+      /* One hue, one ramp, two directions: the light theme's span is
+         negative, so a heavy weight is dark ink rather than bright glass. */
+      var l  = THEME.artL0 + q * THEME.artSpan;
+      var s  = THEME.artS0 + q * THEME.artSSpan;
+      ctx.fillStyle = 'hsl(187, ' + s + '%, ' + l + '%)';
       ctx.fillRect(x * cell, y * cell, cell - 1, cell - 1);
     }
   }
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
   if (!reduced) requestAnimationFrame(draw);
+
+/* A running loop repaints itself on the next frame anyway. Reduced motion
+   drew exactly one frame and would otherwise keep the old palette — but
+   only that case may schedule here, or the deck ends up with two loops. */
+if (reduced) {
+  document.addEventListener('deck:theme', function () {
+    requestAnimationFrame(draw);
+  });
+}
 }
 requestAnimationFrame(draw);
+
+/* A running loop repaints itself on the next frame anyway. Reduced motion
+   drew exactly one frame and would otherwise keep the old palette — but
+   only that case may schedule here, or the deck ends up with two loops. */
+if (reduced) {
+  document.addEventListener('deck:theme', function () {
+    requestAnimationFrame(draw);
+  });
+}
 }

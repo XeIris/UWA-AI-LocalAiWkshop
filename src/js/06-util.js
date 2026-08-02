@@ -57,16 +57,29 @@ function rem() {
   return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 }
 
-var THEME = (function () {
+/* Canvas colours, resolved from the CSS tokens. Every canvas in the deck
+   reads THEME at draw time, so this object is REFILLED IN PLACE on a
+   theme change rather than replaced — a module that captured the
+   reference (they all do) has to see the new values, and a fresh object
+   would leave it painting yesterday's palette forever. */
+var THEME = {};
+function readTheme() {
   var css = getComputedStyle(document.documentElement);
   function v(name) { return css.getPropertyValue(name).trim(); }
-  return {
-    accent: v('--accent'), accentLo: v('--accent-lo'),
-    ok: v('--ok'), warn: v('--warn'), bad: v('--bad'),
-    ink: v('--ink'), inkMid: v('--ink-mid'), inkDim: v('--ink-dim'),
-    rule: v('--rule-soft'), raise: v('--bg-raise'), mono: v('--mono')
-  };
-}());
+  THEME.accent = v('--accent');  THEME.accentLo = v('--accent-lo');
+  THEME.ok = v('--ok');          THEME.warn = v('--warn');
+  THEME.bad = v('--bad');        THEME.ink = v('--ink');
+  THEME.inkMid = v('--ink-mid'); THEME.inkDim = v('--ink-dim');
+  THEME.rule = v('--rule-soft'); THEME.raise = v('--bg-raise');
+  THEME.mono = v('--mono');
+  THEME.artBg = v('--art-bg');
+  THEME.artL0 = parseFloat(v('--art-l0'));
+  THEME.artSpan = parseFloat(v('--art-span'));
+  THEME.artS0 = parseFloat(v('--art-s0'));
+  THEME.artSSpan = parseFloat(v('--art-sspan'));
+}
+readTheme();
+document.addEventListener('deck:theme', readTheme);
 
 var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

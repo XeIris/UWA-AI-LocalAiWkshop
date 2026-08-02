@@ -31,7 +31,54 @@ something. Never use warm colors decoratively.
 rather than a stronger recommendation (the "PRESENTER DEMO" badge on the model picker),
 use filled `--ink` with dark text, mirroring the filled-cyan badge. Violet was the
 obvious choice and is wrong: Qwen's own mark is `#6336E7` and sits directly under that
-badge. Do not add a fourth hue without a reason this specific.
+badge. Do not add a fourth hue without a reason this specific. On paper the same
+third state is filled black — "a different category", not "a darker cyan", is the
+thing being encoded, and it survives the inversion.
+
+**Light theme (added 2026-08-02).** A second token block, `:root[data-theme="light"]`,
+and *nothing else*: the same blueprint printed rather than projected. Dark remains the
+default and there is deliberately **no `prefers-color-scheme` rule** — auto-switching
+would mean a presenter discovering their deck is white as they plug into the projector.
+The toggle is top-left, mirrors the counter, persists in `localStorage` (wrapped in
+try/catch; `file://` storage is not guaranteed), and shows the theme you would *get*.
+
+Three rules keep it working:
+
+- **No colour at a use site.** A hex or `rgba()` in a component file is a bug now.
+  Warm tints are `color-mix(in srgb, var(--ok) 9%, transparent)` so they follow the
+  semantic token; text sitting *on* a filled swatch uses `--on-accent` / `--on-ink` /
+  `--on-ok` / `--on-bad`, which flip with the theme. Hardcoding `#04262b` on a fill is
+  exactly what broke when light mode arrived.
+- **Canvas has to be told.** `THEME` (and §3's `C`) are **refilled in place** on
+  `deck:theme`, never replaced — every module captured the reference. A theme change
+  fires `deck:theme` then `deck:slide`, in that order, or the repaint uses the old
+  palette. The cover art's shade ramp is two numeric tokens (`--art-l0`, `--art-span`,
+  plus saturation) so it inverts instead of staying a dark rectangle on white.
+- **Never name a colour in slide copy.** "The white bars are inference" stopped being
+  true the moment the bars went black. Name the category, not the ink.
+
+Semantics keep their meaning and lose their neon: `--ok` `#15803d`, `--warn` `#b45309`,
+`--bad` `#c02626`. Green at dark-theme brightness is unreadable on white, and washing it
+out instead would break the one rule the palette has.
+
+**Glossary.** Terms are marked by a DOM pass at load (`js/19-glossary.js`), not by hand
+in the slide source — hand-marked spans would drift the first time a sentence was
+reworded. The pass is timid on purpose: prose containers only (never a heading, readout
+or control, where an underline reads as part of the number), one mark per *definition*
+per slide, at most six per slide, longest term first so "memory bandwidth" beats
+"bandwidth". Opt out with `data-noglossary`. Definitions are one sentence and say what
+the thing **is** — the slide is already doing the job of saying why it matters. Each
+carries the section that covers it properly, as a `data-goto` button, which the deck's
+existing delegated listener handles for free.
+
+Each entry may also carry a **"not the same as"** list, and that half is the one people
+actually need. Nearly every wrong mental model in the room is a *collision* between two
+neighbouring words — quantization with distillation, the context window with memory,
+fine-tuning with RAG, llama.cpp with Llama, LM Studio with LM Studio Bionic,
+DiffusionGemma with Gemini Diffusion — and a definition that only says what a thing is
+leaves the collision intact. Where a term has a famous twin, name the twin. Definitions
+are as long as the idea needs; the panel scrolls internally rather than growing off the
+screen, because it is anchored to a word in a sentence and cannot move to make room.
 
 **Type:** system font stack (no CDN, no embedded webfont). Sans for prose, monospace for
 every number, formula, label and eyebrow. Root font-size scales off `min(vw, vh)` so the
@@ -143,7 +190,19 @@ word is spoken.
    Intelligence Index 37, Apache 2.0, ~17 GB at 4-bit vs GPT-5 high,
    7 Aug 2025, index 35) before either un-runnable horizon example, so
    the section starts with something the room can actually download.
-7. Cover art polish.
+7. ~~Post-run polish (Aug 2026), from feedback on the first delivery: the §0
+   **definition slide**, the **glossary**, and the **light theme**.~~ The
+   feedback that mattered was that the room could recite five reasons to run a
+   local model before anyone had said what one *is* — so §0 is now "what it is,
+   and why bother", and the definition is mechanical (a file, a runner, your
+   memory) because every later section is about one of those three parts.
+   Adding it forced a second full renumber of `src/slides/`, and splitting the
+   old `02-why-bother.html` into a card file and a reasons file.
+8. ~~The §2 **chat-template gotcha** and the two **closing slides**.~~ These were
+   the last two things the plan named and the deck did not have. §2's is the
+   only interactive in the deck whose subject is a *failure*, and the closers
+   are what the deck ends on instead of the diffusion animation stopping.
+9. Cover art polish.
 
 ## Tech constraints
 
@@ -349,7 +408,7 @@ explains everything → horizon.**
 
 | # | Section | Time | Notes |
 |---|---------|------|-------|
-| 0 | Why bother? | 10m | Hook |
+| 0 | What it is, and why bother | 10m | Definition, then hook |
 | 1 | First win — hands-on | 20m | Everyone gets a model running |
 | 2 | What just happened + where models come from | 15m | |
 | 3 | Hardware + the one formula | 20m | |
@@ -358,8 +417,15 @@ explains everything → horizon.**
 | 6 | What small models are good and bad at | 10m | |
 | 7 | The horizon | 10m | |
 
-### 0. Why bother? (10 min)
-Lead with **privacy** (data never leaves the machine), **offline**, **no rate limits**,
+### 0. What it is, and why bother (10 min)
+**Say what a local LLM is before saying why to run one.** The definition slide is
+first: an open-weight model whose *inference* runs on hardware you own, and the three
+parts that makes it — the weights file, the runner, your memory. It closes on the two
+routes a sentence can take (cloud has two hops that local simply does not) and on
+**open weights ≠ open source**, which is the misconception a hobbyist room arrives
+with. Keep it mechanical; the reasons slide does the persuading.
+
+Then lead with **privacy** (data never leaves the machine), **offline**, **no rate limits**,
 **no subscription**, **full control** (swap/customize models).
 
 > **Framing note — important.** An earlier draft opened with "intelligence is becoming
@@ -401,8 +467,33 @@ and what temperature does. Nothing deeper.
   Beginners get stuck here constantly.
 - One sentence that LM Studio is a wrapper around **llama.cpp** (and **MLX** on Mac), so
   the tool isn't magic and alternatives exist: Ollama, Open WebUI, GPT4All.
-- **Chat/prompt template gotcha:** the wrong template produces garbage output, and it's
-  an *invisible* failure — nothing errors, the text is just bad. High value, low effort.
+- **Chat/prompt template gotcha — BUILT.** The wrong template produces bad output and it
+  is an *invisible* failure: nothing errors, the text is just worse.
+
+  Told as before-and-after **on the wire**: the left panel is the literal string handed
+  to the model, coloured by whether each marker is a token this model owns (green) or
+  one it has never seen (red); the right panel plays what comes back. One model
+  (Gemma 3 1B, the §1 download), one prompt, six wrappings.
+
+  The failures are **graded, not uniform** — that is the whole design, and picking six
+  presets that all fail the same way would have taught nothing:
+
+  | preset | what breaks |
+  |--------|-------------|
+  | Gemma 3 | nothing — the baseline the rest is measured against |
+  | ChatML | markers not in the vocabulary shred into text; turn structure gone, system prompt ignored, answer drifts |
+  | Llama 3 | same class, worse: the model starts *imitating* the marker-shaped text |
+  | Mistral | `[INST]` is plain ASCII, tokenizes cleanly, and is read as part of the question |
+  | No template | no generation prompt, so it **completes** your sentence instead of replying |
+  | Wrong stop | right markers, foreign stop string — it answers, then plays both sides until the token limit |
+
+  Two honesty constraints. The outputs are **illustrations of documented failure
+  classes, not captured transcripts**, and the slide says so. And the framing has to
+  stay accurate about *when* you meet this: the template lives in the GGUF metadata and
+  LM Studio normally applies it, so the real triggers are a hand-overridden preset, an
+  oddly converted GGUF, or the raw completion endpoint — not "LM Studio gets this wrong
+  every day". Note also that Gemma genuinely has **no system role**; the app folds the
+  system prompt into the first user turn, which is worth saying out loud.
 
 ### 3. Hardware + the one formula (20 min)
 DRAM vs VRAM. dGPU vs SoC, with real examples: traditional PC + discrete GPU versus
@@ -462,6 +553,27 @@ Llama 3.1 405B (Jul 2024) and DeepSeek V3 671B/37B (Dec 2024). Closed: GPT-3.5 1
 anywhere near confirmed. Everything after that is a band, not a number — see the build
 order note above. **Do not turn the bands back into point estimates before presenting,
 however tempting a single figure looks on a slide.**
+
+### Closing (in §7, after the horizon)
+Three slides, because the deck used to end on the diffusion animation simply stopping.
+
+**"If you remember five things"** — the recap, in §0's own five-tile component so the
+deck closes in the shape it opened in: it is a file / fit comes first / speed is
+division / the 4-bit floor / bring the knowledge. Every tile is a `data-goto`, which
+makes it the board to stand on during questions — someone asks about the cliff, you
+press 04 and you are on the cliff.
+
+**"Where to go next"** — the slide that stays up through Q&A, so it has to reward being
+looked at for ten minutes: three things to do this week, the rabbit holes this deck
+deliberately skipped (speculative decoding, embeddings/RAG internals, fine-tuning and
+LoRA, serving a local API), and where to read. The **deck link is a placeholder**
+(`[ LINK GOES HERE ]`) under a marked comment, like the posters' event details — fill it
+in the source and rebuild.
+
+**"Thank you"** — the cover reprised: same wordmark, same NO CLOUD / NO SUBSCRIPTION /
+NO WI-FI strapline, one line of instruction and one line inviting questions. It carries
+`data-noglossary`, because nothing on an end frame is being taught and a dotted underline
+is an invitation to click one more thing.
 
 ### 7. The horizon (10 min)
 Two examples, **both presenter-demo only** (see accuracy notes below):

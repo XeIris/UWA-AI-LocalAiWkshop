@@ -1,0 +1,63 @@
+  <!-- ---- what a local LLM actually IS ----
+       Added after the first run of the workshop: the room could recite
+       the reasons to run one before anyone had said what one is. The
+       definition is deliberately mechanical — a file, a program, your
+       memory — because every later section is about one of those three
+       parts, and the "no third thing" line is what makes §0's privacy
+       and offline claims consequences rather than promises. -->
+  <section class="slide" data-section="0">
+    <div class="slide-inner">
+      <div class="eyebrow">00 &mdash; What is a local LLM?</div>
+      <h2>A file of numbers, and a program that reads it</h2>
+
+      <p class="def">An <strong>open-weight</strong> language model whose
+        <strong>inference</strong> &mdash; the arithmetic that produces each word &mdash;
+        runs on hardware you own. Same kind of model as the one in the browser tab.
+        Different address.</p>
+
+      <div class="anat">
+        <div class="anat-part">
+          <span class="anat-n">01</span>
+          <h3>The weights</h3>
+          <p>One file you download once. A few billion numbers, learned during
+            training and then frozen &mdash; nothing about it changes as you use it.</p>
+          <span class="anat-m">GEMMA-3-1B-Q4_K_M.GGUF &middot; 0.7 GB</span>
+        </div>
+        <div class="anat-part">
+          <span class="anat-n">02</span>
+          <h3>The runner</h3>
+          <p>An ordinary desktop app that loads that file into memory and does the
+            multiplication. LM Studio tonight; the engine underneath is llama.cpp.</p>
+          <span class="anat-m">INSTALLS LIKE ANY OTHER APP</span>
+        </div>
+        <div class="anat-part">
+          <span class="anat-n">03</span>
+          <h3>Your memory</h3>
+          <p>The file has to fit in RAM or VRAM, and gets read once per word.
+            That is why the next two hours are mostly about memory.</p>
+          <span class="anat-m">CAPACITY &rarr; FITS &middot; BANDWIDTH &rarr; SPEED</span>
+        </div>
+      </div>
+
+      <div class="hops">
+        <div class="hop cloud">
+          <span class="hop-k">Cloud</span>
+          <span class="hop-p">your text</span><i>&rarr;</i>
+          <span class="hop-p net">the internet</span><i>&rarr;</i>
+          <span class="hop-p net">someone&rsquo;s datacentre</span><i>&rarr;</i>
+          <span class="hop-p">an answer</span>
+        </div>
+        <div class="hop local">
+          <span class="hop-k">Local</span>
+          <span class="hop-p">your text</span><i>&rarr;</i>
+          <span class="hop-p">your RAM</span><i>&rarr;</i>
+          <span class="hop-p">an answer</span>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Open weights is not open source.</strong> You get the
+        finished numbers to keep, run and fine-tune. The training data and the code that
+        made them usually stay private &mdash; and a license can still restrict what you
+        do with the output. Read the model card.</p>
+    </div>
+  </section>

@@ -36,6 +36,28 @@
   --warn: #fbbf24;
   --bad:  #f87171;
 
+  /* Text sitting ON a filled swatch. A fill flips lightness between the
+     two themes, so its label has to flip with it — otherwise the light
+     theme paints dark ink on a dark chip. Never hardcode these at the
+     use site; that is exactly what broke when light mode arrived. */
+  --on-accent: #04262b;
+  --on-ink:    #06101a;   /* the filled-white third state */
+  --on-ok:     #05271a;
+  --on-bad:    #2b0707;
+
+  /* Cover art. The canvas is painted in JS, which cannot read rem or
+     a hex token by itself — these are the two numbers its shade ramp
+     needs, so the art follows the theme like everything else. */
+  /* The floating glossary panel is the only thing in the deck that
+     casts one, and it needs to survive both backgrounds. */
+  --shadow: rgba(0, 0, 0, 0.5);
+
+  --art-bg:   #060a0e;
+  --art-l0:   6;          /* lightness % of the lowest weight */
+  --art-span: 52;         /* added at the highest; may be negative */
+  --art-s0:   46;         /* saturation % at the lowest weight */
+  --art-sspan: 30;
+
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
           "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
@@ -58,6 +80,64 @@
   --r-pill: calc(999px * var(--r-scale));  /* tracks, tags            */
 
   --fade: 260ms;
+}
+
+/* ============================================================
+   DAYLIGHT — the same blueprint, printed rather than projected.
+
+   Dark is the identity and stays the default: a deck opens dark
+   even on a machine set to light, because the room is usually dim
+   and a white 1080p projection is painful. The toggle (top-left)
+   is for the attendee reading this on a laptop by a window, and
+   its choice persists. There is deliberately NO
+   prefers-color-scheme rule — auto-switching would mean some
+   presenters discover their deck is white as they plug in.
+
+   Every value here is a token override and nothing else. If a
+   component needs a colour that is not derivable from these, the
+   fix belongs in this block, not in the component.
+   ============================================================ */
+:root[data-theme="light"] {
+  --bg:        #f1f5f7;
+  --bg-panel:  #ffffff;
+  --bg-raise:  #e6eef2;
+  --grid-line: rgba(10, 108, 122, 0.085);
+  --rule:      rgba(10, 108, 122, 0.30);
+  --rule-soft: rgba(10, 108, 122, 0.17);
+
+  --ink:       #08161a;
+  --ink-mid:   #3a545e;
+  --ink-dim:   #647d88;
+
+  /* The cyan has to darken or it stops being legible as text on
+     paper-white; it is the same hue, not a second accent. */
+  --accent:    #0a6c7a;
+  --accent-lo: #63bcc9;
+  --accent-glow: rgba(10, 108, 122, 0.22);
+
+  /* Semantics keep their meaning and lose their neon. Green/amber/red
+     at dark-theme brightness are unreadable on white, and washing them
+     out would break the one rule the palette has. */
+  --ok:   #15803d;
+  --warn: #b45309;
+  --bad:  #c02626;
+
+  /* Fills are now dark, so their labels invert. */
+  --on-accent: #f0fdff;
+  --on-ink:    #f4fbfd;
+  --on-ok:     #f2fdf5;
+  --on-bad:    #fff5f5;
+
+  /* Ink on paper: the ramp runs the other way, and pulls a lot of
+     saturation out — the projected version can be neon, a laptop
+     screen a foot from your face cannot. */
+  --shadow: rgba(8, 22, 26, 0.16);
+
+  --art-bg:   #eef4f6;
+  --art-l0:   93;
+  --art-span: -48;
+  --art-s0:   20;
+  --art-sspan: 34;
 }
 * { box-sizing: border-box; }
 
@@ -89,7 +169,7 @@ body {
 }
 .vignette {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(ellipse 90% 70% at 50% 40%, rgba(53,214,232,0.045), transparent 70%);
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%);
 }
 
 /* --- slide plumbing ----------------------------------------- */
@@ -177,7 +257,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   width: 100%; height: auto; display: block;
   border: 1px solid var(--rule-soft);
   border-radius: var(--r-md);
-  background: #060a0e;
+  background: var(--art-bg);
 }
 .art-readout {
   display: flex; align-items: baseline; justify-content: space-between;
@@ -330,7 +410,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   margin-top: 1.5rem; padding: 0.7rem 1rem;
   border-left: 2px solid var(--warn);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: rgba(251, 191, 36, 0.05);
+  background: color-mix(in srgb, var(--warn) 7%, transparent);
   font-size: 0.98rem; color: var(--ink-mid);
 }
 
@@ -381,20 +461,20 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   display: flex; flex-direction: column; gap: 0.85rem;
   position: relative;
 }
-.model.pick { border-color: var(--accent); background: rgba(53, 214, 232, 0.045); }
+.model.pick { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
 /* The demo card is a different CATEGORY, not a stronger recommendation.
    Filled white rather than a new hue: violet would have been the obvious
    pick but Qwen's own mark is #6336E7 and sits directly under the badge. */
-.model.demo { border-color: rgba(230, 241, 245, 0.32); background: rgba(230, 241, 245, 0.035); }
+.model.demo { border-color: color-mix(in srgb, var(--ink) 32%, transparent); background: color-mix(in srgb, var(--ink) 3.5%, transparent); }
 .model .flag {
   position: absolute; top: -0.62rem; left: 1.2rem;
-  background: var(--accent); color: #04262b;
+  background: var(--accent); color: var(--on-accent);
   font-family: var(--mono); font-size: 0.62rem;
   letter-spacing: 0.16em; padding: 0.17rem 0.55rem;
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
-.model.demo .flag { background: var(--ink); color: #06101a; }
+.model.demo .flag { background: var(--ink); color: var(--on-ink); }
 .model .top { display: flex; align-items: center; gap: 0.8rem; }
 .model .nm { font-size: 1.06rem; line-height: 1.2; letter-spacing: -0.01em; }
 .model .by { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-dim); letter-spacing: 0.1em; }
@@ -562,13 +642,15 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   transition: all 180ms ease;
 }
 .seg button:hover { color: var(--ink-mid); border-color: var(--rule); }
-.seg button.on { background: var(--accent); color: #04262b; border-color: var(--accent); }
+.seg button.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 /* --- section rail ------------------------------------------- */
 .rail {
   position: fixed; left: 0; right: 0; bottom: 0; height: 4.6rem;
   display: flex; align-items: stretch;
   border-top: 1px solid var(--rule-soft);
-  background: linear-gradient(180deg, rgba(5,8,11,0.4), rgba(5,8,11,0.95));
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--bg) 40%, transparent),
+              color-mix(in srgb, var(--bg) 95%, transparent));
   backdrop-filter: blur(6px);
   z-index: 5;
   padding: 0 1.2rem;
@@ -898,7 +980,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-size: 0.86rem; color: var(--ink);
   font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
 }
-.qz-cell.drift { border-color: rgba(251, 191, 36, 0.35); }
+.qz-cell.drift { border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
 .qz-cell.drift .qz-val { color: var(--warn); }
 
 .qz-store {
@@ -1155,7 +1237,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 /* Green is the recommendation, and it is the only green on the slide. */
 .qq.revealed .qq-card[data-best] {
   border-color: var(--ok); border-top-color: var(--ok);
-  background: rgba(74, 222, 128, 0.06);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
 }
 .qq.revealed .qq-card[data-best] .qq-size,
 .qq.revealed .qq-card[data-best] .qq-tag { color: var(--ok); }
@@ -1164,7 +1246,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   position: absolute; top: 1.15rem; right: 1.1rem;
   font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
   padding: 0.2rem 0.5rem; border-radius: var(--r-pill);
-  background: var(--ok); color: #05271a;
+  background: var(--ok); color: var(--on-ok);
 }
 .qq.revealed .qq-card:not([data-best]) { opacity: 0.72; }
 .qq.revealed .qq-card { cursor: default; transform: none; }
@@ -1187,7 +1269,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   flex: 1; margin: 0; font-size: 1.05rem; color: var(--ink-mid);
   border-left: 2px solid var(--ok);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: rgba(74, 222, 128, 0.05);
+  background: color-mix(in srgb, var(--ok) 6%, transparent);
   padding: 0.8rem 1.1rem;
 }
 .qq-rule strong { color: var(--ink); }
@@ -1238,8 +1320,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 /* Below the floor the readout itself goes amber, then red — the number is
    the warning, so it carries the colour. */
-.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem rgba(251,191,36,0.28); }
-.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem rgba(248,113,113,0.28); }
+.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem color-mix(in srgb, var(--warn) 28%, transparent); }
+.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem color-mix(in srgb, var(--bad) 28%, transparent); }
 
 .cl-stats { margin: 1.2rem 0 0; display: grid; gap: 0.7rem; }
 .cl-stats div { border-top: 1px solid var(--rule-soft); padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
@@ -1391,7 +1473,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 .bg-seg span {
   font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
-  color: #04262b; white-space: nowrap; opacity: 1;
+  color: var(--on-accent); white-space: nowrap; opacity: 1;
   transition: opacity 200ms ease;
 }
 .bg-seg.narrow span { opacity: 0; }
@@ -1402,7 +1484,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .bg-k {
   background-color: var(--accent-lo);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(53,214,232,0.55) 0 4px, transparent 4px 9px);
+    -45deg, color-mix(in srgb, var(--accent) 55%, transparent) 0 4px, transparent 4px 9px);
 }
 .bg-k span { color: var(--ink); }
 .bg-o { background: var(--ink-dim); opacity: 0.35; }
@@ -1413,7 +1495,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   background-image: repeating-linear-gradient(
     -45deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);
 }
-.bg-bar.over .bg-k span { color: #2b0707; }
+.bg-bar.over .bg-k span { color: var(--on-bad); }
 
 .bg-cap {
   position: absolute; top: -0.35rem; bottom: -0.35rem; width: 0;
@@ -1444,7 +1526,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .sw-kv {
   background-color: var(--accent-lo); border-color: var(--accent-lo);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(53,214,232,0.6) 0 2px, transparent 2px 4px);
+    -45deg, color-mix(in srgb, var(--accent) 60%, transparent) 0 2px, transparent 2px 4px);
 }
 
 /* --- readouts --------------------------------------------------- */
@@ -1470,9 +1552,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 1.5rem;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok);
 }
-.bg-verdict.tight { border-color: rgba(251,191,36,0.4); }
+.bg-verdict.tight { border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
 .bg-verdict.tight .bg-v-k { color: var(--warn); }
-.bg-verdict.over  { border-color: rgba(248,113,113,0.45); }
+.bg-verdict.over  { border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
 .bg-verdict.over  .bg-v-k { color: var(--bad); }
 .bg-out.over .bg-num { color: var(--bad); }
 .bg-out.tight .bg-num { color: var(--warn); }
@@ -1671,7 +1753,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
   text-transform: uppercase; padding: 0.35rem 1rem;
   border-radius: var(--r-pill); cursor: pointer;
-  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent);
 }
 .pf-note { font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
 
@@ -1808,7 +1890,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
   text-transform: uppercase; padding: 0.5rem 1.1rem;
   border-radius: var(--r-pill); cursor: pointer;
-  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent);
   transition: filter 160ms ease, opacity 160ms ease;
 }
 .sc-add:hover { filter: brightness(1.12); }
@@ -1934,8 +2016,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .cs-group.bad  .cs-g-k { color: var(--bad); }
 /* The selected tab wears the verdict, so the reader always knows which
    half of the argument they are watching without reading the label. */
-.cs-group.good .seg button.on { background: var(--ok);  border-color: var(--ok);  color: #052e16; }
-.cs-group.bad  .seg button.on { background: var(--bad); border-color: var(--bad); color: #300f0f; }
+.cs-group.good .seg button.on { background: var(--ok);  border-color: var(--ok);  color: var(--on-ok); }
+.cs-group.bad  .seg button.on { background: var(--bad); border-color: var(--bad); color: var(--on-bad); }
 
 .cs-replay {
   font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
@@ -2044,8 +2126,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   border-bottom-right-radius: var(--r-sm);
   color: var(--ink);
 }
-.cs-msg.u.good { background: rgba(74, 222, 128, 0.13);  border: 1px solid rgba(74, 222, 128, 0.3); }
-.cs-msg.u.bad  { background: rgba(248, 113, 113, 0.13); border: 1px solid rgba(248, 113, 113, 0.3); }
+.cs-msg.u.good { background: color-mix(in srgb, var(--ok) 13%, transparent);  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent); }
+.cs-msg.u.bad  { background: color-mix(in srgb, var(--bad) 13%, transparent); border: 1px solid color-mix(in srgb, var(--bad) 30%, transparent); }
 
 .cs-file {
   display: flex; align-items: center; gap: 0.45rem;
@@ -2072,6 +2154,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   color: var(--ink-mid);
 }
 .cs-msg.a.plain { background: transparent; border-color: transparent; padding-left: 0; }
+/* The corrections half of the two-lane fact scenario. Red because these
+   are the invented claims being named as invented — the same job the
+   verdict stamp does, in a bubble that has to stream. */
+.cs-msg.a.wrong { color: var(--bad); }
 .cs-caret {
   display: none; width: 0.42rem; height: 0.85rem;
   background: var(--accent); vertical-align: -0.12rem; margin-left: 0.15rem;
@@ -2105,8 +2191,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .cs-msg.e {
   align-self: flex-start; max-width: 100%;
   display: flex; align-items: flex-start; gap: 0.5rem;
-  background: rgba(248, 113, 113, 0.09);
-  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: color-mix(in srgb, var(--bad) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent);
   color: var(--bad); font-size: 0.8rem;
 }
 .cs-msg.e b { color: var(--bad); }
@@ -2135,8 +2221,8 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   padding: 0.3rem 0.7rem; border-radius: var(--r-pill);
   text-align: center;
 }
-.cs-msg.v.ok  { color: var(--ok);  border: 1px solid rgba(74, 222, 128, 0.4);  background: rgba(74, 222, 128, 0.09); }
-.cs-msg.v.bad { color: var(--bad); border: 1px solid rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.09); }
+.cs-msg.v.ok  { color: var(--ok);  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);  background: color-mix(in srgb, var(--ok) 9%, transparent); }
+.cs-msg.v.bad { color: var(--bad); border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent); background: color-mix(in srgb, var(--bad) 9%, transparent); }
 
 /* the twelve-step plan */
 .cs-msg.p { align-self: stretch; max-width: 100%; background: transparent; padding: 0.2rem 0; }
@@ -2244,7 +2330,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   border-radius: var(--r-pill);
   border: 1px solid var(--rule-soft); color: var(--ink-dim);
 }
-.cu-tag.on { background: var(--accent); border-color: var(--accent); color: #04262b; }
+.cu-tag.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .cu-when {
   font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-dim);
@@ -2345,7 +2431,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
   text-transform: uppercase; padding: 0.5rem 1.1rem;
   border-radius: var(--r-pill); cursor: pointer;
-  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent);
   transition: filter 160ms ease;
 }
 .bn-step:hover { filter: brightness(1.12); }
@@ -2419,7 +2505,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-variant-numeric: tabular-nums;
   transition: color 200ms ease, text-shadow 200ms ease;
 }
-.bn.cliff .bn-num { color: var(--bad); text-shadow: 0 0 2.2rem rgba(248,113,113,0.28); }
+.bn.cliff .bn-num { color: var(--bad); text-shadow: 0 0 2.2rem color-mix(in srgb, var(--bad) 28%, transparent); }
 .bn-unit {
   font-family: var(--mono); font-size: var(--label-sm);
   letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--ink-dim);
@@ -2457,9 +2543,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   border: 1px solid var(--rule-soft); color: var(--ink-dim);
   transition: color 220ms ease, border-color 220ms ease, background 220ms ease;
 }
-.bn-fits span.fit  { color: var(--ok);  border-color: rgba(74,222,128,0.45);  background: rgba(74,222,128,0.09); }
-.bn-fits span.tight{ color: var(--warn);border-color: rgba(251,191,36,0.45);  background: rgba(251,191,36,0.09); }
-.bn-fits span.no   { color: var(--bad);  border-color: rgba(248,113,113,0.45); background: rgba(248,113,113,0.09); }
+.bn-fits span.fit  { color: var(--ok);  border-color: color-mix(in srgb, var(--ok) 45%, transparent);  background: color-mix(in srgb, var(--ok) 9%, transparent); }
+.bn-fits span.tight{ color: var(--warn);border-color: color-mix(in srgb, var(--warn) 45%, transparent);  background: color-mix(in srgb, var(--warn) 9%, transparent); }
+.bn-fits span.no   { color: var(--bad);  border-color: color-mix(in srgb, var(--bad) 45%, transparent); background: color-mix(in srgb, var(--bad) 9%, transparent); }
 
 @media (max-width: 900px) {
   .bn { grid-template-columns: 1fr; }
@@ -2479,7 +2565,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
   text-transform: uppercase; padding: 0.5rem 1.1rem;
   border-radius: var(--r-pill); cursor: pointer;
-  background: var(--accent); color: #04262b; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent);
   transition: filter 160ms ease, opacity 160ms ease;
 }
 .df-run:hover { filter: brightness(1.12); }
@@ -2546,6 +2632,469 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .df-lane canvas { height: 7rem; }
   .df-clock { font-size: 1.3rem; }
   .df-v-t { min-width: 0; }
+}
+/* --- what a local LLM is (§0) -------------------------------- */
+/* Three parts of one machine, then the two routes a sentence can
+   take. The route rows are the argument: the local one is shorter
+   because two hops simply do not happen, not because it is drawn
+   smaller. */
+.def {
+  font-size: 1.24rem; line-height: 1.4; color: var(--ink-mid);
+  margin: 0 0 1.3rem; max-width: 58rem;
+}
+.def strong { color: var(--ink); font-weight: 620; }
+
+.anat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.anat-part {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-top: 2px solid var(--accent-lo);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.anat-n {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); color: var(--ink-dim); opacity: 0.7;
+}
+.anat-part h3 { margin: 0.6rem 0 0.4rem; color: var(--accent); }
+.anat-part p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-mid); }
+.anat-m {
+  display: block; margin-top: 0.8rem;
+  font-family: var(--mono); font-size: 0.66rem;
+  letter-spacing: 0.1em; color: var(--ink-dim);
+  word-spacing: -0.1em;
+}
+
+/* --- the two routes ----------------------------------------- */
+.hops { display: grid; gap: 0.5rem; margin-top: 1.1rem; }
+.hop {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-sm);
+}
+.hop-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); width: 5.5rem; flex: none;
+}
+.hop.local .hop-k { color: var(--accent); }
+.hop-p {
+  font-family: var(--mono); font-size: 0.82rem;
+  padding: 0.2rem 0.6rem; border-radius: var(--r-pill);
+  background: var(--bg-raise); color: var(--ink-mid);
+  border: 1px solid var(--rule-soft);
+}
+.hop.local .hop-p { border-color: var(--rule); color: var(--ink); }
+/* The two hops that only the cloud route has. Dashed rather than
+   coloured — nothing here is a warning, it is just a longer trip. */
+.hop-p.net { border-style: dashed; color: var(--ink-dim); background: none; }
+.hop i { color: var(--ink-dim); font-style: normal; font-size: 0.8rem; }
+
+@media (max-width: 900px) {
+  .anat { grid-template-columns: 1fr; }
+  .def { font-size: 1.05rem; }
+  .hop-k { width: 100%; }
+  .hop-p { font-size: 0.74rem; }
+}
+/* --- theme toggle ------------------------------------------- */
+/* Mirrors the slide counter in the opposite corner: same size, same
+   mono weight, same dim ink. It is chrome, so it is cyan on hover and
+   never anything warmer. The icon shown is the theme you would GET,
+   not the one you are in — a sun on a dark deck. */
+.theme-toggle {
+  position: fixed; left: 1.6rem; top: 1.4rem; z-index: 6;
+  width: 2.1rem; height: 2.1rem;
+  display: grid; place-items: center;
+  padding: 0; cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--ink-dim);
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--rule-soft);
+  background: var(--bg-panel);
+}
+.theme-toggle:focus-visible { outline: none; color: var(--accent); border-color: var(--accent); }
+.theme-toggle svg {
+  width: 1.15rem; height: 1.15rem; display: block;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+/* Only one of the two glyphs is ever in the document flow, so the
+   button never reflows and the swap costs nothing. */
+.theme-toggle .i-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .i-moon { display: block; }
+:root[data-theme="light"] .theme-toggle .i-sun  { display: none; }
+
+/* Narrow screens drop the slide's left padding to 1.6rem, which puts the
+   eyebrow under the button. Nothing is gained by keeping the corner, so
+   it moves in beside the counter instead. */
+@media (max-width: 900px) {
+  .theme-toggle { left: auto; right: 5.6rem; top: 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle { transition: none; }
+}
+/* --- glossary terms + panel --------------------------------- */
+/* The marked word has to stay a word: same face, same size, same
+   colour, and only a faint dotted rule underneath to say it will
+   answer if asked. Anything stronger and the deck reads as a page of
+   hyperlinks — which is exactly what a beginner does not need while
+   someone is talking over the top of it. */
+.gl {
+  display: inline;
+  font: inherit; color: inherit; letter-spacing: inherit;
+  margin: 0; padding: 0; border: 0; background: none;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+.gl:hover, .gl[aria-expanded="true"] {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.gl:focus-visible {
+  outline: none;
+  color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+  border-radius: var(--r-xs);
+}
+
+.gloss {
+  position: fixed; z-index: 20;
+  width: min(30rem, calc(100vw - 2rem));
+  /* A long entry scrolls inside the panel rather than growing past the
+     bottom of the screen — the anchor point is a word in a sentence and
+     cannot be moved to make room. */
+  max-height: min(28rem, 70vh); overflow-y: auto;
+  padding: 0.95rem 1.05rem 0.85rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  /* The one shadow in the deck. It is not decoration — the panel floats
+     over content and has to be readable against whatever is under it. */
+  box-shadow: 0 1.2rem 2.6rem var(--shadow);
+}
+.gloss[hidden] { display: none; }
+.gloss-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.5rem;
+}
+.gloss-d {
+  margin: 0; font-size: 0.98rem; line-height: 1.42; color: var(--ink-mid);
+}
+/* ---- the distinctions ---- */
+.gloss-vs {
+  margin-top: 0.8rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.gloss-vs[hidden] { display: none; }
+.gloss-vs-k {
+  display: block;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.45rem;
+}
+.gloss-vs dl { margin: 0; }
+.gloss-vs dt {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.04em; color: var(--ink);
+}
+.gloss-vs dd {
+  margin: 0.12rem 0 0.6rem;
+  font-size: 0.88rem; line-height: 1.4; color: var(--ink-dim);
+}
+.gloss-vs dd:last-child { margin-bottom: 0; }
+
+.gloss-go {
+  margin-top: 0.75rem; padding: 0.25rem 0.7rem;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: pointer;
+  color: var(--ink-dim);
+  background: none;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-pill);
+  transition: color 140ms ease, border-color 140ms ease;
+}
+.gloss-go:hover { color: var(--accent); border-color: var(--accent); }
+.gloss-go[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gl, .gloss-go { transition: none; }
+}
+
+/* Sample of the treatment, on the orientation slide. Not a term — there
+   is nothing to define about the phrase "dotted underline". */
+.gl-demo {
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-underline-offset: 0.22em;
+}
+/* --- §2 · the chat template gotcha --------------------------- */
+/* Two panels: the wire on the left, the consequence on the right.
+   Warm colour appears here because a mismatched template is a genuine
+   failure — green marks the tokens this model actually knows, red the
+   markers it has never seen. Nothing else on the slide is warm. */
+
+.tp-tabs {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.tp-group { display: flex; align-items: center; gap: 0.6rem; }
+.tp-tabs .seg { gap: 0.3rem; }
+.tp-tabs .seg button { padding: 0.35rem 0.62rem; letter-spacing: 0.08em; }
+.tp-g-k {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;
+}
+.tp-group.ok  .tp-g-k { color: var(--ok); }
+.tp-group.bad .tp-g-k { color: var(--bad); }
+.tp-group.ok  .seg button.on { background: var(--ok);  border-color: var(--ok);  color: var(--on-ok); }
+.tp-group.bad .seg button.on { background: var(--bad); border-color: var(--bad); color: var(--on-bad); }
+
+.tp-replay {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill); cursor: pointer; margin-left: auto;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.tp-replay:hover { color: var(--accent); border-color: var(--rule); }
+
+/* Fixed height, both panels scrolling internally: a runaway generation
+   is one of the scenarios, and it must not push the caveat off the
+   slide to make its point. */
+.tp-panes {
+  display: grid; grid-template-columns: 1.08fr 1fr; gap: 1rem;
+  height: 17.5rem; margin-top: 0.9rem;
+}
+.tp-pane {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.tp-k {
+  display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); flex: none;
+}
+.tp-tag {
+  font-style: normal; font-size: 0.6rem; letter-spacing: 0.1em;
+  margin-left: auto; text-align: right;
+}
+.tp-tag.ok  { color: var(--ok); }
+.tp-tag.bad { color: var(--bad); }
+.tp-tag.mute { color: var(--ink-dim); opacity: 0.75; text-transform: none; letter-spacing: 0.04em; }
+
+/* ---- the wire ---- */
+.tp-wire {
+  flex: 1; min-height: 0; overflow: auto; margin: 0;
+  padding: 0.8rem 0.9rem;
+  font-family: var(--mono); font-size: 0.76rem; line-height: 1.5;
+  white-space: pre-wrap; word-break: break-word;
+  color: var(--ink-mid);
+}
+/* A special token this model owns: one id in the vocabulary, drawn as
+   one solid object. The point is that it is NOT text. */
+.tp-wire .w-tok {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
+  border-radius: var(--r-xs); padding: 0 0.25rem;
+}
+/* A marker this model has no token for. Struck through with a dotted
+   underline rather than a block fill, because the whole idea is that
+   it dissolves into ordinary characters. */
+.tp-wire .w-bad {
+  color: var(--bad);
+  border-bottom: 1px dashed color-mix(in srgb, var(--bad) 60%, transparent);
+}
+.tp-wire .w-txt { color: var(--ink); }
+
+.tp-meta {
+  flex: none; padding: 0.55rem 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.64rem; line-height: 1.5;
+  letter-spacing: 0.04em; color: var(--ink-dim);
+}
+.tp-meta b { color: var(--ink-mid); font-weight: 500; }
+.tp-meta b.no { color: var(--bad); }
+.tp-meta span {
+  display: block; margin-top: 0.3rem;
+  font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0;
+}
+
+/* ---- the output ---- */
+.tp-out {
+  flex: 1; min-height: 0; overflow: hidden;
+  padding: 0.8rem 0.9rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.tp-msg {
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  border-bottom-left-radius: var(--r-sm);
+  padding: 0.5rem 0.7rem;
+  font-size: 0.86rem; line-height: 1.42; color: var(--ink-mid);
+  white-space: pre-wrap;
+  animation: cs-in 220ms ease both;
+}
+.tp-caret {
+  display: none; width: 0.42rem; height: 0.85rem;
+  background: var(--accent); vertical-align: -0.12rem; margin-left: 0.15rem;
+  animation: cs-blink 1s steps(2, start) infinite;
+}
+.tp-msg.typing .tp-caret { display: inline-block; }
+
+/* The clean run's stop marker — the only thing on this slide that is
+   good news, so it is the only green chip in the output column. */
+.tp-stop {
+  align-self: flex-start;
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.28rem 0.7rem; border-radius: var(--r-pill);
+  color: var(--ok);
+  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);
+  background: color-mix(in srgb, var(--ok) 9%, transparent);
+  animation: cs-in 220ms ease both;
+}
+.tp-note {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--bad); animation: cs-in 220ms ease both;
+}
+
+/* ---- verdict ---- */
+.tp-v {
+  margin: 0.8rem 0 0; padding-left: 0.9rem;
+  /* Transparent until there is something to say — the space is
+     reserved so nothing below it jumps, but an empty rule reads as a
+     component that failed to load. */
+  border-left: 2px solid transparent;
+  font-size: 1rem; line-height: 1.4; color: var(--ink-mid);
+  min-height: 2.8rem;
+}
+.tp-v.ok  { border-left-color: var(--ok); }
+.tp-v.bad { border-left-color: var(--bad); }
+
+@media (max-width: 900px) {
+  .tp-panes { grid-template-columns: 1fr; height: auto; }
+  .tp-wire { max-height: 12rem; }
+  .tp-out { min-height: 9rem; }
+}
+/* --- the two closing slides --------------------------------- */
+/* The recap reuses §0's tile grid so the deck ends in the same shape
+   it opened in. The only new thing is that a tile is now a button. */
+.tile.jump {
+  font: inherit; color: inherit; text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.tile.jump:hover, .tile.jump:focus-visible {
+  outline: none;
+  border-color: var(--rule);
+  border-top-color: var(--accent);
+  background: var(--bg-raise);
+}
+
+/* ---- where to go next ---- */
+.next {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+  margin-top: 0.6rem;
+}
+.next-col {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.next-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 0.6rem; margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+/* Counter rather than a marker glyph: the numbered column is a set of
+   instructions and the unnumbered ones are not, and the two have to
+   line up on the same left edge across the three panels. */
+.next-list { list-style: none; margin: 0; padding: 0; counter-reset: n; }
+.next-list li {
+  position: relative; padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.92rem; line-height: 1.4; color: var(--ink-mid);
+}
+.next-list li:last-child { margin-bottom: 0; }
+.next-list li b { color: var(--ink); font-weight: 600; }
+.next-list li::before {
+  position: absolute; left: 0; top: 0.05rem;
+  font-family: var(--mono); font-size: 0.7rem;
+  color: var(--ink-dim); content: "\2014";
+}
+ol.next-list li { counter-increment: n; }
+ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(--accent); }
+
+/* The reading list is name-then-what-it-is-for, so the name is mono and
+   the gloss drops to a second line rather than running on. */
+.next-list.refs li b { font-family: var(--mono); font-size: 0.84rem; font-weight: 500; }
+.next-list.refs li span {
+  display: block; margin-top: 0.15rem;
+  font-size: 0.84rem; color: var(--ink-dim);
+}
+
+.next-link {
+  display: block; margin-top: 0.5rem;
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim);
+}
+.next-link b { color: var(--accent); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .next { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile.jump { transition: none; }
+}
+
+/* ---- the end frame ---- */
+/* Centred, and the only slide besides the cover that leads with the
+   wordmark. Nothing here is interactive: it is what the projector shows
+   while the room packs up. */
+.thanks { text-align: center; max-width: 46rem; margin: 0 auto; }
+.thanks .eyebrow { justify-content: center; }
+/* The eyebrow's trailing rule only works flush left; centred, it drags
+   the label off-centre. */
+.thanks .eyebrow::after { display: none; }
+.thanks .wordmark { justify-content: center; }
+.thanks-sub {
+  font-size: 1.35rem; line-height: 1.4; color: var(--ink-mid);
+  margin: 1.4rem auto 0; max-width: 34rem;
+}
+.thanks-meta {
+  margin-top: 2.4rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: var(--label-lg);
+  letter-spacing: 0.1em; color: var(--ink-dim);
+  display: flex; gap: 1.6rem; flex-wrap: wrap; justify-content: center;
+}
+.thanks-q {
+  margin-top: 1.6rem; font-size: 0.98rem; color: var(--ink-dim);
 }
 </style>
 </head>
@@ -2636,9 +3185,9 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <div class="toc-k">Tonight &middot; 2 hours</div>
           <button type="button" class="toc-item" data-goto="0">
             <span class="toc-n">00</span>
-            <span class="toc-t">Why bother?</span>
+            <span class="toc-t">What it is &amp; why bother</span>
             <span class="toc-m">10m</span>
-            <span class="toc-w">Privacy, offline, no meter, no subscription.</span>
+            <span class="toc-w">A file, a runner, your memory &mdash; and five reasons to care.</span>
           </button>
           <button type="button" class="toc-item" data-goto="1">
             <span class="toc-n">01</span>
@@ -2685,8 +3234,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         </nav>
       </div>
 
-      <p class="caveat">Any line above is clickable, and so is the index down the left
-        edge &mdash; nothing here has to be walked through in order.</p>
+      <p class="caveat">Any line above is clickable, and so is the index along the
+        bottom edge &mdash; nothing here has to be walked through in order. A word with a
+        <span class="gl-demo">dotted underline</span> anywhere in the deck will define
+        itself if you click it.</p>
     </div>
   </section>
   <!-- ============ §0 ============ -->
@@ -2697,12 +3248,75 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
     <div class="slide-inner">
       <div class="num">00</div>
       <div class="eyebrow">Section 00</div>
-      <h2>Why bother?</h2>
-      <p class="lede">Cloud AI is good, cheap and everywhere. So why run a model on your
+      <h2>What it is, and why bother</h2>
+      <p class="lede">First, what a &ldquo;local model&rdquo; actually is. Then the harder
+        question: cloud AI is good, cheap and everywhere &mdash; so why run one on your
         own machine at all?</p>
     </div>
   </section>
+  <!-- ---- what a local LLM actually IS ----
+       Added after the first run of the workshop: the room could recite
+       the reasons to run one before anyone had said what one is. The
+       definition is deliberately mechanical — a file, a program, your
+       memory — because every later section is about one of those three
+       parts, and the "no third thing" line is what makes §0's privacy
+       and offline claims consequences rather than promises. -->
+  <section class="slide" data-section="0">
+    <div class="slide-inner">
+      <div class="eyebrow">00 &mdash; What is a local LLM?</div>
+      <h2>A file of numbers, and a program that reads it</h2>
 
+      <p class="def">An <strong>open-weight</strong> language model whose
+        <strong>inference</strong> &mdash; the arithmetic that produces each word &mdash;
+        runs on hardware you own. Same kind of model as the one in the browser tab.
+        Different address.</p>
+
+      <div class="anat">
+        <div class="anat-part">
+          <span class="anat-n">01</span>
+          <h3>The weights</h3>
+          <p>One file you download once. A few billion numbers, learned during
+            training and then frozen &mdash; nothing about it changes as you use it.</p>
+          <span class="anat-m">GEMMA-3-1B-Q4_K_M.GGUF &middot; 0.7 GB</span>
+        </div>
+        <div class="anat-part">
+          <span class="anat-n">02</span>
+          <h3>The runner</h3>
+          <p>An ordinary desktop app that loads that file into memory and does the
+            multiplication. LM Studio tonight; the engine underneath is llama.cpp.</p>
+          <span class="anat-m">INSTALLS LIKE ANY OTHER APP</span>
+        </div>
+        <div class="anat-part">
+          <span class="anat-n">03</span>
+          <h3>Your memory</h3>
+          <p>The file has to fit in RAM or VRAM, and gets read once per word.
+            That is why the next two hours are mostly about memory.</p>
+          <span class="anat-m">CAPACITY &rarr; FITS &middot; BANDWIDTH &rarr; SPEED</span>
+        </div>
+      </div>
+
+      <div class="hops">
+        <div class="hop cloud">
+          <span class="hop-k">Cloud</span>
+          <span class="hop-p">your text</span><i>&rarr;</i>
+          <span class="hop-p net">the internet</span><i>&rarr;</i>
+          <span class="hop-p net">someone&rsquo;s datacentre</span><i>&rarr;</i>
+          <span class="hop-p">an answer</span>
+        </div>
+        <div class="hop local">
+          <span class="hop-k">Local</span>
+          <span class="hop-p">your text</span><i>&rarr;</i>
+          <span class="hop-p">your RAM</span><i>&rarr;</i>
+          <span class="hop-p">an answer</span>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>Open weights is not open source.</strong> You get the
+        finished numbers to keep, run and fine-tune. The training data and the code that
+        made them usually stay private &mdash; and a license can still restrict what you
+        do with the output. Read the model card.</p>
+    </div>
+  </section>
   <section class="slide" data-section="0">
     <div class="slide-inner">
       <div class="eyebrow">00 &mdash; Why bother?</div>
@@ -2986,7 +3600,6 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
       <h2>What just happened</h2>
       <p class="lede">Hugging Face, GGUF, who publishes quants &mdash; and the chat template
         gotcha that fails silently.</p>
-      <!-- TO BUILD: template gotcha demo -->
     </div>
   </section>
 
@@ -3098,6 +3711,67 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         &mdash; but moving is not quite free. Open WebUI is a front end and needs
         Ollama (or another server) behind it, and Ollama imports a local GGUF through
         a <span class="mono">Modelfile</span> rather than opening it directly.</p>
+    </div>
+  </section>
+  <!-- ---- 2 · the chat template gotcha ---- -->
+  <!-- The one failure in the whole deck that produces no error message.
+       Told as before-and-after on the wire: the LEFT panel is the exact
+       string the app hands the model, the RIGHT panel is what comes
+       back. Six presets against one model — the correct one, three real
+       templates belonging to other families, no template at all, and
+       the right template with the wrong stop string.
+
+       The scripts live in js/20-template.js. Outputs are illustrations
+       of documented failure classes, not captured transcripts, and the
+       caveat says so. -->
+  <section class="slide" data-section="2" id="s-tmpl">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; The invisible failure</div>
+      <h2>One model, six ways of addressing it. Five are wrong.</h2>
+
+      <div class="tp-tabs">
+        <div class="tp-group ok">
+          <span class="tp-g-k">This model was trained on</span>
+          <div class="seg" id="tpA" role="group" aria-label="Correct template">
+            <button type="button" class="on" aria-pressed="true" data-s="gemma">Gemma 3</button>
+          </div>
+        </div>
+        <div class="tp-group bad">
+          <span class="tp-g-k">Send it instead</span>
+          <div class="seg" id="tpB" role="group" aria-label="Mismatched templates">
+            <button type="button" aria-pressed="false" data-s="chatml">ChatML</button>
+            <button type="button" aria-pressed="false" data-s="llama">Llama&nbsp;3</button>
+            <button type="button" aria-pressed="false" data-s="mistral">Mistral</button>
+            <button type="button" aria-pressed="false" data-s="none">No template</button>
+            <button type="button" aria-pressed="false" data-s="stop">Wrong stop</button>
+          </div>
+        </div>
+        <button type="button" class="tp-replay" id="tpReplay">Replay &#8635;</button>
+      </div>
+
+      <div class="tp-panes">
+        <div class="tp-pane">
+          <div class="tp-k">What actually reaches the model
+            <i class="tp-tag" id="tpTag"></i></div>
+          <pre class="tp-wire" id="tpWire"></pre>
+          <div class="tp-meta" id="tpMeta"></div>
+        </div>
+        <div class="tp-pane">
+          <div class="tp-k">What comes back <i class="tp-tag mute">Gemma 3 1B &middot; same weights, same prompt</i></div>
+          <div class="tp-out" id="tpOut"></div>
+        </div>
+      </div>
+
+      <p class="tp-v" id="tpVerdict">&nbsp;</p>
+
+      <p class="caveat"><strong>Nothing here errors, and that is the whole problem.</strong>
+        The template lives in the GGUF&rsquo;s metadata and LM Studio normally reads it,
+        so you meet this when you override the preset by hand, load an oddly converted
+        GGUF, or drive the model from the raw completion endpoint. Symptom to remember:
+        output that is fluent but stops obeying you, ignores the system prompt, echoes
+        stray markers, or never shuts up. Check the template before you blame the model.
+        These outputs illustrate the documented failure classes; they are not captured
+        transcripts.</p>
     </div>
   </section>
   <!-- ============ §3 ============ -->
@@ -3837,7 +4511,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 
       <p class="caveat"><strong>Nobody outside the lab knows the closed numbers.</strong>
         Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
-        The white bars are inference, not fact &mdash; the two published attempts to measure
+        The closed-weight bars are inference, not fact &mdash; the two published attempts to measure
         them from the outside disagree by roughly <em>six times</em>, which is why they are
         drawn as ranges. The lesson survives the uncertainty: even the <em>floor</em> of the
         most conservative estimate is fifty times the largest model a laptop can hold, and
@@ -3875,7 +4549,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
           <div class="seg" id="csBad" role="group" aria-label="Unsuitable tasks">
             <button type="button" aria-pressed="false" data-s="reason">Reasoning</button>
             <button type="button" aria-pressed="false" data-s="agent">Long tasks</button>
-            <button type="button" aria-pressed="false" data-s="fact">Obscure facts</button>
+            <button type="button" aria-pressed="false" data-s="fact">History</button>
           </div>
         </div>
         <button type="button" class="cs-replay" id="csReplay">Replay &#8635;</button>
@@ -4123,11 +4797,176 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
         figures on a single H100, not on anything in this room.</p>
     </div>
   </section>
+  <!-- ---- close 1 · the recap ----
+       Deliberately the same five-tile component as §0's reasons, and
+       deliberately in the same order the deck taught them. Every tile
+       is a [data-goto] jump, so this doubles as the board to stand on
+       during questions: someone asks about the cliff, you press 04 and
+       you are on the cliff. -->
+  <section class="slide" data-section="7">
+    <div class="slide-inner">
+      <div class="eyebrow">Take this home</div>
+      <h2>If you remember five things</h2>
+
+      <div class="tiles">
+        <button type="button" class="tile jump" data-goto="0">
+          <span class="idx">01</span>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/>
+          </svg>
+          <span class="k">It is a file</span>
+          <span class="v">Weights on your disk, an app that reads them. There is no third thing.</span>
+        </button>
+        <button type="button" class="tile jump" data-goto="4">
+          <span class="idx">02</span>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="7" width="17" height="10" rx="1.5"/>
+            <path d="M7 7v10M11 7v10M15 7v10"/>
+          </svg>
+          <span class="k">Fit comes first</span>
+          <span class="v">Weights + KV cache + a couple of spare GB. Over that, it crawls.</span>
+        </button>
+        <button type="button" class="tile jump" data-goto="3">
+          <span class="idx">03</span>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 15h16"/><circle cx="9" cy="9" r="1.4"/><circle cx="15" cy="21" r="1.4"/>
+          </svg>
+          <span class="k">Speed is division</span>
+          <span class="v">tok/s &asymp; bandwidth &divide; model size. Everything else is detail.</span>
+        </button>
+        <button type="button" class="tile jump" data-goto="4">
+          <span class="idx">04</span>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3.5 6.5h6v13h-6z"/><path d="M13 11h7.5"/><path d="M13 16h7.5"/>
+          </svg>
+          <span class="k">The 4-bit floor</span>
+          <span class="v">A bigger model at 4-bit beats a smaller one at 8. Below 4 it falls apart.</span>
+        </button>
+        <button type="button" class="tile jump" data-goto="6">
+          <span class="idx">05</span>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5.5h9l2 2h5v11H4z"/><path d="M9.5 13.5h5"/><path d="M12 11v5"/>
+          </svg>
+          <span class="k">Bring the knowledge</span>
+          <span class="v">Hand it the document. Do not ask it what it remembers.</span>
+        </button>
+      </div>
+
+      <p class="note" style="margin-top:1.4rem">Any of the five will take you back to the
+        section it came from &mdash; and the index along the bottom edge goes anywhere.</p>
+    </div>
+  </section>
+  <!-- ---- close 2 · where to go next ----
+       The slide that stays on screen through questions, so it has to
+       be useful to look at for ten minutes: something to do this week,
+       the rabbit holes this deck deliberately skipped, and where to
+       read. Nothing here is a cliffhanger.
+
+       EVENT DETAILS — edit these, rebuild, do not touch index.html:
+       the deck link at the bottom is a placeholder. -->
+  <section class="slide" data-section="7">
+    <div class="slide-inner">
+      <div class="eyebrow">Thanks for coming</div>
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <div class="next-col">
+          <div class="next-k">This week</div>
+          <ol class="next-list">
+            <li><b>Run the same prompt through both.</b> The 1&nbsp;B you downloaded and a
+              4&nbsp;B. The gap is the whole of &sect;6 in ninety seconds.</li>
+            <li><b>Point it at your own PDF.</b> Attach a document and ask about it. That is
+              the thing a small model is genuinely good at.</li>
+            <li><b>Measure your own machine.</b> LM Studio reports tok/s. Check it against
+              bandwidth &divide; file size and see how much of the ceiling you actually get.</li>
+          </ol>
+        </div>
+
+        <div class="next-col">
+          <div class="next-k">Rabbit holes we skipped</div>
+          <ul class="next-list">
+            <li><b>Speculative decoding</b> &mdash; a small model drafts, a big one checks.
+              Real speedups, heavy concepts.</li>
+            <li><b>Embeddings and a proper RAG stack</b> &mdash; what tonight&rsquo;s
+              &ldquo;chat with your files&rdquo; is doing underneath.</li>
+            <li><b>Fine-tuning and LoRA</b> &mdash; changing the weights rather than the
+              prompt. Start here only after RAG has failed you.</li>
+            <li><b>Serving it</b> &mdash; LM Studio and Ollama both expose a local API, which
+              is how you point other software at your own model.</li>
+          </ul>
+        </div>
+
+        <div class="next-col">
+          <div class="next-k">Where to read</div>
+          <!-- No glossary marks in here: the repo and domain names are the
+               reference, and a dotted underline through "llama.cpp" reads as
+               part of the path. -->
+          <ul class="next-list refs" data-noglossary>
+            <li><b>ggml-org/llama.cpp</b><span>The engine. Its discussions are where the
+              quantization work actually gets argued out.</span></li>
+            <li><b>lmstudio.ai/docs</b><span>The app, including the local server and the
+              chat-template settings from &sect;2.</span></li>
+            <li><b>huggingface.co</b><span>Model cards first, downloads second. bartowski and
+              lmstudio-community for quants.</span></li>
+            <li><b>artificialanalysis.ai</b><span>Independent scoring, open and closed models
+              side by side. Read it as a ranking, not a verdict.</span></li>
+            <li><b>r/LocalLLaMA</b><span>Noisy, fast, and the first place a new release gets
+              tested on consumer hardware.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>One honest closing note.</strong> Half the specifics in this
+        deck will be wrong within a year &mdash; the model names certainly, the hardware
+        probably. The arithmetic will not be: a model is a file, it has to fit, and it is
+        read once per token. That is what you came for.
+        <span class="next-link">These slides &middot; <b>[ LINK GOES HERE ]</b></span></p>
+    </div>
+  </section>
+  <!-- ---- close 3 · the end frame ----
+       The cover, reprised. Same wordmark, same strapline, so the deck
+       shuts the way it opened — and it is the frame that sits on the
+       projector while people pack up, so there is nothing on it to
+       read twice.
+
+       EVENT DETAILS — edit here, rebuild, never touch index.html. -->
+  <section class="slide" data-section="7" id="s-thanks">
+    <div class="slide-inner">
+      <!-- No glossary marks on the end frame: nothing here is being taught,
+           and a dotted underline is an invitation to click one more thing. -->
+      <div class="thanks" data-noglossary>
+        <div class="eyebrow">That&rsquo;s the workshop</div>
+        <h1 class="wordmark"><span>Thank</span><span class="unplugged">you</span></h1>
+        <p class="thanks-sub">Now go and run something on your own machine.
+          It is a file, it has to fit, and it is read once per token.</p>
+
+        <div class="thanks-meta">
+          <span>NO CLOUD</span><span>NO SUBSCRIPTION</span><span>NO WI&#8209;FI REQUIRED</span>
+        </div>
+
+        <p class="thanks-q">Questions &mdash; and the two machines are on the table
+          if you want to see the difference for yourself.</p>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- filled by deck.js; empty rather than a stale literal that would
      be wrong the moment a slide is added -->
 <div class="counter" id="counter"></div>
+
+<!-- The icon is the theme you would switch TO, which is why the dark
+     deck shows a sun. Both glyphs ship; CSS shows one. -->
+<button type="button" class="theme-toggle" id="themeBtn" aria-pressed="false"
+        aria-label="Switch to light theme" title="Light / dark">
+  <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2"/>
+    <path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+  </svg>
+  <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 14.4A8.6 8.6 0 0 1 9.6 3.5a8.6 8.6 0 1 0 10.9 10.9z"/>
+  </svg>
+</button>
 <div class="hint">&larr; &rarr; NAVIGATE &nbsp;&middot;&nbsp; 0&ndash;7 JUMP TO SECTION</div>
 <nav class="rail" id="rail"></nav>
 
@@ -4136,7 +4975,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 'use strict';
 
 var SECTIONS = [
-  ['00', 'Why bother?'],
+  ['00', 'What &amp; why'],
   ['01', 'First win'],
   ['02', 'Under the hood'],
   ['03', 'Hardware + formula'],
@@ -4529,7 +5368,7 @@ function draw(now) {
   var cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
   var t    = reduced ? 0 : now / 1000;
 
-  ctx.fillStyle = '#060a0e';
+  ctx.fillStyle = THEME.artBg;
   ctx.fillRect(0, 0, W, H);
   ctx.globalAlpha = 0.15 + 0.85 * fade;
 
@@ -4539,16 +5378,37 @@ function draw(now) {
       var v  = field(wx * 6, wy * 6, t);
       /* posterize to the configuration's shade count */
       var q  = Math.round(v * (cfg.shades - 1)) / (cfg.shades - 1);
-      var l  = 6 + q * 52;
-      ctx.fillStyle = 'hsl(187, ' + (46 + q * 30) + '%, ' + l + '%)';
+      /* One hue, one ramp, two directions: the light theme's span is
+         negative, so a heavy weight is dark ink rather than bright glass. */
+      var l  = THEME.artL0 + q * THEME.artSpan;
+      var s  = THEME.artS0 + q * THEME.artSSpan;
+      ctx.fillStyle = 'hsl(187, ' + s + '%, ' + l + '%)';
       ctx.fillRect(x * cell, y * cell, cell - 1, cell - 1);
     }
   }
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
   if (!reduced) requestAnimationFrame(draw);
+
+/* A running loop repaints itself on the next frame anyway. Reduced motion
+   drew exactly one frame and would otherwise keep the old palette — but
+   only that case may schedule here, or the deck ends up with two loops. */
+if (reduced) {
+  document.addEventListener('deck:theme', function () {
+    requestAnimationFrame(draw);
+  });
+}
 }
 requestAnimationFrame(draw);
+
+/* A running loop repaints itself on the next frame anyway. Reduced motion
+   drew exactly one frame and would otherwise keep the old palette — but
+   only that case may schedule here, or the deck ends up with two loops. */
+if (reduced) {
+  document.addEventListener('deck:theme', function () {
+    requestAnimationFrame(draw);
+  });
+}
 }
 /* ==========================================================
    DECODE SPEED ESTIMATOR
@@ -4726,16 +5586,22 @@ if (mxSlide) {
     mac: { pools: [{ label: 'Unified memory', gb: 64, bw: 614 }] }
   };
 
-  var css = getComputedStyle(document.documentElement);
-  var C = {
-    fast: css.getPropertyValue('--accent').trim(),
-    slow: css.getPropertyValue('--warn').trim(),
-    bad:  css.getPropertyValue('--bad').trim(),
-    empty: css.getPropertyValue('--bg-raise').trim(),
-    rule: css.getPropertyValue('--rule-soft').trim(),
-    dim:  css.getPropertyValue('--ink-dim').trim(),
-    mono: css.getPropertyValue('--mono').trim()
-  };
+  /* Named for what they MEAN here (fast pool, slow pool, spilled), not
+     for the token behind them. Refilled in place on a theme change for
+     the same reason THEME is — the draw loop captured this object. */
+  var C = {};
+  function mxColours() {
+    var css = getComputedStyle(document.documentElement);
+    C.fast = css.getPropertyValue('--accent').trim();
+    C.slow = css.getPropertyValue('--warn').trim();
+    C.bad  = css.getPropertyValue('--bad').trim();
+    C.empty = css.getPropertyValue('--bg-raise').trim();
+    C.rule = css.getPropertyValue('--rule-soft').trim();
+    C.dim  = css.getPropertyValue('--ink-dim').trim();
+    C.mono = css.getPropertyValue('--mono').trim();
+  }
+  mxColours();
+  document.addEventListener('deck:theme', mxColours);
 
   var paramsEl = document.getElementById('mxParams');
   var paramsOut = document.getElementById('mxParamsOut');
@@ -5085,16 +5951,29 @@ function rem() {
   return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 }
 
-var THEME = (function () {
+/* Canvas colours, resolved from the CSS tokens. Every canvas in the deck
+   reads THEME at draw time, so this object is REFILLED IN PLACE on a
+   theme change rather than replaced — a module that captured the
+   reference (they all do) has to see the new values, and a fresh object
+   would leave it painting yesterday's palette forever. */
+var THEME = {};
+function readTheme() {
   var css = getComputedStyle(document.documentElement);
   function v(name) { return css.getPropertyValue(name).trim(); }
-  return {
-    accent: v('--accent'), accentLo: v('--accent-lo'),
-    ok: v('--ok'), warn: v('--warn'), bad: v('--bad'),
-    ink: v('--ink'), inkMid: v('--ink-mid'), inkDim: v('--ink-dim'),
-    rule: v('--rule-soft'), raise: v('--bg-raise'), mono: v('--mono')
-  };
-}());
+  THEME.accent = v('--accent');  THEME.accentLo = v('--accent-lo');
+  THEME.ok = v('--ok');          THEME.warn = v('--warn');
+  THEME.bad = v('--bad');        THEME.ink = v('--ink');
+  THEME.inkMid = v('--ink-mid'); THEME.inkDim = v('--ink-dim');
+  THEME.rule = v('--rule-soft'); THEME.raise = v('--bg-raise');
+  THEME.mono = v('--mono');
+  THEME.artBg = v('--art-bg');
+  THEME.artL0 = parseFloat(v('--art-l0'));
+  THEME.artSpan = parseFloat(v('--art-span'));
+  THEME.artS0 = parseFloat(v('--art-s0'));
+  THEME.artSSpan = parseFloat(v('--art-sspan'));
+}
+readTheme();
+document.addEventListener('deck:theme', readTheme);
 
 var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -6807,23 +7686,38 @@ if (csSlide) {
 
     fact: {
       bad: true,
-      why: 'A 1&nbsp;B model has room for the shape of language and very little else. ' +
-           'Asked something it does not hold, it does not stop &mdash; it invents.',
+      why: 'Half of this is right, and that is what makes it dangerous &mdash; the ' +
+           'invented half arrives in exactly the same tone as the true half.',
       lanes: [
         { model: LOCAL, steps: [
-          { t: 0.2, m: 'user', text: 'Who published Kimi K3, and how big is it?' },
-          { t: 0.85, m: 'sys', text: 'Thinking', bar: 0.55 },
-          { t: 1.5, m: 'ai', text: 'Kimi K3 is a large language model released by Baidu in early 2025. It has roughly 300 billion parameters and is available through their cloud platform.' },
-          { t: 3.9, m: 'verdict', bad: true, text: 'Wrong company, wrong year, wrong by 9×. No hedge anywhere.' }
+          { t: 0.2, m: 'user', text: 'What happened in 1888? Give me the highlights.' },
+          { t: 0.8, m: 'sys', text: 'Thinking', bar: 0.5 },
+          { t: 1.4, m: 'ai', pre: true, text:
+            '• The Great Blizzard buried the US East Coast in March — around 400 dead.\n' +
+            '• George Eastman put the first Kodak camera on sale: the Brownie, $25.\n' +
+            '• Nikola Tesla patented his alternating-current induction motor.\n' +
+            '• The Eiffel Tower opened in Paris for the World\u2019s Fair.\n' +
+            '• Van Gogh painted The Starry Night in Arles.\n' +
+            '• Germany had three emperors in one year, ending with Wilhelm II.' },
+          { t: 5.6, m: 'verdict', bad: true, text: 'Six claims, one voice. Three of them are wrong.' }
         ] },
-        { model: { name: 'The answer', sub: 'from the scale slide', kind: 'truth' }, steps: [
-          { t: 2.7, m: 'ai', pre: true, plain: true, text:
-            'Moonshot AI, July 2026.\n' +
-            '2.8 trillion parameters total,\n' +
-            '104 billion active per token.\n\n' +
-            'The largest open-weight release\n' +
-            'to date — you saw it two slides ago.' },
-          { t: 4.1, m: 'verdict', text: 'It was never going to know this. It was trained before it happened.' }
+        /* The corrections are the SECOND lane rather than annotations on the
+           first, because the whole point is that nothing in the answer marks
+           itself. You need an outside source to tell the halves apart — which
+           is the argument for retrieval, one slide early. */
+        { model: { name: 'The record', sub: 'what actually happened', kind: 'truth' }, steps: [
+          { t: 2.6, m: 'ai', pre: true, plain: true, text:
+            'RIGHT\n' +
+            '11–14 March. ~400 dead, Chesapeake to Maine.\n' +
+            'Tesla\u2019s induction-motor patent, 1 May 1888.\n' +
+            'Wilhelm I, Frederick III, Wilhelm II — all in 1888.' },
+          { t: 4.6, m: 'ai', pre: true, plain: true, tone: 'wrong', text:
+            'WRONG\n' +
+            'The 1888 camera is the Kodak No. 1, $25. The Brownie is 1900.\n' +
+            'The Eiffel Tower was finished 31 March 1889.\n' +
+            'The Starry Night: June 1889, Saint-Rémy. In Arles that\n' +
+            'December he cut off part of his ear.' },
+          { t: 7.6, m: 'verdict', text: 'Each one is a year out, or the right story about the wrong thing.' }
         ] }
       ]
     }
@@ -6899,7 +7793,10 @@ if (csSlide) {
       d = bubble('s', '<span class="cs-spin"></span><span>' + st.text +
         '</span><span class="cs-prog"><i style="--d:' + st.bar + 's"></i></span>');
     } else if (st.m === 'ai') {
-      d = bubble('a' + (st.plain ? ' plain' : ''),
+      /* tone marks an assistant message that is making a judgement rather
+         than answering — used by the corrections lane, and warm because a
+         correction is a genuine wrong/right call, not decoration. */
+      d = bubble('a' + (st.plain ? ' plain' : '') + (st.tone ? ' ' + st.tone : ''),
         '<span class="cs-t' + cls(st) + '"></span><span class="cs-caret"></span>');
       st.body = d.querySelector('.cs-t');
       st.words = st.text.split(' ');
@@ -7055,6 +7952,678 @@ if (csSlide) {
   load('sum');
   lastT = performance.now();
   setInterval(frame, TICK_MS);
+}
+/* ==========================================================
+   THEME TOGGLE
+   Flips :root[data-theme] between the deck's dark default and the
+   daylight token block. Everything drawn in CSS follows for free;
+   canvases do not, so a change fires 'deck:theme' (repopulate the
+   colour objects) and then 'deck:slide' (repaint with them). The
+   order matters — a repaint that ran first would use the old
+   palette and nothing would ask it again.
+   ========================================================== */
+var themeBtn = document.getElementById('themeBtn');
+
+/* file:// is the deck's normal habitat and some browsers refuse
+   storage there, so the preference is best-effort. Failing to
+   remember a theme must never stop the deck from opening. */
+function themeStored(value) {
+  try {
+    if (value === undefined) return localStorage.getItem('unplugged-theme');
+    localStorage.setItem('unplugged-theme', value);
+  } catch (e) { /* no storage: the toggle still works, it just forgets */ }
+  return null;
+}
+
+function setTheme(name) {
+  if (name === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+
+  if (themeBtn) {
+    themeBtn.setAttribute('aria-pressed', name === 'light' ? 'true' : 'false');
+    themeBtn.setAttribute('aria-label',
+      name === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  }
+  document.dispatchEvent(new CustomEvent('deck:theme'));
+  document.dispatchEvent(new CustomEvent('deck:slide'));
+}
+
+setTheme(themeStored() === 'light' ? 'light' : 'dark');
+
+if (themeBtn) {
+  themeBtn.addEventListener('click', function () {
+    var next = document.documentElement.getAttribute('data-theme') === 'light'
+      ? 'dark' : 'light';
+    themeStored(next);
+    setTheme(next);
+  });
+}
+/* ==========================================================
+   GLOSSARY
+   A beginner hits eight unfamiliar nouns before §1 is over, and the
+   presenter cannot stop for each one. Every term below is marked in
+   the prose with a faint dotted underline and defines itself in place
+   on click.
+
+   Terms are marked BY A PASS OVER THE DOM, not by hand in the slide
+   source. Thirty-odd slides written by hand would drift the moment a
+   sentence was reworded, and marking is exactly the kind of work that
+   should not be someone's job. The pass is deliberately timid:
+
+     - prose containers only (see PROSE) — never a heading, a readout,
+       a control or a canvas label, where an underline would read as
+       part of the number;
+     - one mark per definition per slide, so a slide that says
+       "quantization" six times gets one dotted word, not a rash — and
+       "open weights" does not mark twice under two spellings;
+     - PER_SLIDE marks at most, because past half a dozen the treatment
+       stops reading as faint and starts reading as a page of links;
+     - longest term first, so "memory bandwidth" wins over "bandwidth"
+       and "KV cache" over "cache";
+     - anything inside [data-noglossary] is left alone.
+
+   Definitions are one sentence, in the deck's own terms, and say what
+   the thing IS rather than why it matters — the slide is already doing
+   the second job.
+   ========================================================== */
+
+/* term -> { d: definition, s: section to jump to, vs: [[thing, how it
+   differs], ...] }
+
+   The "not the same as" list is the half people actually need. Nearly
+   every wrong mental model in this room is a COLLISION between two
+   neighbouring words — quantization with distillation, the context
+   window with memory, fine-tuning with RAG, llama.cpp with Llama — and
+   a definition that only says what a thing is leaves the collision
+   intact. Where a term has a famous twin, name the twin. */
+var GLOSSARY = {
+  'llm': { s: 0,
+    d: 'Large language model. Given some text, it predicts what token comes next; run that over and over and you get a paragraph. Everything else — chat, summarising, code — is that one trick wrapped in a template.' },
+
+  'local llm': { s: 0,
+    d: 'A language model whose weights you hold and whose inference runs on your own hardware. No account, no request leaving the machine, and no version change unless you choose one.',
+    vs: [['A smaller/dumber model', 'Local is about WHERE it runs, not how good it is. The size limit comes from your memory, not from the idea.']] },
+
+  'weights': { s: 0,
+    d: 'The numbers inside a model — billions of them, learned during training and then frozen. A model file is essentially nothing but weights, which is why its size in gigabytes is just a count of weights times the bits each one is stored in.',
+    vs: [['Your data', 'Nothing you type is written back into them. The file is identical after a year of use.']] },
+
+  'open weights': { s: 0,
+    d: 'The finished weights are published for anyone to download, run, inspect and fine-tune.',
+    vs: [['Open source', 'The training data and the code that produced the weights usually stay private, and the license can still restrict commercial use or outputs. Read the model card.']] },
+  'open-weight': { s: 0,
+    d: 'The finished weights are published for anyone to download, run, inspect and fine-tune.',
+    vs: [['Open source', 'The training data and the code that produced the weights usually stay private, and the license can still restrict commercial use or outputs. Read the model card.']] },
+
+  'inference': { s: 0,
+    d: 'Running a trained model to get an answer out of it — the only half of the job your laptop is doing tonight.',
+    vs: [['Training', 'Making the weights in the first place: thousands of GPUs, weeks, and millions of dollars. Nothing you do in LM Studio changes a weight.']] },
+
+  'parameters': { s: 4,
+    d: 'The weights, counted rather than described. "8B" means eight billion of them, and that count is the first half of every memory calculation in this deck.',
+    vs: [['Active parameters', 'In a mixture-of-experts model only a slice runs per token. The active count sets the speed; the total still sets the memory.']] },
+  'parameter': { s: 4,
+    d: 'One weight. Model sizes count them: "8B" is eight billion.' },
+
+  'token': { s: 1,
+    d: 'The chunk of text a model reads and writes — roughly three quarters of a word in English, so a common word is one token and an unusual one is three or four.',
+    vs: [['A word', 'Close enough for estimating, wrong for arithmetic. Context limits, speeds and prices are all counted in tokens, never words.']] },
+  'tokens': { s: 1,
+    d: 'The chunks of text a model reads and writes — roughly three quarters of a word in English, so a common word is one token and an unusual one is three or four.',
+    vs: [['Words', 'Close enough for estimating, wrong for arithmetic. Context limits, speeds and prices are all counted in tokens, never words.']] },
+  'tokenizer': { s: 1,
+    d: 'The lookup table that cuts your text into tokens and turns them back afterwards. Every model ships its own, which is why a token count differs slightly between models.' },
+
+  'temperature': { s: 1,
+    d: 'The sampling knob that flattens or sharpens the probability distribution before a token is drawn from it. Near 0 it always takes the most likely token; higher, and unlikely ones get a real chance.',
+    vs: [['Creativity or intelligence', 'It changes nothing about what the model knows. High temperature is not a better writer, just a less predictable one.']] },
+  'top-p': { s: 1,
+    d: 'Keep the most likely tokens until their probabilities add up to p, then sample from just those — so the tail gets cut, and how much of it depends on how confident the model is.',
+    vs: [['Temperature', 'Temperature reshapes the whole distribution; top-p deletes part of it. They are usually used together.']] },
+  'min-p': { s: 1,
+    d: 'Discard any token less likely than a set fraction of the best one. Adapts to the model’s confidence: strict when it is sure, generous when it is not.' },
+  'sampling': { s: 1,
+    d: 'Choosing the next token from the distribution the model produced. The model never picks a word — it produces probabilities for every token in the vocabulary, and the sampler picks.' },
+
+  'system prompt': { s: 1,
+    d: 'A standing instruction placed before the conversation, setting the model’s role, tone and rules. LM Studio lets you edit it per model.',
+    vs: [['The chat template', 'The system prompt is WHAT you say. The template is HOW it gets wrapped in the markers the model was trained on. A wrong template can make a perfect system prompt invisible.']] },
+  'chat template': { s: 2,
+    d: 'The exact markers and punctuation a model was trained to see around a conversation — who is speaking, where a turn ends, where the model should start writing. It normally lives in the GGUF’s metadata and the app applies it for you.',
+    vs: [['The system prompt', 'That is the content. This is the envelope, and the wrong envelope fails silently: no error, just fluent output that stops obeying you.']] },
+
+  'hugging face': { s: 2,
+    d: 'The site nearly every open-weight model is published on. A "model card" is a repo — a folder of files, a license and some usage notes — not a product page.' },
+  'gguf': { s: 2,
+    d: 'The single-file model format llama.cpp reads: weights, tokenizer, chat template and metadata in one file you can copy to a USB stick. Quantized builds are distributed this way.',
+    vs: [['safetensors', 'The full-precision format models are published in first. A GGUF is usually converted and quantized FROM safetensors.'],
+         ['GGML', 'The older format GGUF replaced in 2023. Old links and old blog posts still say GGML; the file will not load.']] },
+  'safetensors': { s: 2,
+    d: 'The format models are usually published in before conversion — the full-precision original a GGUF is quantized from. What you want if you intend to fine-tune rather than just run.' },
+  'llama.cpp': { s: 2,
+    d: 'The C++ inference engine most local apps are built on, LM Studio and Ollama included. No dependencies, runs on anything from a Raspberry Pi to a server, and reads GGUF.',
+    vs: [['Llama', 'Meta’s family of models. The engine is named after them but runs almost every open model, and you never have to touch a Llama to use it.']] },
+  'mlx': { s: 2,
+    d: 'Apple’s array framework, built around unified memory. Meaningfully faster than llama.cpp on Apple silicon, and useless anywhere else — it has its own model format, so you download a different file.' },
+  'lm studio': { s: 1,
+    d: 'The desktop app used tonight: it finds models, downloads them, and runs them through llama.cpp or MLX behind a chat window.',
+    vs: [['LM Studio Bionic', 'A separate app from the same team — a local coding and document agent. It is not a newer LM Studio and does not replace the model manager. The name invites exactly the wrong guess.']] },
+  'ollama': { s: 2,
+    d: 'A command-line-first model runner, also built on llama.cpp. Popular for serving a model to other programs rather than chatting with it yourself.',
+    vs: [['Open WebUI', 'A browser front end with no engine of its own — it needs Ollama or something like it behind it.']] },
+
+  'quantization': { s: 4,
+    d: 'Storing each weight in fewer bits — 16 down to 8, 4 or 2 — so the file shrinks and the whole model can be read from memory faster. The model gets a little worse in a way that is nearly free down to about 4 bits, and expensive below it.',
+    vs: [['Distillation', 'Training a smaller model to imitate a bigger one. That makes a NEW model; quantization keeps the same one and rounds it.'],
+         ['Zipping the file', 'A quantized model is smaller in memory while it runs, which is the whole point. A zip has to be unpacked back to full size first.']] },
+  'quantized': { s: 4,
+    d: 'Stored at reduced precision: fewer bits per weight, a smaller file, and a small loss of quality that is negligible at 4 bits and severe at 2.' },
+  'quant': { s: 4,
+    d: 'One quantized build of a model, named for its scheme — Q4_K_M, Q8_0, IQ4_XS. One model produces dozens of them, and picking the right one is the skill.' },
+  'q4_k_m': { s: 4,
+    d: 'The usual 4-bit build, and the default recommendation. "K" is the block-scale scheme, "M" the medium variant that keeps a few sensitive tensors at higher precision.',
+    vs: [['Exactly 4 bits', 'It averages about 4.83 bits per weight once the per-block scales are counted — which is why the download is bigger than the napkin says.']] },
+  'bits per weight': { s: 4,
+    d: 'The real average storage cost of one weight, block scales and metadata included — the honest version of "4-bit", and the number that makes a download page agree with your arithmetic.' },
+
+  'vram': { s: 3,
+    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, at roughly a tenth of the speed.',
+    vs: [['System RAM', 'Plentiful and cheap, and far slower. Spilling from one to the other is the cliff you can watch on the two-machines slide.'],
+         ['Unified memory', 'On a Mac there is only one pool, shared by CPU and GPU. Large capacity, no copying, and no cliff — until the pool itself is full.']] },
+  'unified memory': { s: 3,
+    d: 'One pool of RAM shared by CPU and GPU, as on Apple silicon and AMD APUs. Capacity a graphics card cannot match, at bandwidth a plain PC cannot match — which is why Macs punch above their weight at generation.',
+    vs: [['VRAM', 'A separate pool that has to be filled by copying across the PCIe bus, and that runs out sooner.']] },
+  'dram': { s: 3,
+    d: 'Ordinary system RAM. Plentiful, cheap, and roughly ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
+
+  'memory bandwidth': { s: 3,
+    d: 'How many gigabytes per second the machine can read from memory. Because every weight is read once per token, this number divided by the size of the model is the speed ceiling for generation — the one formula the whole workshop hangs off.',
+    vs: [['Capacity', 'Gigabytes, not gigabytes per second. Capacity decides whether the model runs at all; bandwidth decides how fast. They are different numbers on the same spec sheet.']] },
+  'bandwidth': { s: 3,
+    d: 'How many gigabytes per second the machine can read from memory. Every weight is read once per token, so this divided by the model size is the speed ceiling for generation.',
+    vs: [['Capacity', 'Gigabytes, not gigabytes per second. Capacity decides whether the model runs at all; bandwidth decides how fast.'],
+         ['Network bandwidth', 'Nothing to do with your internet connection. This is the bus between the chip and its memory.']] },
+
+  'prefill': { s: 3,
+    d: 'The first phase: the whole prompt is read in one pass, all tokens at the same time. Limited by raw arithmetic, and it is what the pause before the first word is made of.',
+    vs: [['Decode', 'The second phase, one token at a time and limited by memory bandwidth instead. A Mac is good at decode and modest at prefill; a big GPU is good at both until the model stops fitting.']] },
+  'decode': { s: 3,
+    d: 'The second phase: one token at a time, with every weight in the model read from memory for each one. Limited by memory bandwidth, which is why the size of the file sets the speed.',
+    vs: [['Prefill', 'Reading your prompt, which happens in parallel and is limited by compute. Same model, two completely different bottlenecks.']] },
+  'tok/s': { s: 3,
+    d: 'Tokens per second — the rate words appear once the model has started. Roughly memory bandwidth divided by model size, and always meaningfully lower than that ceiling in practice.',
+    vs: [['Time to first token', 'How long you wait before anything appears. That is prefill, and a slow prefill with fast decode still feels sluggish.']] },
+
+  'context window': { s: 5,
+    d: 'The maximum number of tokens the model can have in front of it at once: the conversation so far, anything you pasted, and the reply it is writing. Everything outside it does not exist as far as the model is concerned.',
+    vs: [['Memory', 'It does not remember you between chats, and nothing in the window is learned. Close the window and it is gone.'],
+         ['The KV cache', 'The window is the limit. The cache is the RAM that filling it actually costs, and it grows with every token.']] },
+  'context': { s: 5,
+    d: 'Everything the model can see at once: the conversation plus whatever you pasted. Measured in tokens, and it costs memory that grows as you talk.',
+    vs: [['Long-term memory', 'There is none by default. A fresh chat starts from nothing, however long the last one was.']] },
+  'kv cache': { s: 5,
+    d: 'The saved intermediate state for every token so far, so the model does not have to re-read the whole conversation for each new word. It grows linearly with context, lives in the same RAM as the weights, and is why a long chat can push a model that fitted an hour ago out of memory.',
+    vs: [['The context window', 'That is the limit in tokens; this is the memory bill for using it.'],
+         ['RAG', 'Retrieval fetches passages into the prompt. The cache is just the running state of whatever is already there.']] },
+  'gqa': { s: 5,
+    d: 'Grouped-query attention. Several attention heads share one set of keys and values, which cuts the KV cache several-fold against the textbook formula — so a beginner computing it the old way over-estimates badly.',
+    vs: [['MHA', 'The original, where every head keeps its own keys and values — much larger cache.'],
+         ['MQA', 'The extreme version: one shared set for all heads. GQA sits between the two and is what nearly everything ships with now.']] },
+  'overhead': { s: 4,
+    d: 'Everything resident besides the weights and the cache — the runtime, compute buffers, the OS, whatever else you have open. Budget a couple of gigabytes and do not plan to use the last one.' },
+
+  'rag': { s: 6,
+    d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
+    vs: [['Fine-tuning', 'Fine-tuning teaches style and format by changing weights. RAG changes nothing and supplies facts at question time — for "what do my files say", RAG is almost always the right answer.'],
+         ['A bigger context window', 'Pasting everything in works until it does not: the cache cost is linear and attention quality falls off long before the limit does.']] },
+  'hallucination': { s: 6,
+    d: 'A fluent, confident answer that is simply wrong. The failure mode of asking a model for facts it was never given, and small models reach it sooner because they were given less.',
+    vs: [['Lying', 'There is no intent and no awareness. The model has no separate store of "things I know" to check an answer against.']] },
+  'fine-tune': { s: 6,
+    d: 'Continue training a published model on your own data to specialise it — tone, format, a domain’s vocabulary. Cheaper than training from scratch, and still not a weekend job.',
+    vs: [['RAG', 'If the goal is "know about my documents", retrieval beats fine-tuning on cost, freshness and accuracy. Fine-tune for HOW it answers, retrieve for WHAT it answers with.']] },
+
+  'mixture of experts': { s: 6,
+    d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
+    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.']] },
+  'moe': { s: 6,
+    d: 'Mixture of experts: a model split into sub-networks where only a few run per token. Fast for its size, but the whole thing still has to fit in memory.',
+    vs: [['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  'active parameters': { s: 6,
+    d: 'In a mixture-of-experts model, the slice actually used for one token. It sets the speed; the total parameter count still sets the memory.' },
+
+  'autoregressive': { s: 7,
+    d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',
+    vs: [['Diffusion text models', 'They denoise a whole block of tokens in parallel over a few passes, which breaks the one-weight-read-per-token arithmetic entirely.']] },
+  'diffusion': { s: 7,
+    d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',
+    vs: [['Gemini Diffusion', 'Google’s closed research demo from 2025. DiffusionGemma is the 2026 open-weights model — at least one source online conflates the two and mis-dates it.'],
+         ['Image diffusion', 'Same idea, different medium. Nothing here generates pictures.']] },
+
+  'benchmark': { s: 6,
+    d: 'A fixed test set used to score models. Useful for ranking, weak evidence for how a model will do on your particular job — and every published number was produced at a precision and context length that may not match yours.',
+    vs: [['Your use case', 'The only benchmark that decides anything is running your own prompts on your own machine.']] }
+};
+
+var glossPanel = null;
+var glossTerm = null;
+
+/* Only prose. A dotted underline inside a readout or a control reads as
+   part of the value, and inside a heading it reads as a typo. */
+var PROSE = '.slide p, .slide li, .tile .v, .toc-w, .srow .body p, .anat-part p, .dis p';
+
+function glossKeys() {
+  return Object.keys(GLOSSARY).sort(function (a, b) { return b.length - a.length; });
+}
+
+/* \b does not do what you want next to a dot or a slash: "llama.cpp" and
+   "tok/s" end at a non-word character, so the trailing \b never matches.
+   Guard with explicit "not a word character" lookarounds instead. */
+function glossRe(term) {
+  var esc = term.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
+  return new RegExp('(^|[^\\w-])(' + esc + ')(?![\\w-])', 'i');
+}
+
+var PER_SLIDE = 6;
+
+function markSlide(slide) {
+  var nodes = Array.prototype.slice.call(slide.querySelectorAll(PROSE));
+  var used = {}, n = 0;
+  glossKeys().forEach(function (term) {
+    if (n >= PER_SLIDE) return;
+    /* Two spellings of one idea share a definition and count as one. */
+    var def = GLOSSARY[term].d;
+    if (used[def]) return;
+    var re = glossRe(term);
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].closest('[data-noglossary], button, .gl')) continue;
+      if (markIn(nodes[i], re, term)) { used[def] = true; n++; return; }
+    }
+  });
+}
+
+function markIn(el, re, term) {
+  var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+  var node;
+  while ((node = walker.nextNode())) {
+    if (node.parentNode.closest('.gl, button, code, [data-noglossary]')) continue;
+    var m = re.exec(node.nodeValue);
+    if (!m) continue;
+
+    var at = m.index + m[1].length;
+    var tail = node.splitText(at);
+    tail.nodeValue = tail.nodeValue.slice(m[2].length);
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'gl';
+    btn.dataset.gl = term;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = m[2];              /* keep the sentence's own casing */
+    node.parentNode.insertBefore(btn, tail);
+    return true;
+  }
+  return false;
+}
+
+function buildGlossPanel() {
+  var el = document.createElement('div');
+  el.className = 'gloss';
+  el.id = 'gloss';
+  el.setAttribute('role', 'dialog');
+  el.hidden = true;
+  el.innerHTML =
+    '<div class="gloss-k"></div>' +
+    '<p class="gloss-d"></p>' +
+    '<div class="gloss-vs" hidden><span class="gloss-vs-k">Not the same as</span>' +
+    '<dl></dl></div>' +
+    '<button type="button" class="gloss-go" hidden></button>';
+  document.body.appendChild(el);
+  return el;
+}
+
+function closeGloss() {
+  if (!glossPanel || glossPanel.hidden) return;
+  glossPanel.hidden = true;
+  if (glossTerm) glossTerm.setAttribute('aria-expanded', 'false');
+  glossTerm = null;
+}
+
+function openGloss(btn) {
+  var entry = GLOSSARY[btn.dataset.gl];
+  if (!entry) return;
+  if (!glossPanel) glossPanel = buildGlossPanel();
+
+  glossPanel.querySelector('.gloss-k').textContent = btn.dataset.gl;
+  glossPanel.querySelector('.gloss-d').textContent = entry.d;
+
+  /* The distinctions, where the term has a famous twin. Built as a
+     definition list because that is what it is, and because a term and
+     its correction have to stay visibly paired when it wraps. */
+  var vs = glossPanel.querySelector('.gloss-vs');
+  var dl = vs.querySelector('dl');
+  dl.textContent = '';
+  vs.hidden = !entry.vs;
+  if (entry.vs) {
+    entry.vs.forEach(function (pair) {
+      var dt = document.createElement('dt');
+      dt.textContent = pair[0];
+      var dd = document.createElement('dd');
+      dd.textContent = pair[1];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+  }
+
+  var go = glossPanel.querySelector('.gloss-go');
+  if (entry.s === null || entry.s === undefined) {
+    go.hidden = true;
+    go.removeAttribute('data-goto');
+  } else {
+    go.hidden = false;
+    go.textContent = 'Section 0' + entry.s;
+    /* data-goto is handled by the deck's delegated listener, so the
+       jump costs nothing here — and the slide change closes this. */
+    go.dataset.goto = entry.s;
+  }
+
+  glossPanel.hidden = false;
+  glossTerm = btn;
+  btn.setAttribute('aria-expanded', 'true');
+  placeGloss(btn);
+}
+
+/* Anchored under the word, clamped to the viewport, and flipped above
+   when the word is low enough that the panel would sit under the rail. */
+function placeGloss(btn) {
+  var r = btn.getBoundingClientRect();
+  var p = glossPanel.getBoundingClientRect();
+  var pad = 12;
+
+  var left = r.left + r.width / 2 - p.width / 2;
+  left = Math.max(pad, Math.min(left, window.innerWidth - p.width - pad));
+
+  var below = r.bottom + 10;
+  var top = (below + p.height > window.innerHeight - 80)
+    ? r.top - p.height - 10
+    : below;
+  top = Math.max(pad, top);
+
+  glossPanel.style.left = Math.round(left) + 'px';
+  glossPanel.style.top = Math.round(top) + 'px';
+}
+
+Array.prototype.slice.call(document.querySelectorAll('.slide')).forEach(markSlide);
+
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('.gl');
+  if (btn) {
+    if (glossTerm === btn) closeGloss(); else openGloss(btn);
+    return;
+  }
+  if (!e.target.closest || !e.target.closest('.gloss')) closeGloss();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeGloss();
+});
+/* Navigating away from the word the panel is pointing at would leave it
+   floating over an unrelated slide. */
+document.addEventListener('deck:slide', closeGloss);
+window.addEventListener('resize', closeGloss);
+/* The panel is fixed and anchored once. On a narrow screen the slide
+   itself scrolls, so it would otherwise drift away from its word —
+   capture, because that scroll happens on the slide, not the window. */
+document.addEventListener('scroll', closeGloss, true);
+/* ==========================================================
+   §2 — THE CHAT TEMPLATE GOTCHA
+   One model (Gemma 3 1B), one prompt, six wrappings. The left panel
+   shows the literal string handed to the model, token by token; the
+   right panel plays what comes back.
+
+   The point being taught is that five of the six produce NO error.
+   So the failures are graded, not uniform — each preset breaks a
+   different part of the contract:
+
+     chatml/llama  markers that are not in this model's vocabulary, so
+                   they shred into ordinary text and the turn structure
+                   disappears — instructions stop being obeyed;
+     mistral       markers that tokenize perfectly well as plain ASCII,
+                   so they are read as part of the question;
+     none          no generation prompt, so the model completes your
+                   sentence instead of answering it;
+     stop          the right template with a foreign stop string, so
+                   nothing halts the generation and it writes both
+                   sides of the conversation.
+
+   Outputs are illustrations of those classes, not transcripts, and the
+   slide says so on its face.
+
+   Clock is a setInterval for the same reason §6's is — see the long
+   note at the bottom of 17-chat.js. This module only inserts DOM.
+   ========================================================== */
+var tpSlide = document.getElementById('s-tmpl');
+if (tpSlide) {
+  var tpWire = document.getElementById('tpWire');
+  var tpOut = document.getElementById('tpOut');
+  var tpMeta = document.getElementById('tpMeta');
+  var tpTag = document.getElementById('tpTag');
+  var tpVerdict = document.getElementById('tpVerdict');
+  var tpReplay = document.getElementById('tpReplay');
+
+  var SYS = 'Answer in exactly three bullets. No preamble.';
+  var ASK = 'What should I check before club night?';
+
+  /* Wire segments: ['tok', s] a real special token of THIS model,
+     ['bad', s] a marker this model has no token for, ['txt', s] your
+     own words. The colouring is the argument — one glance says whether
+     the structure is something the weights have ever seen. */
+  var TP = {
+    gemma: {
+      ok: true,
+      tag: 'CORRECT &middot; FROM THE GGUF METADATA',
+      wire: [['tok', '<start_of_turn>'], ['txt', 'user\n' + SYS + '\n\n' + ASK],
+             ['tok', '<end_of_turn>'], ['txt', '\n'],
+             ['tok', '<start_of_turn>'], ['txt', 'model\n']],
+      meta: 'Stop token <b>&lt;end_of_turn&gt;</b> &middot; 2 special tokens, both in the vocabulary' +
+            '<span>Gemma has no system role at all &mdash; the app folds your system prompt into the first user turn.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        '• Charge the projector and pack the HDMI adapter.\n' +
+        '• Print six spare name badges.\n' +
+        '• Confirm the room is booked until 9pm.' },
+        { t: 3.4, m: 'stop', text: '&lt;end_of_turn&gt; &mdash; generation ends here' }],
+      v: ['ok', 'Three bullets, no preamble, and it stopped by itself. This is the baseline everything below is measured against.']
+    },
+
+    chatml: {
+      tag: 'CHATML &middot; QWEN, MANY OTHERS',
+      wire: [['bad', '<|im_start|>'], ['txt', 'system\n' + SYS], ['bad', '<|im_end|>'],
+             ['txt', '\n'], ['bad', '<|im_start|>'], ['txt', 'user\n' + ASK],
+             ['bad', '<|im_end|>'], ['txt', '\n'], ['bad', '<|im_start|>'], ['txt', 'assistant\n']],
+      meta: 'None of these are tokens to Gemma &middot; <b>&lt;|im_start|&gt;</b> becomes 7 ordinary pieces of punctuation' +
+            '<span>The turn structure is now just text in the middle of your question.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        'Sure! Happy to help you get ready. There are quite a few things worth ' +
+        'thinking about before a club night, so let me walk you through them. ' +
+        'First, the venue itself — it is always worth confirming the booking, ' +
+        'and while you are at it, checking whether anyone needs a key…' },
+        { t: 5.2, m: 'note', text: 'System prompt ignored. Not three bullets. No error.' }],
+      v: ['bad', 'The invisible one. Fluent, confident, and no longer following your instructions — the failure people spend an evening blaming on the model.']
+    },
+
+    llama: {
+      tag: 'LLAMA 3 &middot; META',
+      wire: [['bad', '<|begin_of_text|><|start_header_id|>'], ['txt', 'system'],
+             ['bad', '<|end_header_id|>'], ['txt', '\n\n' + SYS], ['bad', '<|eot_id|>'],
+             ['bad', '<|start_header_id|>'], ['txt', 'user'], ['bad', '<|end_header_id|>'],
+             ['txt', '\n\n' + ASK], ['bad', '<|eot_id|>'],
+             ['bad', '<|start_header_id|>'], ['txt', 'assistant'], ['bad', '<|end_header_id|>']],
+      meta: 'Four different foreign markers &middot; all shredded into plain text' +
+            '<span>The model has no idea these ever meant &ldquo;a turn starts here&rdquo;.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        'assistant\n\nHere is what I would check before club night: the projector, ' +
+        'the badges, and the room booking. <|eot_id|><|start_header_id|>user' },
+        { t: 4.6, m: 'note', text: 'It is copying the shape of your markers back at you.' }],
+      v: ['bad', 'A model imitates whatever pattern is in front of it. Seeing marker-shaped text, it writes marker-shaped text — they were never tokens to it.']
+    },
+
+    mistral: {
+      tag: 'MISTRAL &middot; PLAIN ASCII MARKERS',
+      wire: [['tok', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
+             ['bad', '[/INST]']],
+      meta: '<b>[INST]</b> is ordinary ASCII &middot; it tokenizes cleanly and looks like text you typed' +
+            '<span>Nothing about it is special, so nothing about it is treated as special.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        'I am not sure what [INST] refers to — is it a form you need to fill in? ' +
+        'Before club night I would check the projector, the badges and the room ' +
+        'booking, but let me know what INST is and I can include it.' },
+        { t: 5.0, m: 'note', text: 'The wrapper became part of the question.' }],
+      v: ['bad', 'The most literal version of the mistake: you did not frame the conversation, you added two words to it.']
+    },
+
+    none: {
+      tag: 'NO TEMPLATE &middot; RAW COMPLETION',
+      wire: [['txt', SYS + '\n' + ASK]],
+      meta: 'No roles, no markers &mdash; and crucially <b>no generation prompt</b>' +
+            '<span>Nothing in the string says &ldquo;your turn now&rdquo;, so it does what a language model does by default.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        'And is anyone bringing the urn this time? Last month we ran out of hot ' +
+        'water by eight and the side door key was still with Marcus, so someone ' +
+        'should probably…' },
+        { t: 4.8, m: 'note', text: 'It continued your message. It never replied to it.' }],
+      v: ['bad', 'Underneath the chat window it is still a text predictor. The template is the only thing that makes it a conversation.']
+    },
+
+    stop: {
+      tag: 'RIGHT TEMPLATE &middot; FOREIGN STOP STRING',
+      wire: [['tok', '<start_of_turn>'], ['txt', 'user\n' + SYS + '\n\n' + ASK],
+             ['tok', '<end_of_turn>'], ['txt', '\n'],
+             ['tok', '<start_of_turn>'], ['txt', 'model\n']],
+      meta: 'Markup correct &middot; stop string overridden to <b class="no">&lt;|im_end|&gt;</b>' +
+            '<span>The model emits &lt;end_of_turn&gt; on time. Nobody is listening for it.</span>',
+      out: [{ t: 0.5, m: 'ai', text:
+        '• Charge the projector and pack the HDMI adapter.\n' +
+        '• Print six spare name badges.\n' +
+        '• Confirm the room is booked until 9pm.\n' +
+        '<end_of_turn>\n<start_of_turn>user\n' +
+        'Thanks! And what about parking?<end_of_turn>\n<start_of_turn>model\n' +
+        'Parking is free after 6pm in the north lot, though…' },
+        { t: 7.0, m: 'note', text: 'Still going. It will stop at the token limit, and not before.' }],
+      v: ['bad', 'The answer was right and finished in the first three lines. Everything after it is the model politely playing both parts.']
+    }
+  };
+
+  /* ---- rendering ---- */
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function paintWire(sc) {
+    tpTag.innerHTML = sc.tag;
+    tpTag.className = 'tp-tag' + (sc.ok ? ' ok' : ' bad');
+    tpWire.innerHTML = sc.wire.map(function (seg) {
+      return '<span class="w-' + seg[0] + '">' + esc(seg[1]) + '</span>';
+    }).join('');
+    tpMeta.innerHTML = sc.meta;
+  }
+
+  /* ---- playback ---- */
+  var tpCur = null, tpClock = 0, tpLast = 0, tpPlaying = false;
+  var TP_WPS = 24;
+
+  function tpLoad(id) {
+    var sc = TP[id];
+    if (!sc) return;
+    tpCur = sc;
+    paintWire(sc);
+    tpOut.innerHTML = '';
+    sc.out.forEach(function (st) { st.node = null; });
+    tpVerdict.textContent = ' ';
+    tpVerdict.className = 'tp-v';
+    tpClock = 0; tpPlaying = true;
+    if (REDUCED) { tpClock = 999; tpPlaying = false; }
+    tpStep();
+  }
+
+  function tpNode(st) {
+    var d = document.createElement('div');
+    if (st.m === 'ai') {
+      d.className = 'tp-msg';
+      d.innerHTML = '<span class="tp-t"></span><span class="tp-caret"></span>';
+      st.body = d.querySelector('.tp-t');
+      st.words = st.text.split(' ');
+    } else if (st.m === 'stop') {
+      d.className = 'tp-stop';
+      d.innerHTML = st.text;
+    } else {
+      d.className = 'tp-note';
+      d.innerHTML = st.text;
+    }
+    tpOut.appendChild(d);
+    return d;
+  }
+
+  function tpStep() {
+    var busy = false;
+    tpCur.out.forEach(function (st) {
+      if (tpClock < st.t) { busy = true; return; }
+      if (!st.node) st.node = tpNode(st);
+      if (st.m !== 'ai') return;
+      var n = REDUCED ? st.words.length : Math.floor((tpClock - st.t) * TP_WPS);
+      if (n < st.words.length) busy = true;
+      st.body.textContent = st.words.slice(0, Math.min(n, st.words.length)).join(' ');
+      st.node.classList.toggle('typing', n < st.words.length);
+    });
+    tpOut.scrollTop = tpOut.scrollHeight;
+    /* The verdict is the punchline and lands only once the output has
+       finished arriving — reading it first gives the answer away. */
+    if (!busy && tpPlaying) {
+      tpVerdict.textContent = tpCur.v[1];
+      tpVerdict.className = 'tp-v ' + tpCur.v[0];
+    }
+    if (REDUCED) {
+      tpVerdict.textContent = tpCur.v[1];
+      tpVerdict.className = 'tp-v ' + tpCur.v[0];
+    }
+    tpPlaying = busy;
+  }
+
+  function tpFrame() {
+    var now = performance.now();
+    if (!tpSlide.classList.contains('active')) { tpLast = now; return; }
+    var dt = Math.min(now - tpLast, 250) / 1000;
+    tpLast = now;
+    if (!tpPlaying) return;
+    tpClock += dt;
+    tpStep();
+  }
+
+  var tpTabs = Array.prototype.slice.call(
+    tpSlide.querySelectorAll('.tp-tabs .seg button'));
+
+  function tpPick(b) {
+    tpTabs.forEach(function (o) {
+      var on = o === b;
+      o.classList.toggle('on', on);
+      o.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    tpLoad(b.dataset.s);
+  }
+  tpTabs.forEach(function (b) {
+    b.addEventListener('click', function () { tpPick(b); });
+  });
+  function tpCurrent() {
+    return tpTabs.filter(function (b) { return b.classList.contains('on'); })[0];
+  }
+  tpReplay.addEventListener('click', function () { tpLoad(tpCurrent().dataset.s); });
+
+  document.addEventListener('deck:slide', function () {
+    if (tpSlide.classList.contains('active')) tpLoad(tpCurrent().dataset.s);
+  });
+
+  tpLoad('gemma');
+  tpLast = performance.now();
+  setInterval(tpFrame, 33);
 }
 })();
 </script>

@@ -1,0 +1,100 @@
+/* --- glossary terms + panel --------------------------------- */
+/* The marked word has to stay a word: same face, same size, same
+   colour, and only a faint dotted rule underneath to say it will
+   answer if asked. Anything stronger and the deck reads as a page of
+   hyperlinks — which is exactly what a beginner does not need while
+   someone is talking over the top of it. */
+.gl {
+  display: inline;
+  font: inherit; color: inherit; letter-spacing: inherit;
+  margin: 0; padding: 0; border: 0; background: none;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+.gl:hover, .gl[aria-expanded="true"] {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.gl:focus-visible {
+  outline: none;
+  color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+  border-radius: var(--r-xs);
+}
+
+.gloss {
+  position: fixed; z-index: 20;
+  width: min(30rem, calc(100vw - 2rem));
+  /* A long entry scrolls inside the panel rather than growing past the
+     bottom of the screen — the anchor point is a word in a sentence and
+     cannot be moved to make room. */
+  max-height: min(28rem, 70vh); overflow-y: auto;
+  padding: 0.95rem 1.05rem 0.85rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  /* The one shadow in the deck. It is not decoration — the panel floats
+     over content and has to be readable against whatever is under it. */
+  box-shadow: 0 1.2rem 2.6rem var(--shadow);
+}
+.gloss[hidden] { display: none; }
+.gloss-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.5rem;
+}
+.gloss-d {
+  margin: 0; font-size: 0.98rem; line-height: 1.42; color: var(--ink-mid);
+}
+/* ---- the distinctions ---- */
+.gloss-vs {
+  margin-top: 0.8rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.gloss-vs[hidden] { display: none; }
+.gloss-vs-k {
+  display: block;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.45rem;
+}
+.gloss-vs dl { margin: 0; }
+.gloss-vs dt {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.04em; color: var(--ink);
+}
+.gloss-vs dd {
+  margin: 0.12rem 0 0.6rem;
+  font-size: 0.88rem; line-height: 1.4; color: var(--ink-dim);
+}
+.gloss-vs dd:last-child { margin-bottom: 0; }
+
+.gloss-go {
+  margin-top: 0.75rem; padding: 0.25rem 0.7rem;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: pointer;
+  color: var(--ink-dim);
+  background: none;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-pill);
+  transition: color 140ms ease, border-color 140ms ease;
+}
+.gloss-go:hover { color: var(--accent); border-color: var(--accent); }
+.gloss-go[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gl, .gloss-go { transition: none; }
+}
+
+/* Sample of the treatment, on the orientation slide. Not a term — there
+   is nothing to define about the phrase "dotted underline". */
+.gl-demo {
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-underline-offset: 0.22em;
+}

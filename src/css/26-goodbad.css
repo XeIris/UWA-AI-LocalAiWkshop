@@ -21,8 +21,8 @@
 .cs-group.bad  .cs-g-k { color: var(--bad); }
 /* The selected tab wears the verdict, so the reader always knows which
    half of the argument they are watching without reading the label. */
-.cs-group.good .seg button.on { background: var(--ok);  border-color: var(--ok);  color: #052e16; }
-.cs-group.bad  .seg button.on { background: var(--bad); border-color: var(--bad); color: #300f0f; }
+.cs-group.good .seg button.on { background: var(--ok);  border-color: var(--ok);  color: var(--on-ok); }
+.cs-group.bad  .seg button.on { background: var(--bad); border-color: var(--bad); color: var(--on-bad); }
 
 .cs-replay {
   font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
@@ -131,8 +131,8 @@
   border-bottom-right-radius: var(--r-sm);
   color: var(--ink);
 }
-.cs-msg.u.good { background: rgba(74, 222, 128, 0.13);  border: 1px solid rgba(74, 222, 128, 0.3); }
-.cs-msg.u.bad  { background: rgba(248, 113, 113, 0.13); border: 1px solid rgba(248, 113, 113, 0.3); }
+.cs-msg.u.good { background: color-mix(in srgb, var(--ok) 13%, transparent);  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent); }
+.cs-msg.u.bad  { background: color-mix(in srgb, var(--bad) 13%, transparent); border: 1px solid color-mix(in srgb, var(--bad) 30%, transparent); }
 
 .cs-file {
   display: flex; align-items: center; gap: 0.45rem;
@@ -159,6 +159,10 @@
   color: var(--ink-mid);
 }
 .cs-msg.a.plain { background: transparent; border-color: transparent; padding-left: 0; }
+/* The corrections half of the two-lane fact scenario. Red because these
+   are the invented claims being named as invented — the same job the
+   verdict stamp does, in a bubble that has to stream. */
+.cs-msg.a.wrong { color: var(--bad); }
 .cs-caret {
   display: none; width: 0.42rem; height: 0.85rem;
   background: var(--accent); vertical-align: -0.12rem; margin-left: 0.15rem;
@@ -192,8 +196,8 @@
 .cs-msg.e {
   align-self: flex-start; max-width: 100%;
   display: flex; align-items: flex-start; gap: 0.5rem;
-  background: rgba(248, 113, 113, 0.09);
-  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: color-mix(in srgb, var(--bad) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent);
   color: var(--bad); font-size: 0.8rem;
 }
 .cs-msg.e b { color: var(--bad); }
@@ -222,8 +226,8 @@
   padding: 0.3rem 0.7rem; border-radius: var(--r-pill);
   text-align: center;
 }
-.cs-msg.v.ok  { color: var(--ok);  border: 1px solid rgba(74, 222, 128, 0.4);  background: rgba(74, 222, 128, 0.09); }
-.cs-msg.v.bad { color: var(--bad); border: 1px solid rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.09); }
+.cs-msg.v.ok  { color: var(--ok);  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);  background: color-mix(in srgb, var(--ok) 9%, transparent); }
+.cs-msg.v.bad { color: var(--bad); border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent); background: color-mix(in srgb, var(--bad) 9%, transparent); }
 
 /* the twelve-step plan */
 .cs-msg.p { align-self: stretch; max-width: 100%; background: transparent; padding: 0.2rem 0; }

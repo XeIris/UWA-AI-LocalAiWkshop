@@ -28,6 +28,19 @@
 <!-- filled by deck.js; empty rather than a stale literal that would
      be wrong the moment a slide is added -->
 <div class="counter" id="counter"></div>
+
+<!-- The icon is the theme you would switch TO, which is why the dark
+     deck shows a sun. Both glyphs ship; CSS shows one. -->
+<button type="button" class="theme-toggle" id="themeBtn" aria-pressed="false"
+        aria-label="Switch to light theme" title="Light / dark">
+  <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2"/>
+    <path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+  </svg>
+  <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 14.4A8.6 8.6 0 0 1 9.6 3.5a8.6 8.6 0 1 0 10.9 10.9z"/>
+  </svg>
+</button>
 <div class="hint">&larr; &rarr; NAVIGATE &nbsp;&middot;&nbsp; 0&ndash;7 JUMP TO SECTION</div>
 <nav class="rail" id="rail"></nav>
 

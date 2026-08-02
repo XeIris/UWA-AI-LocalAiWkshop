@@ -45,6 +45,10 @@ The deck is built around live interactives — drag a slider, watch the conseque
 
 ![Memory calculator and fit indicator](docs/img/calculator.png)
 
+**The chat-template gotcha — the literal string sent, and what comes back**
+
+![A ChatML template applied to a Gemma model](docs/img/template.png)
+
 Each interactive is a teaching device, not decoration: the animations encode a quantity
 changing. Drag the model past what a machine holds and you watch it spill from VRAM into
 system DRAM, and the token output rate collapse.
@@ -53,7 +57,7 @@ system DRAM, and the token output rate collapse.
 
 | # | Section | Time |
 |---|---------|------|
-| 0 | Why bother? — privacy, offline, no rate limits, no subscription, control | 10m |
+| 0 | What a local LLM is, and why bother — a file, a runner, your memory | 10m |
 | 1 | First win — install, download a model, send a message (hands-on) | 20m |
 | 2 | What just happened + where models come from (Hugging Face, GGUF, llama.cpp) | 15m |
 | 3 | Hardware + the one formula — DRAM vs VRAM, decode vs prefill | 20m |
@@ -62,10 +66,20 @@ system DRAM, and the token output rate collapse.
 | 6 | What small models are actually good and bad at | 10m |
 | 7 | The horizon — natively low-bit models, diffusion text models | 10m |
 
-Sections 0–5 are built; 6 and 7 are section cards awaiting their content.
+All eight sections are built, plus a three-slide close: a five-point recap whose tiles
+jump back to the section each point came from, a "where to go next" board to leave up
+during questions, and an end frame. One stub remains — the pre-workshop install checklist in §1,
+marked `TO BUILD` in the slide source.
 
 **Navigation:** `←` / `→` to move, `0`–`7` to jump to a section, `f` for fullscreen.
 The URL hash deep-links to a slide (`index.html#18`).
+
+**Two things to click.** Any word with a faint dotted underline defines itself in
+place — 50-odd terms, from *weights* to *GQA*, each with a jump to the section that
+covers it properly and, where the term has a famous twin, a *not the same as* note
+(fine-tuning vs RAG, the context window vs memory, llama.cpp vs Llama). And the corner
+toggle switches the deck between the projector's dark theme and a daylight one for
+reading on a laptop; the choice is remembered.
 
 ## Build
 
