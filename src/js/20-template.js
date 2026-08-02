@@ -254,13 +254,19 @@ if (tpSlide) {
   }
   tpReplay.addEventListener('click', function () { tpLoad(tpCurrent().dataset.s); });
 
+  /* Reload on ARRIVAL only. deck:slide also fires on a theme change (the
+     toggle sends deck:theme then deck:slide), and reloading there threw away
+     a scenario the presenter was part-way through explaining. */
+  var tpWasActive = false;
   document.addEventListener('deck:slide', function () {
-    if (tpSlide.classList.contains('active')) {
-      tpLoad(tpCurrent().dataset.s);
+    var on = tpSlide.classList.contains('active');
+    if (on) {
+      if (!tpWasActive) tpLoad(tpCurrent().dataset.s);
       tpStart();
     } else {
       tpStop();
     }
+    tpWasActive = on;
   });
 
   tpLoad('gemma');

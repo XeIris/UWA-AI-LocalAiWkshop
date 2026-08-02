@@ -57,8 +57,9 @@
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
         produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch is the hardware, not the quality.</strong>
-        DiffusionGemma is a 26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
+        compute more. <strong>The catch is the hardware.</strong>
+        DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
+        26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
         Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
         graphics card. That is a desk, not a lap, and well past what anything in this
         room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served

@@ -119,7 +119,7 @@ def slim_css(css):
 
 
 def slim_js(js):
-    """Strip leading indentation and blank lines. Nothing else.
+    """Strip leading indentation from each line. Nothing else.
 
     This is the ONLY transform on JavaScript that can be justified without a
     parser, and it is safe for one specific reason: no token in this codebase
@@ -129,6 +129,14 @@ def slim_js(js):
     of a token. Newlines are preserved, so automatic semicolon insertion sees
     exactly the line structure it saw before.
 
+    Blank lines are kept, deliberately. Dropping them would save a little more
+    and cost the invariant: line N of the release build is line N of the debug
+    build, so a stack trace from the machine you are presenting from still
+    points at the right source line — and the verification in CLAUDE.md (strip
+    leading whitespace from both builds, diff, expect identical) stays a real
+    check rather than one that normalises away the same thing the transform
+    did.
+
     Comments are deliberately NOT stripped. That needs a lexer that can tell
     a regex literal from a division, and the classic failure — an eaten
     regex — would appear only in the build you present from.
@@ -136,12 +144,7 @@ def slim_js(js):
     If a template literal is ever added to src/js/, DELETE THIS FUNCTION.
     A multi-line `...` would have its indentation silently rewritten.
     """
-    out = []
-    for line in js.split("\n"):
-        line = line.lstrip(" \t")
-        if line:
-            out.append(line)
-    return "\n".join(out)
+    return "\n".join(line.lstrip(" \t") for line in js.split("\n"))
 
 
 def release(html):

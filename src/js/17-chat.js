@@ -485,13 +485,21 @@ if (csSlide) {
 
   /* Restart on entry: a chat that is already over when the slide appears
      has thrown away the only thing it had to show. */
+  /* ...on ARRIVAL. deck:slide fires on a theme change too, and restarting
+     there would wipe a scenario mid-explanation for no reason — this slide
+     paints no canvas, so it has nothing to repaint for the new palette. */
+  var csWasActive = false;
   document.addEventListener('deck:slide', function () {
-    if (csSlide.classList.contains('active')) {
-      load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+    var on = csSlide.classList.contains('active');
+    if (on) {
+      if (!csWasActive) {
+        load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+      }
       csStart();
     } else {
       csStop();
     }
+    csWasActive = on;
   });
 
   /* Built now so the slide is never blank for a frame, but the clock only
