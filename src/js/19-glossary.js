@@ -271,12 +271,15 @@ function buildGlossPanel() {
   el.className = 'gloss';
   el.id = 'gloss';
   el.setAttribute('role', 'dialog');
+  /* Without a name this announces as an unlabelled dialog. The term itself
+     is the only sensible label, and it is already the first thing in it. */
+  el.setAttribute('aria-labelledby', 'gloss-k');
   /* Focusable but not tabbable: it is announced and reachable when the
      panel opens, and stays out of the tab order the rest of the time. */
   el.tabIndex = -1;
   el.hidden = true;
   el.innerHTML =
-    '<div class="gloss-k"></div>' +
+    '<div class="gloss-k" id="gloss-k"></div>' +
     '<p class="gloss-d"></p>' +
     '<div class="gloss-vs" hidden><span class="gloss-vs-k">Not the same as</span>' +
     '<dl></dl></div>' +
@@ -389,7 +392,20 @@ document.addEventListener('keydown', function (e) {
    floating over an unrelated slide. */
 document.addEventListener('deck:slide', closeGloss);
 window.addEventListener('resize', closeGloss);
-/* The panel is fixed and anchored once. On a narrow screen the slide
-   itself scrolls, so it would otherwise drift away from its word —
-   capture, because that scroll happens on the slide, not the window. */
-document.addEventListener('scroll', closeGloss, true);
+/* The panel is fixed and anchored once. On a narrow screen the slide itself
+   scrolls, so it would otherwise drift away from its word — capture, because
+   that scroll happens on the slide, not the window.
+
+   Only a scroll that actually MOVED the word counts. Three slides auto-scroll
+   a pane to follow streaming text (§3's decode passage, §2's template output,
+   §6's chat threads), and those panes do not contain any marked word — but a
+   blanket close treated their every frame as "the reader scrolled away" and
+   shut the panel the instant it opened. §3 is where it was unmissable: its
+   passage loops forever, so the scrolling never stops, while the other two
+   settle once their scenario finishes. */
+document.addEventListener('scroll', function (e) {
+  if (!glossTerm) return;
+  var t = e.target;
+  if (t === document || t === document.documentElement || t === window ||
+      (t.contains && t.contains(glossTerm))) closeGloss();
+}, true);

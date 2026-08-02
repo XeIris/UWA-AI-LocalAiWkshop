@@ -6,7 +6,7 @@
   <section class="slide" data-section="7" id="s-bonsai">
     <div class="slide-inner">
       <div class="eyebrow">07 &mdash; Three values</div>
-      <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
+      <h2>The cliff is a fact about <em>squashing</em></h2>
 
       <div class="bn-controls">
         <button type="button" class="bn-step" id="bnStep">Next &#9654;</button>
@@ -33,7 +33,7 @@
           </div>
           <div class="bn-row" data-i="2">
             <div class="bn-lab"><b>Q2_K</b><span>squashed harder</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.8 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">3.4 GB</span></div>
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
@@ -68,14 +68,14 @@
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is a version number</strong>
-        &mdash; PrismML ship two ternary builds, and only the group&#8209;64 one
-        (<span class="mono">*-Q2_0_g64.gguf</span>) is the format mainline llama.cpp took:
-        CPU, Metal and Vulkan are merged, CUDA is still in review, and the older
-        group&#8209;128 files need their fork. Whether the llama.cpp inside <em>your</em>
-        LM Studio is new enough is a question to settle before tonight, not during it. The decode figure is §3&rsquo;s
-        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
-        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
-        roughly half to four fifths of it.</p>
+        1&#8209;bit version that had no zero. <strong>The catch is which build you
+        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
+        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
+        own docs say it still needs their fork and that Ollama cannot load it, while their
+        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
+        is already in mainline. Check the machine you are presenting from, on the night.
+        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
+        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
+        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
     </div>
   </section>

@@ -211,9 +211,23 @@ if (tpSlide) {
     tpPlaying = busy;
   }
 
+  /* Wound only while the slide is on screen — see the matching note in
+     17-chat.js. Timer rather than rAF for the reason given there; not
+     running at all on the other 37 slides for the reason given here. */
+  var tpTimer = null;
+  function tpStart() {
+    if (tpTimer) return;              /* deck:slide can arrive twice */
+    tpLast = performance.now();
+    tpTimer = setInterval(tpFrame, 33);
+  }
+  function tpStop() {
+    if (!tpTimer) return;
+    clearInterval(tpTimer);
+    tpTimer = null;
+  }
+
   function tpFrame() {
     var now = performance.now();
-    if (!tpSlide.classList.contains('active')) { tpLast = now; return; }
     var dt = Math.min(now - tpLast, 250) / 1000;
     tpLast = now;
     if (!tpPlaying) return;
@@ -241,10 +255,14 @@ if (tpSlide) {
   tpReplay.addEventListener('click', function () { tpLoad(tpCurrent().dataset.s); });
 
   document.addEventListener('deck:slide', function () {
-    if (tpSlide.classList.contains('active')) tpLoad(tpCurrent().dataset.s);
+    if (tpSlide.classList.contains('active')) {
+      tpLoad(tpCurrent().dataset.s);
+      tpStart();
+    } else {
+      tpStop();
+    }
   });
 
   tpLoad('gemma');
-  tpLast = performance.now();
-  setInterval(tpFrame, 33);
+  if (tpSlide.classList.contains('active')) tpStart();
 }

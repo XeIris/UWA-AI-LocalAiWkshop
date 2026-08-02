@@ -21,7 +21,7 @@
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
-          <canvas id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
+          <canvas role="img" id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
           <div class="df-stats">
             <span><i>Per pass</i><b>1 token</b></span>
             <span><i>Rate</i><b id="df-r-ar">&asymp;250</b> tok/s</span>
@@ -37,7 +37,7 @@
             </div>
             <div class="df-clock"><span id="df-el-df">0.00</span><i>s</i></div>
           </div>
-          <canvas id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
+          <canvas role="img" id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
           <div class="df-stats">
             <span><i>Per pass</i><b>256 tokens</b></span>
             <span><i>Rate</i><b id="df-r-df">&gt;1,000</b> tok/s</span>
@@ -57,12 +57,12 @@
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
         produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
-        experts with 3.8&nbsp;B active, scores below standard Gemma&nbsp;4, and has no
-        hosted API to try it on. Quantized, Google put it inside the 24&nbsp;GB of an
-        RTX&nbsp;5090 or 4090 &mdash; which is a graphics card, not a laptop, and well
-        past what anything in this room downloaded tonight. Apache 2.0, weights on
-        Hugging Face. Rates are Google&rsquo;s
+        compute more. <strong>The catch is the hardware, not the quality.</strong>
+        DiffusionGemma is a 26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
+        Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
+        graphics card. That is a desk, not a lap, and well past what anything in this
+        room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served
+        on Vertex AI if you want to try it without the card. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>
   </section>

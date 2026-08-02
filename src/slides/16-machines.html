@@ -2,7 +2,7 @@
   <section class="slide" data-section="3" id="s-mach">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; Two machines, same model</div>
-      <h2>Raw bandwidth wins &mdash; until the model stops fitting</h2>
+      <h2>Raw bandwidth wins, until the model stops fitting</h2>
 
       <div class="mx-controls">
         <div class="ctrl">
@@ -33,7 +33,8 @@
             </div>
             <div class="mach-rate"><span class="r-num" id="rate-pc">56</span><span class="r-unit">tok/s</span></div>
           </div>
-          <canvas class="mach-canvas" id="cv-pc"></canvas>
+          <canvas role="img" class="mach-canvas" id="cv-pc"
+            aria-label="Memory pools of the desktop PC: the model laid across fast VRAM first, then spilling into slower system DRAM"></canvas>
           <div class="mach-state" id="state-pc">Everything sits in VRAM &mdash; full speed</div>
         </div>
 
@@ -45,7 +46,8 @@
             </div>
             <div class="mach-rate"><span class="r-num" id="rate-mac">19</span><span class="r-unit">tok/s</span></div>
           </div>
-          <canvas class="mach-canvas" id="cv-mac"></canvas>
+          <canvas role="img" class="mach-canvas" id="cv-mac"
+            aria-label="Memory pool of the MacBook: one shared pool, with the model laid across it and no separate VRAM to spill out of"></canvas>
           <div class="mach-state" id="state-mac">Fits with room to spare</div>
         </div>
       </div>
@@ -57,13 +59,13 @@
         <span class="lg-item mono">Read head crosses the whole model once per token &middot; slowed 10&times;</span>
       </div>
 
-      <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
+      <p class="caveat">Both machines hold 64 GB, and that is the point: capacity is not
         the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
         Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.
-        <strong>Weights only.</strong> The bars count nothing but the model, so the
-        opening state &mdash; 32&nbsp;GB of weights in 32&nbsp;GB of VRAM &mdash; is the
-        theoretical edge, not a configuration to copy: the KV cache of &sect;5 and a
-        couple of gigabytes of runtime have to live there too, and in practice that
-        machine falls off this cliff a little before the slider says it does.</p>
+        <strong>Weights only.</strong> The bars count nothing but the model. So the
+        opening state, 32&nbsp;GB of weights in 32&nbsp;GB of VRAM, is the theoretical
+        edge rather than a configuration to copy: the KV cache of &sect;5 and a couple of
+        gigabytes of runtime have to live there too, and in practice that machine falls
+        off this cliff a little before the slider says it does.</p>
     </div>
   </section>

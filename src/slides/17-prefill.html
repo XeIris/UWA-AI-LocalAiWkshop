@@ -75,13 +75,14 @@
 
       <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
         The 5090 has roughly three times the Mac's bandwidth but around five times its
-        peak matrix compute &mdash; so which phase you are in decides how big the gap
-        feels. The measured prefill gap is wider still, because llama.cpp's CUDA path is
-        mature and its Metal path does not yet use the matrix units built into the
-        M5&nbsp;GPU (Apple calls them Neural Accelerators; they are not the separate
-        Neural Engine, which no local runtime uses). Every rate here is an
-        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit, not
-        a benchmark of your machine &mdash; only the clock is real. Attention is also
-        quadratic, so a really long prompt is worse than this straight line suggests.</p>
+        peak matrix compute, so which phase you are in decides how big the gap feels.
+        The measured prefill gap is wider still, because llama.cpp's CUDA path is mature
+        and its Metal path does not yet use the matrix units built into the M5&nbsp;GPU
+        (Apple calls them Neural Accelerators; they are not the separate Neural Engine,
+        which no local runtime uses). Every rate here is an
+        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit
+        rather than a benchmark of your machine. Only the clock is real. Attention is
+        also quadratic, so a really long prompt is worse than this straight line
+        suggests.</p>
     </div>
   </section>

@@ -20,7 +20,12 @@ if (bnSlide) {
       qual: '&asymp;98% retained',
       say: 'The sweet spot from §4. A third of the size and you would struggle ' +
            'to tell the difference in a blind test.' },
-    { gb: 2.8,  name: 'Qwen3 8B &middot; Q2_K', alpha: '4 values + a scale',
+    /* 3.4, not the 2.8 this row used to claim. Q2_K is 3.35 bits per weight
+       once its block metadata is counted — the same figure §4's calculator
+       and the cliff chart both use — so 8.19 B weights land at 3.4 GB, and
+       real files are about that. The old number quietly undercut the deck's
+       own arithmetic on the one slide arguing that the arithmetic holds. */
+    { gb: 3.4,  name: 'Qwen3 8B &middot; Q2_K', alpha: '4 values + a scale',
       qual: 'Falls apart', cliff: true,
       say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
            'loops, contradictions, confident nonsense. This is the floor.' },

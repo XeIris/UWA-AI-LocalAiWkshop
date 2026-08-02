@@ -4,7 +4,7 @@
   <section class="slide" data-section="5" id="s-budget">
     <div class="slide-inner">
       <div class="eyebrow">05 &mdash; The ceiling</div>
-      <h2>A 32&nbsp;GB model in a 64&nbsp;GB machine. Now make it remember.</h2>
+      <h2>What a long conversation costs you in memory</h2>
 
       <div class="bg-controls">
         <div class="ctrl">
@@ -54,7 +54,9 @@
           <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
         </div>
         <div class="bg-cell">
-          <div class="bg-num" id="bgMax">262K</div>
+          <!-- Must match what bgDraw computes at the defaults above:
+               (64 − 32 − 2) GiB of headroom ÷ 192 KB per token = 160K. -->
+          <div class="bg-num" id="bgMax">160K</div>
           <div class="bg-lab">longest context that fits</div>
         </div>
         <div class="bg-cell bg-verdict" id="bgVerdict">
@@ -67,7 +69,7 @@
         setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
         no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
         quantization, sliding windows and racks of accelerators. On your laptop, the honest
-        move is to set the context you actually need &mdash; LM Studio hands you that slider,
+        move is to set the context you actually need. LM Studio hands you that slider,
         and now you know what it costs.</p>
     </div>
   </section>

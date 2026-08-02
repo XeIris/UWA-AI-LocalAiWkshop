@@ -238,7 +238,18 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   align-items: center;
   max-width: 82rem;
 }
-.wordmark { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; }
+/* The wordmark carries its own type, rather than inheriting whatever the
+   h1 rule happens to say. It appears twice — as the cover's h1 and as the
+   end frame's h2, which is a fact about document structure and not about
+   how big the word "Unplugged" should be. */
+.wordmark {
+  display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap;
+  font-size: 4.6rem; line-height: 1.02; letter-spacing: -0.035em;
+  margin: 0; font-weight: 650;
+}
+@media (max-width: 900px) {
+  .wordmark { font-size: 3.2rem; }
+}
 .wordmark .unplugged {
   color: var(--accent);
   text-shadow: 0 0 2.5rem var(--accent-glow);
@@ -1396,7 +1407,18 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .kv-res b { color: var(--accent); text-shadow: 0 0 1.6rem var(--accent-glow); }
 .kv-res em { color: var(--accent); }
 
-.kv { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.1rem; margin-top: 0.8rem; }
+.kv {
+  display: grid; grid-template-columns: 1fr 1.35fr;
+  /* An explicit row height, for exactly the reason §6's scale grid has one.
+     The canvas below is a replaced element: leave its height unresolved and
+     it falls back to its own height attribute, which fitCanvas writes from
+     the measured size — so the two chase each other upward. This one was the
+     last unpinned canvas in the deck, and it grew by the device pixel ratio
+     every time the slide was re-entered. Invisible at 1x; runaway on the
+     Retina laptop you are presenting from. */
+  grid-template-rows: 21rem;
+  gap: 1.1rem; margin-top: 0.8rem;
+}
 .kv-panel {
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
@@ -1430,17 +1452,19 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   border-bottom: 1px solid var(--rule-soft);
 }
 .kv-head-hi { color: var(--accent); text-transform: none; letter-spacing: 0.05em; font-size: 0.66rem; }
-.kv-chart canvas { display: block; width: 100%; flex: 1; min-height: 13rem; }
+/* flex-basis 0 and min-height 0, so the canvas takes the row's leftover
+   height rather than contributing its own content height back to it. */
+.kv-chart canvas { display: block; width: 100%; flex: 1 1 0; min-height: 0; }
 
 @media (max-width: 900px) {
-  .kv { grid-template-columns: 1fr; gap: 0.7rem; }
+  .kv { grid-template-columns: 1fr; grid-template-rows: auto 15rem; gap: 0.7rem; }
   .kv-panel { padding: 0.85rem 0.9rem; }
   .kv-eq { padding: 0.8rem 0.7rem; gap: 0.35rem 0.4rem; }
   .kv-t b { font-size: 1.15rem; }
   .kv-t { min-width: 2.6rem; }
   .kv-x { padding-bottom: 0.9rem; font-size: 0.9rem; }
   .kv-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-  .kv-chart canvas { min-height: 11rem; }
+
 }
 /* --- the context ceiling -------------------------------------- */
 .bg-controls { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
@@ -1493,10 +1517,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 .bg-o { background: var(--ink-dim); opacity: 0.35; }
 /* Over capacity the cache is the thing that broke it, so the cache is what
    goes red — the weights were always going to fit. */
+/* The hatch has to follow the fill it sits on. Hardcoded white read as a
+   crisp stripe over the light theme's dark red and all but vanished over
+   the dark theme's light one — --on-bad is the token that flips with it. */
 .bg-bar.over .bg-k {
   background-color: var(--bad);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);
+    -45deg, color-mix(in srgb, var(--on-bad) 22%, transparent) 0 4px, transparent 4px 9px);
 }
 .bg-bar.over .bg-k span { color: var(--on-bad); }
 
@@ -3153,7 +3180,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
       <div class="cover-art">
-        <canvas id="art" width="760" height="470"></canvas>
+        <!-- Decorative: the readout beneath it carries every word this
+             says, so announcing it twice would only be noise. -->
+        <canvas id="art" width="760" height="470" aria-hidden="true"></canvas>
         <div class="art-readout">
           <span class="cfg" id="artCfg">7.5B &middot; 16-bit</span>
           <span class="gb" id="artGb">15.0 GB</span>
@@ -3176,9 +3205,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <span class="dis-n">01</span>
             <div>
               <span class="dis-k">This ages fast</span>
-              <p>Some of what follows is already out of date &mdash; models, apps and
-                hardware all move faster than a slide deck. The shape of it holds.
-                Treat tonight as an entry point, not a reference.</p>
+              <p>Some of what follows is already out of date. Models, apps and hardware
+                all move faster than a slide deck. The shape of it holds. Treat tonight
+                as an entry point rather than a reference.</p>
             </div>
           </div>
           <div class="dis">
@@ -3188,7 +3217,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
               <p>Not a benchmark. Architectures differ, machines differ, and the
                 same model on two laptops will not behave the same. The figures are
                 here to make the <em>relationships</em> visible. For real numbers,
-                read the official docs &mdash; or measure your own machine.</p>
+                read the official docs, or measure your own machine.</p>
             </div>
           </div>
         </div>
@@ -3251,9 +3280,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
            which is a poor advertisement for the feature it is advertising. The
            marking pass picks "quantization" up here like anywhere else. -->
       <p class="caveat">Any line above is clickable, and so is the index along the
-        bottom edge &mdash; nothing here has to be walked through in order. A word
-        carrying a faint dotted underline, like quantization, will define itself if
-        you click it.</p>
+        bottom edge. Nothing here has to be walked through in order. A word carrying a
+        faint dotted underline, like quantization, will define itself if you click it.</p>
     </div>
   </section>
   <!-- ============ §0 ============ -->
@@ -3285,15 +3313,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <p class="def">A language model whose <strong>inference</strong> &mdash; the
         arithmetic that produces each word &mdash; runs on hardware you own. In practice
         that means an <strong>open-weight</strong> model, because someone has to publish
-        the file before you can hold it. Same kind of model as the one in the browser tab.
-        Different address.</p>
+        the file before you can hold it. It is the same kind of model as the one in the
+        browser tab. What changes is the address.</p>
 
       <div class="anat">
         <div class="anat-part">
           <span class="anat-n">01</span>
           <h3>The weights</h3>
           <p>One file you download once. A few billion numbers, learned during
-            training and then frozen &mdash; nothing about it changes as you use it.</p>
+            training and then frozen. Nothing about it changes as you use it.</p>
           <span class="anat-m">GEMMA-3-1B-IT-Q4_0.GGUF &middot; 720 MB</span>
         </div>
         <div class="anat-part">
@@ -3330,8 +3358,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat"><strong>Open weights are not the same as open source.</strong> You get the
         finished numbers to keep, run and fine-tune. The training data and the code that
-        made them usually stay private &mdash; and a license can still restrict what you
-        do with the output. Read the model card.</p>
+        made them usually stay private, and a license can still restrict what you do with
+        the output. Read the model card.</p>
     </div>
   </section>
   <section class="slide" data-section="0">
@@ -3396,7 +3424,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="eyebrow">Section 01 &middot; Hands on</div>
       <h2>First win</h2>
       <p class="lede">Install LM Studio, download one small model, send one message.</p>
-      <!-- TO BUILD: install checklist -->
+      <!-- The pre-workshop install checklist lives outside the deck — it has
+           to reach people days before they are in the room, which is not a
+           job a slide can do. Send it with the event reminder. -->
     </div>
   </section>
   <!-- ---- 1 · get the app ---- -->
@@ -3405,7 +3435,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="1">
     <div class="slide-inner">
       <div class="eyebrow">01 &mdash; Step one</div>
-      <h2>Install LM Studio. Free, and it runs on all three.</h2>
+      <h2>Install LM Studio, free, on any of the three</h2>
 
       <div class="dl">
         <div class="dl-panel dl-app">
@@ -3533,7 +3563,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <span class="sv">~8 GB free</span>
           </div>
           <div class="tag-row"><span class="tag">VISION</span><span class="tag">REASONING</span></div>
-          <p class="use">Only if you have the memory to spare. Reads images, and thinks before answering.</p>
+          <!-- Reasoning ships OFF on this model. Saying "thinks before
+               answering" described something a fresh download does not do. -->
+          <p class="use">Only if you have the memory to spare. Reads images, and will
+            reason step by step once you turn that on.</p>
         </div>
 
       </div>
@@ -3662,7 +3695,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="2">
     <div class="slide-inner">
       <div class="eyebrow">02 &mdash; Under the hood</div>
-      <h2>LM Studio is a wrapper. These do the work.</h2>
+      <h2>The engines doing the actual work</h2>
       <div class="stack two">
         <div class="srow">
           <span class="chip lg"><svg><use href="#lg-llamacpp"/></svg></span>
@@ -3841,15 +3874,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
-        thinks slowly. A big discrete GPU is fast at both &mdash; right up until the model
-        stops fitting in its VRAM.</p>
+        thinks slowly. A big discrete GPU is fast at both, right up until the model stops
+        fitting in its VRAM.</p>
     </div>
   </section>
   <!-- ---- 3 · decode speed estimator ---- -->
   <section class="slide" data-section="3" id="s-decode">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; Decode speed estimator</div>
-      <h2>Divide one by the other. That is the whole trick.</h2>
+      <h2>Bandwidth divided by size, and nothing else</h2>
 
       <div class="dk">
         <div class="dk-controls">
@@ -3905,7 +3938,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="3" id="s-mach">
     <div class="slide-inner">
       <div class="eyebrow">03 &mdash; Two machines, same model</div>
-      <h2>Raw bandwidth wins &mdash; until the model stops fitting</h2>
+      <h2>Raw bandwidth wins, until the model stops fitting</h2>
 
       <div class="mx-controls">
         <div class="ctrl">
@@ -3936,7 +3969,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             </div>
             <div class="mach-rate"><span class="r-num" id="rate-pc">56</span><span class="r-unit">tok/s</span></div>
           </div>
-          <canvas class="mach-canvas" id="cv-pc"></canvas>
+          <canvas role="img" class="mach-canvas" id="cv-pc"
+            aria-label="Memory pools of the desktop PC: the model laid across fast VRAM first, then spilling into slower system DRAM"></canvas>
           <div class="mach-state" id="state-pc">Everything sits in VRAM &mdash; full speed</div>
         </div>
 
@@ -3948,7 +3982,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             </div>
             <div class="mach-rate"><span class="r-num" id="rate-mac">19</span><span class="r-unit">tok/s</span></div>
           </div>
-          <canvas class="mach-canvas" id="cv-mac"></canvas>
+          <canvas role="img" class="mach-canvas" id="cv-mac"
+            aria-label="Memory pool of the MacBook: one shared pool, with the model laid across it and no separate VRAM to spill out of"></canvas>
           <div class="mach-state" id="state-mac">Fits with room to spare</div>
         </div>
       </div>
@@ -3960,14 +3995,14 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <span class="lg-item mono">Read head crosses the whole model once per token &middot; slowed 10&times;</span>
       </div>
 
-      <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
+      <p class="caveat">Both machines hold 64 GB, and that is the point: capacity is not
         the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
         Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.
-        <strong>Weights only.</strong> The bars count nothing but the model, so the
-        opening state &mdash; 32&nbsp;GB of weights in 32&nbsp;GB of VRAM &mdash; is the
-        theoretical edge, not a configuration to copy: the KV cache of &sect;5 and a
-        couple of gigabytes of runtime have to live there too, and in practice that
-        machine falls off this cliff a little before the slider says it does.</p>
+        <strong>Weights only.</strong> The bars count nothing but the model. So the
+        opening state, 32&nbsp;GB of weights in 32&nbsp;GB of VRAM, is the theoretical
+        edge rather than a configuration to copy: the KV cache of &sect;5 and a couple of
+        gigabytes of runtime have to live there too, and in practice that machine falls
+        off this cliff a little before the slider says it does.</p>
     </div>
   </section>
   <!-- ---- 3 · the other half of the formula ---- -->
@@ -4047,14 +4082,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat"><strong>Prefill is arithmetic; decode is memory traffic.</strong>
         The 5090 has roughly three times the Mac's bandwidth but around five times its
-        peak matrix compute &mdash; so which phase you are in decides how big the gap
-        feels. The measured prefill gap is wider still, because llama.cpp's CUDA path is
-        mature and its Metal path does not yet use the matrix units built into the
-        M5&nbsp;GPU (Apple calls them Neural Accelerators; they are not the separate
-        Neural Engine, which no local runtime uses). Every rate here is an
-        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit, not
-        a benchmark of your machine &mdash; only the clock is real. Attention is also
-        quadratic, so a really long prompt is worse than this straight line suggests.</p>
+        peak matrix compute, so which phase you are in decides how big the gap feels.
+        The measured prefill gap is wider still, because llama.cpp's CUDA path is mature
+        and its Metal path does not yet use the matrix units built into the M5&nbsp;GPU
+        (Apple calls them Neural Accelerators; they are not the separate Neural Engine,
+        which no local runtime uses). Every rate here is an
+        order&#8209;of&#8209;magnitude estimate for one 8&nbsp;B model at 4&#8209;bit
+        rather than a benchmark of your machine. Only the clock is real. Attention is
+        also quadratic, so a really long prompt is worse than this straight line
+        suggests.</p>
     </div>
   </section>
   <!-- ============ §4 ============ -->
@@ -4074,7 +4110,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="4" id="s-quant">
     <div class="slide-inner">
       <div class="eyebrow">04 &mdash; What a quant actually is</div>
-      <h2>Same weights. Fewer decimal places.</h2>
+      <h2>The same weights, written down more roughly</h2>
 
       <div class="qz">
         <div class="qz-panel qz-matrix">
@@ -4097,7 +4133,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="qz-head"><span>Values it is allowed to be</span></div>
           <!-- Ticks are the representable values; each dot is one real weight
                dropping onto the nearest one. The drop IS the quantization. -->
-          <canvas class="qz-ladder" id="qzLadder" aria-label="Representable values, with each weight snapping to the nearest one"></canvas>
+          <canvas role="img" class="qz-ladder" id="qzLadder" aria-label="Representable values, with each weight snapping to the nearest one"></canvas>
 
           <dl class="qz-stats">
             <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
@@ -4231,7 +4267,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <span class="qq-size">15.0 GB</span>
           <span class="qq-sub">Every weight at full precision</span>
           <span class="qq-why">Full precision on a small model. You are spending 15&nbsp;GB on
-            decimal places the model barely uses &mdash; and a 7.5B is still a 7.5B.</span>
+            decimal places the model barely uses, and a 7.5B is still a 7.5B.</span>
         </button>
 
         <button type="button" class="qq-card" data-opt="b">
@@ -4256,7 +4292,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="qq-answer" id="qqAnswer" hidden>
         <p class="qq-rule"><strong>Bigger and more compressed usually wins.</strong>
           All three read 15&nbsp;GB out of memory for every token, so all three decode at the
-          same speed &mdash; bandwidth &divide; size does not care how the bytes are arranged.
+          same speed. Bandwidth &divide; size does not care how the bytes are arranged.
           Size and speed are held constant, which leaves exactly one variable: how much model
           you got for the money.</p>
         <button type="button" class="qq-reset" id="qqReset">Ask again</button>
@@ -4274,7 +4310,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <div class="cl">
         <div class="cl-panel cl-chart">
-          <canvas id="clCanvas" aria-label="Quality retained against bits per weight; the curve is flat down to 4 bits and falls away sharply below it"></canvas>
+          <canvas role="img" id="clCanvas" aria-label="Quality retained against bits per weight; the curve is flat down to 4 bits and falls away sharply below it"></canvas>
         </div>
 
         <div class="cl-panel cl-side">
@@ -4346,11 +4382,13 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <span class="ctrl-label" id="kvModelLabel">Model</span>
             <!-- data-kv is the shared-KV count, data-q the query-head count the
                  same model would need without GQA. Representative configs, not
-                 any one checkpoint's config.json. -->
+                 any one checkpoint's config.json. data-w is the weights figure
+                 at Q4_K_M, and must match what §4's cliff chart shows for the
+                 same model — 30B lands at 18.1 GB in both places. -->
             <div class="seg" id="kvModel" role="group" aria-labelledby="kvModelLabel">
               <button type="button" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8">1B&#8209;class</button>
               <button type="button" data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
-              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="17.5">30B&#8209;class</button>
+              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="18.1">30B&#8209;class</button>
             </div>
           </div>
 
@@ -4382,7 +4420,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <span>Memory against context length</span>
             <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
           </div>
-          <canvas id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
+          <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
         </div>
       </div>
 
@@ -4399,7 +4437,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="5" id="s-budget">
     <div class="slide-inner">
       <div class="eyebrow">05 &mdash; The ceiling</div>
-      <h2>A 32&nbsp;GB model in a 64&nbsp;GB machine. Now make it remember.</h2>
+      <h2>What a long conversation costs you in memory</h2>
 
       <div class="bg-controls">
         <div class="ctrl">
@@ -4449,7 +4487,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
         </div>
         <div class="bg-cell">
-          <div class="bg-num" id="bgMax">262K</div>
+          <!-- Must match what bgDraw computes at the defaults above:
+               (64 − 32 − 2) GiB of headroom ÷ 192 KB per token = 160K. -->
+          <div class="bg-num" id="bgMax">160K</div>
           <div class="bg-lab">longest context that fits</div>
         </div>
         <div class="bg-cell bg-verdict" id="bgVerdict">
@@ -4462,7 +4502,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
         no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
         quantization, sliding windows and racks of accelerators. On your laptop, the honest
-        move is to set the context you actually need &mdash; LM Studio hands you that slider,
+        move is to set the context you actually need. LM Studio hands you that slider,
         and now you know what it costs.</p>
     </div>
   </section>
@@ -4507,7 +4547,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
 
         <div class="sc-panel">
-          <canvas id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
+          <canvas role="img" id="scCanvas" aria-label="Parameter counts of local, open-weight and closed models on a shared axis"></canvas>
           <!-- One element, not a text node with a <b> in it: the parent is
                a centring grid and would make each inline run its own item. -->
           <div class="sc-empty" id="scEmpty"><span>Press <b>Add the next model</b></span></div>
@@ -4532,14 +4572,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat"><strong>Nobody outside the lab knows the closed numbers.</strong>
-        Open-weight vendors publish theirs; OpenAI, Anthropic and Google stopped in 2023.
-        The closed-weight bars are inference, not fact &mdash; the two published attempts to measure
-        them from the outside disagree by roughly <em>six times</em>, which is why they are
-        drawn as ranges. The lesson survives the uncertainty: even the <em>floor</em> of the
-        most conservative estimate is fifty times the largest model a laptop can hold, and
-        over a thousand times the one you downloaded tonight &mdash; and a sparse model
-        only ever <em>runs</em> a small slice of that total at a time
-        &mdash; the dot on each bar.</p>
+        Open-weight vendors publish theirs. OpenAI stopped after 2023, and Anthropic and
+        Google never started.
+        The closed-weight bars are inference rather than fact: the two published attempts
+        to measure them from the outside disagree by roughly <em>six times</em>, which is
+        why they are drawn as ranges. The lesson survives the uncertainty. Even the
+        <em>floor</em> of the most conservative estimate is fifty times the largest model
+        a laptop can hold, and over a thousand times the one you downloaded tonight. Note
+        too that a sparse model only ever <em>runs</em> a small slice of that total at a
+        time, which is the dot on each bar.</p>
     </div>
   </section>
   <!-- ---- 6 · what it is for ---- -->
@@ -4552,7 +4593,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="6" id="s-gb">
     <div class="slide-inner">
       <div class="eyebrow">06 &mdash; Good at / bad at</div>
-      <h2>A small model is a tool, not a smaller genius</h2>
+      <h2>What a small model is actually for</h2>
 
       <div class="cs-tabs">
         <div class="cs-group good">
@@ -4599,9 +4640,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="num">07</div>
       <div class="eyebrow">Section 07</div>
       <h2>The horizon</h2>
-      <p class="lede">One thing you can download tonight, and two you cannot. Everything you
-        just learned about bytes&#8209;per&#8209;parameter is already being rewritten &mdash;
-        that is the point, not a caveat.</p>
+      <p class="lede">One thing you can download tonight, and two that want more machine
+        than anyone here brought. Everything you just learned about
+        bytes&#8209;per&#8209;parameter is already being rewritten, which is the reason
+        to look at them rather than a reason to be wary of them.</p>
     </div>
   </section>
   <!-- ---- 7 · the catch-up ---- -->
@@ -4660,19 +4702,25 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <div class="cu-line">
-        <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; read Jul 2026</span>
+        <!-- RE-READ BOTH SCORES BEFORE PRESENTING, from one snapshot on one
+             day, and put the index version in the label below. AA rebases
+             the index between versions, so two numbers read months apart are
+             not comparable — which is the exact mistake the caveat warns the
+             room about. As of Aug 2026 these two do not reconcile with AA's
+             published figures; see the plan note. -->
+        <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; one snapshot, read Jul 2026</span>
         <span class="cu-line-t">Last year&rsquo;s frontier model, matched by something that
-          fits on a laptop &mdash; carrying <b>one sixty&#8209;fifth</b> of the parameters of
-          the last frontier model whose size we can confirm.</span>
+          fits on a laptop, carrying <b>one sixty&#8209;fifth</b> of the parameters of the
+          last frontier model whose size was ever credibly reported.</span>
       </div>
 
       <p class="caveat"><strong>Do not over&#8209;read one number.</strong> A composite
         index compresses very different skills into a single score, its makeup changes
-        between versions, and the 27&nbsp;B still loses badly on exactly what §6 predicted
-        &mdash; breadth of world knowledge, which is the thing parameters actually buy.
-        OpenAI did not stand still either; the 2026 frontier is far above both bars here.
-        The claim is only this: <em>the line beneath you is rising fast</em>, and it is
-        rising in the open.</p>
+        between versions, and the 27&nbsp;B still loses badly on exactly what §6
+        predicted: breadth of world knowledge, which is the thing parameters actually
+        buy. OpenAI did not stand still either; the 2026 frontier is far above both bars
+        here. The claim is only this: <em>the line beneath you is rising fast</em>, and
+        it is rising in the open.</p>
     </div>
   </section>
   <!-- ---- 7 · natively low-bit ---- -->
@@ -4683,7 +4731,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   <section class="slide" data-section="7" id="s-bonsai">
     <div class="slide-inner">
       <div class="eyebrow">07 &mdash; Three values</div>
-      <h2>The cliff is a fact about <em>squashing</em>, not about small numbers</h2>
+      <h2>The cliff is a fact about <em>squashing</em></h2>
 
       <div class="bn-controls">
         <button type="button" class="bn-step" id="bnStep">Next &#9654;</button>
@@ -4710,7 +4758,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           </div>
           <div class="bn-row" data-i="2">
             <div class="bn-lab"><b>Q2_K</b><span>squashed harder</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.8 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">3.4 GB</span></div>
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
@@ -4745,15 +4793,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is a version number</strong>
-        &mdash; PrismML ship two ternary builds, and only the group&#8209;64 one
-        (<span class="mono">*-Q2_0_g64.gguf</span>) is the format mainline llama.cpp took:
-        CPU, Metal and Vulkan are merged, CUDA is still in review, and the older
-        group&#8209;128 files need their fork. Whether the llama.cpp inside <em>your</em>
-        LM Studio is new enough is a question to settle before tonight, not during it. The decode figure is §3&rsquo;s
-        formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
-        measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
-        roughly half to four fifths of it.</p>
+        1&#8209;bit version that had no zero. <strong>The catch is which build you
+        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
+        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
+        own docs say it still needs their fork and that Ollama cannot load it, while their
+        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
+        is already in mainline. Check the machine you are presenting from, on the night.
+        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
+        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
+        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
     </div>
   </section>
   <!-- ---- 7 · a different shape of generation ---- -->
@@ -4779,7 +4827,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
-          <canvas id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
+          <canvas role="img" id="df-cv-ar" aria-label="Tokens filling in one at a time from left to right"></canvas>
           <div class="df-stats">
             <span><i>Per pass</i><b>1 token</b></span>
             <span><i>Rate</i><b id="df-r-ar">&asymp;250</b> tok/s</span>
@@ -4795,7 +4843,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             </div>
             <div class="df-clock"><span id="df-el-df">0.00</span><i>s</i></div>
           </div>
-          <canvas id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
+          <canvas role="img" id="df-cv-df" aria-label="A block of masked tokens resolving in parallel over a handful of denoising steps"></canvas>
           <div class="df-stats">
             <span><i>Per pass</i><b>256 tokens</b></span>
             <span><i>Rate</i><b id="df-r-df">&gt;1,000</b> tok/s</span>
@@ -4815,12 +4863,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
         produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
-        experts with 3.8&nbsp;B active, scores below standard Gemma&nbsp;4, and has no
-        hosted API to try it on. Quantized, Google put it inside the 24&nbsp;GB of an
-        RTX&nbsp;5090 or 4090 &mdash; which is a graphics card, not a laptop, and well
-        past what anything in this room downloaded tonight. Apache 2.0, weights on
-        Hugging Face. Rates are Google&rsquo;s
+        compute more. <strong>The catch is the hardware, not the quality.</strong>
+        DiffusionGemma is a 26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
+        Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
+        graphics card. That is a desk, not a lap, and well past what anything in this
+        room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served
+        on Vertex AI if you want to try it without the card. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>
   </section>
@@ -4944,9 +4992,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat"><strong>One honest closing note.</strong> Half the specifics in this
-        deck will be wrong within a year &mdash; the model names certainly, the hardware
-        probably. The arithmetic will not be: a model is a file, it has to fit, and it is
-        read once per token. That is what you came for.
+        deck will be wrong within a year: the model names certainly, the hardware
+        probably. The arithmetic will not be. A model is a file, it has to fit, and it is
+        read once per token.
         <!-- Where the deck's own link goes. Uncomment and fill in — kept out of
              the rendered slide until it is real, because a placeholder projected
              at a room reads as an unfinished deck, and this is the frame they
@@ -4968,7 +5016,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
            and a dotted underline is an invitation to click one more thing. -->
       <div class="thanks" data-noglossary>
         <div class="eyebrow">That&rsquo;s the workshop</div>
-        <h1 class="wordmark"><span>Thank</span><span class="unplugged">you</span></h1>
+        <!-- h2, not h1: the cover owns the document's only h1, and this is
+             the same wordmark reprised rather than a second title. -->
+        <h2 class="wordmark"><span>Thank</span><span class="unplugged">you</span></h2>
         <p class="thanks-sub">Now go and run something on your own machine.
           It is a file, it has to fit, and it is read once per token.</p>
 
@@ -4989,7 +5039,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
 <!-- The icon is the theme you would switch TO, which is why the dark
      deck shows a sun. Both glyphs ship; CSS shows one. -->
-<button type="button" class="theme-toggle" id="themeBtn" aria-pressed="false"
+<button type="button" class="theme-toggle" id="themeBtn"
         aria-label="Switch to light theme" title="Light / dark">
   <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">
     <circle cx="12" cy="12" r="4.2"/>
@@ -5374,12 +5424,20 @@ function field(wx, wy, t) {
   return (v / 3.6 + 1) / 2;                       /* -> 0..1 */
 }
 
+/* ~2000 fillRects a frame, so the loop is not merely skipped while the
+   cover is off screen — it is stopped, and wound again on arrival. A rAF
+   that early-returns still costs a callback every frame for two hours. */
+var coverRaf = null;
+function coverStart() {
+  if (coverRaf === null) coverRaf = requestAnimationFrame(draw);
+}
+function coverStop() {
+  if (coverRaf !== null) { cancelAnimationFrame(coverRaf); coverRaf = null; }
+}
+
 function draw(now) {
-  /* ~2000 fillRects a frame; no reason to pay that for the 18 slides where
-     the cover is not on screen. Hold t0 so the cycle resumes, not jumps. */
-  if (coverSlide && !coverSlide.classList.contains('active')) {
-    t0 = now; requestAnimationFrame(draw); return;
-  }
+  coverRaf = null;                                /* this frame has fired */
+  if (coverSlide && !coverSlide.classList.contains('active')) { t0 = now; return; }
   var elapsed = now - t0;
   if (elapsed > HOLD + XFADE) { t0 = now; elapsed = 0; swapped = false; }
 
@@ -5420,22 +5478,21 @@ function draw(now) {
   }
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
-  if (!reduced) requestAnimationFrame(draw);
+  if (!reduced) coverStart();
 }
-requestAnimationFrame(draw);
+coverStart();
 
-/* A running loop repaints itself on the next frame anyway. Reduced motion
-   drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops.
+/* Arriving at the cover winds the loop; leaving it stops it. This also
+   covers the repaint a theme change needs, under reduced motion as much
+   as without it: the toggle fires deck:theme and then deck:slide, so the
+   palette is refilled before this asks for a frame.
 
-   Registered ONCE, here at module level. This block briefly lived inside
-   draw() as well, which under reduced motion added a listener per repaint
-   and turned every later theme toggle into a growing burst of frames. */
-if (reduced) {
-  document.addEventListener('deck:theme', function () {
-    requestAnimationFrame(draw);
-  });
-}
+   Registered ONCE, here at module level — coverStart's own guard is what
+   keeps a second deck:slide from leaving two loops running. */
+document.addEventListener('deck:slide', function () {
+  if (coverSlide && coverSlide.classList.contains('active')) coverStart();
+  else coverStop();
+});
 }
 /* ==========================================================
    DECODE SPEED ESTIMATOR
@@ -5562,9 +5619,20 @@ if (dkSlide) {
     dkText.scrollTop = dkText.scrollHeight;
   }
 
+  /* Stopped rather than skipped while the slide is off screen: a loop that
+     early-returns still pays a callback every frame for the whole talk. */
+  var dkRaf = null;
+  function dkStart() {
+    if (dkRaf === null) { last = performance.now(); dkRaf = requestAnimationFrame(tick); }
+  }
+  function dkStop() {
+    if (dkRaf !== null) { cancelAnimationFrame(dkRaf); dkRaf = null; }
+  }
+
   function tick(now) {
-    requestAnimationFrame(tick);
-    if (!dkSlide.classList.contains('active')) { last = now; return; }
+    dkRaf = null;
+    if (!dkSlide.classList.contains('active')) return;
+    dkRaf = requestAnimationFrame(tick);
     var dt = Math.min(now - last, 250) / 1000;   /* clamp tab-switch jumps */
     last = now;
 
@@ -5588,7 +5656,10 @@ if (dkSlide) {
     render();
   } else {
     render();
-    requestAnimationFrame(tick);
+    document.addEventListener('deck:slide', function () {
+      if (dkSlide.classList.contains('active')) dkStart(); else dkStop();
+    });
+    if (dkSlide.classList.contains('active')) dkStart();
   }
 }
 /* ==========================================================
@@ -5858,13 +5929,23 @@ if (mxSlide) {
     ctx.globalAlpha = 1;
   }
 
-  /* ---- animation ---- */
-  var lastT = 0;
+  /* ---- animation ----
+     Two canvases repainted every frame, so the loop is stopped while the
+     slide is off screen rather than merely skipping its body. */
+  var lastT = 0, mxRaf = null;
+  function mxStart() {
+    if (mxRaf === null) { lastT = performance.now(); mxRaf = requestAnimationFrame(frame); }
+  }
+  function mxStop() {
+    if (mxRaf !== null) { cancelAnimationFrame(mxRaf); mxRaf = null; }
+  }
+
   function frame(now) {
-    requestAnimationFrame(frame);
+    mxRaf = null;
+    if (!mxSlide.classList.contains('active')) return;
+    mxRaf = requestAnimationFrame(frame);
     var dt = Math.min(now - lastT, 250) / 1000;
     lastT = now;
-    if (!mxSlide.classList.contains('active')) return;
 
     views.forEach(function (v) {
       var toobig = v.alloc.over > 0.001;
@@ -5911,13 +5992,16 @@ if (mxSlide) {
 
   recompute();
   window.addEventListener('resize', function () { views.forEach(drawMachine); });
-  document.addEventListener('deck:slide', function () { views.forEach(drawMachine); });
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  var mxReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('deck:slide', function () {
     views.forEach(drawMachine);
-  } else {
-    requestAnimationFrame(frame);
-  }
+    if (mxReduced) return;
+    if (mxSlide.classList.contains('active')) mxStart(); else mxStop();
+  });
+
+  views.forEach(drawMachine);
+  if (!mxReduced && mxSlide.classList.contains('active')) mxStart();
 }
 /* ==========================================================
    SHARED HELPERS
@@ -7276,7 +7360,12 @@ if (bnSlide) {
       qual: '&asymp;98% retained',
       say: 'The sweet spot from §4. A third of the size and you would struggle ' +
            'to tell the difference in a blind test.' },
-    { gb: 2.8,  name: 'Qwen3 8B &middot; Q2_K', alpha: '4 values + a scale',
+    /* 3.4, not the 2.8 this row used to claim. Q2_K is 3.35 bits per weight
+       once its block metadata is counted — the same figure §4's calculator
+       and the cliff chart both use — so 8.19 B weights land at 3.4 GB, and
+       real files are about that. The old number quietly undercut the deck's
+       own arithmetic on the one slide arguing that the arithmetic holds. */
+    { gb: 3.4,  name: 'Qwen3 8B &middot; Q2_K', alpha: '4 values + a scale',
       qual: 'Falls apart', cliff: true,
       say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
            'loops, contradictions, confident nonsense. This is the floor.' },
@@ -7445,11 +7534,21 @@ if (dfSlide) {
   }
 
   /* ---- run state ---- */
-  var dfT = 0, dfRunning = false, dfLast = 0;
+  var dfT = 0, dfRunning = false, dfLast = 0, dfRaf = null;
+
+  /* Wound on arrival, stopped on departure. The body only does work while
+     a generation is playing, but the callback itself is not free. */
+  function dfWind() {
+    if (dfRaf === null) { dfLast = performance.now(); dfRaf = requestAnimationFrame(dfFrame); }
+  }
+  function dfHalt() {
+    if (dfRaf !== null) { cancelAnimationFrame(dfRaf); dfRaf = null; }
+  }
 
   function dfFrame(now) {
-    requestAnimationFrame(dfFrame);
-    if (!dfSlide.classList.contains('active')) { dfLast = now; return; }
+    dfRaf = null;
+    if (!dfSlide.classList.contains('active')) return;
+    dfRaf = requestAnimationFrame(dfFrame);
     var dt = Math.min(now - dfLast, 250) / 1000;
     dfLast = now;
     if (dfRunning) {
@@ -7498,10 +7597,14 @@ if (dfSlide) {
 
   dfRun.addEventListener('click', dfStart);
   window.addEventListener('resize', dfRender);
-  document.addEventListener('deck:slide', dfRender);
+  document.addEventListener('deck:slide', function () {
+    dfRender();
+    if (REDUCED) return;
+    if (dfSlide.classList.contains('active')) dfWind(); else dfHalt();
+  });
 
   dfRender();
-  if (!REDUCED) requestAnimationFrame(dfFrame);
+  if (!REDUCED && dfSlide.classList.contains('active')) dfWind();
 }
 /* ==========================================================
    §6 — THE CHAT WINDOW
@@ -7939,11 +8042,31 @@ if (csSlide) {
      in a real presentation — a mirrored or extended display the OS
      considers occluded, a backgrounded window, remote desktop. When that
      happens rAF gives you a chat window that never says anything, with
-     no error and nothing to debug. A timer keeps its clock. */
+     no error and nothing to debug. A timer keeps its clock.
+
+     It is still only wound while this slide is on screen. The argument
+     above is about which CLOCK to use, not about running one for the
+     whole two hours — a 30 Hz wakeup on all 38 slides keeps the CPU out
+     of its idle states on a laptop that is probably on battery. */
   var TICK_MS = 33;
+  var csTimer = null;
+
+  function csStart() {
+    if (csTimer) return;              /* deck:slide can fire twice — the
+                                         theme toggle sends one after
+                                         deck:theme — so this must not
+                                         leave a second interval running */
+    lastT = performance.now();
+    csTimer = setInterval(frame, TICK_MS);
+  }
+  function csStop() {
+    if (!csTimer) return;
+    clearInterval(csTimer);
+    csTimer = null;
+  }
+
   function frame() {
     var now = performance.now();
-    if (!csSlide.classList.contains('active')) { lastT = now; return; }
     var dt = Math.min(now - lastT, 250) / 1000;   /* clamp throttled gaps */
     lastT = now;
     if (!playing) return;
@@ -7973,12 +8096,17 @@ if (csSlide) {
   document.addEventListener('deck:slide', function () {
     if (csSlide.classList.contains('active')) {
       load(tabs.filter(function (b) { return b.classList.contains('on'); })[0].dataset.s);
+      csStart();
+    } else {
+      csStop();
     }
   });
 
+  /* Built now so the slide is never blank for a frame, but the clock only
+     starts if we happen to have opened straight onto this slide (a deep
+     link can). Otherwise deck:slide winds it on arrival. */
   load('sum');
-  lastT = performance.now();
-  setInterval(frame, TICK_MS);
+  if (csSlide.classList.contains('active')) csStart();
 }
 /* ==========================================================
    THEME TOGGLE
@@ -8006,8 +8134,11 @@ function setTheme(name) {
   if (name === 'light') document.documentElement.setAttribute('data-theme', 'light');
   else document.documentElement.removeAttribute('data-theme');
 
+  /* The label carries the state, so aria-pressed must not carry it too —
+     both together announce as "Switch to light theme, pressed", which
+     leaves a listener unable to tell which theme they are actually in.
+     One signal, and it is the one that says what the button will do. */
   if (themeBtn) {
-    themeBtn.setAttribute('aria-pressed', name === 'light' ? 'true' : 'false');
     themeBtn.setAttribute('aria-label',
       name === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
@@ -8298,12 +8429,15 @@ function buildGlossPanel() {
   el.className = 'gloss';
   el.id = 'gloss';
   el.setAttribute('role', 'dialog');
+  /* Without a name this announces as an unlabelled dialog. The term itself
+     is the only sensible label, and it is already the first thing in it. */
+  el.setAttribute('aria-labelledby', 'gloss-k');
   /* Focusable but not tabbable: it is announced and reachable when the
      panel opens, and stays out of the tab order the rest of the time. */
   el.tabIndex = -1;
   el.hidden = true;
   el.innerHTML =
-    '<div class="gloss-k"></div>' +
+    '<div class="gloss-k" id="gloss-k"></div>' +
     '<p class="gloss-d"></p>' +
     '<div class="gloss-vs" hidden><span class="gloss-vs-k">Not the same as</span>' +
     '<dl></dl></div>' +
@@ -8416,10 +8550,23 @@ document.addEventListener('keydown', function (e) {
    floating over an unrelated slide. */
 document.addEventListener('deck:slide', closeGloss);
 window.addEventListener('resize', closeGloss);
-/* The panel is fixed and anchored once. On a narrow screen the slide
-   itself scrolls, so it would otherwise drift away from its word —
-   capture, because that scroll happens on the slide, not the window. */
-document.addEventListener('scroll', closeGloss, true);
+/* The panel is fixed and anchored once. On a narrow screen the slide itself
+   scrolls, so it would otherwise drift away from its word — capture, because
+   that scroll happens on the slide, not the window.
+
+   Only a scroll that actually MOVED the word counts. Three slides auto-scroll
+   a pane to follow streaming text (§3's decode passage, §2's template output,
+   §6's chat threads), and those panes do not contain any marked word — but a
+   blanket close treated their every frame as "the reader scrolled away" and
+   shut the panel the instant it opened. §3 is where it was unmissable: its
+   passage loops forever, so the scrolling never stops, while the other two
+   settle once their scenario finishes. */
+document.addEventListener('scroll', function (e) {
+  if (!glossTerm) return;
+  var t = e.target;
+  if (t === document || t === document.documentElement || t === window ||
+      (t.contains && t.contains(glossTerm))) closeGloss();
+}, true);
 /* ==========================================================
    §2 — THE CHAT TEMPLATE GOTCHA
    One model (Gemma 3 1B), one prompt, six wrappings. The left panel
@@ -8633,9 +8780,23 @@ if (tpSlide) {
     tpPlaying = busy;
   }
 
+  /* Wound only while the slide is on screen — see the matching note in
+     17-chat.js. Timer rather than rAF for the reason given there; not
+     running at all on the other 37 slides for the reason given here. */
+  var tpTimer = null;
+  function tpStart() {
+    if (tpTimer) return;              /* deck:slide can arrive twice */
+    tpLast = performance.now();
+    tpTimer = setInterval(tpFrame, 33);
+  }
+  function tpStop() {
+    if (!tpTimer) return;
+    clearInterval(tpTimer);
+    tpTimer = null;
+  }
+
   function tpFrame() {
     var now = performance.now();
-    if (!tpSlide.classList.contains('active')) { tpLast = now; return; }
     var dt = Math.min(now - tpLast, 250) / 1000;
     tpLast = now;
     if (!tpPlaying) return;
@@ -8663,12 +8824,16 @@ if (tpSlide) {
   tpReplay.addEventListener('click', function () { tpLoad(tpCurrent().dataset.s); });
 
   document.addEventListener('deck:slide', function () {
-    if (tpSlide.classList.contains('active')) tpLoad(tpCurrent().dataset.s);
+    if (tpSlide.classList.contains('active')) {
+      tpLoad(tpCurrent().dataset.s);
+      tpStart();
+    } else {
+      tpStop();
+    }
   });
 
   tpLoad('gemma');
-  tpLast = performance.now();
-  setInterval(tpFrame, 33);
+  if (tpSlide.classList.contains('active')) tpStart();
 }
 })();
 </script>

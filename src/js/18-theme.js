@@ -24,8 +24,11 @@ function setTheme(name) {
   if (name === 'light') document.documentElement.setAttribute('data-theme', 'light');
   else document.documentElement.removeAttribute('data-theme');
 
+  /* The label carries the state, so aria-pressed must not carry it too —
+     both together announce as "Switch to light theme, pressed", which
+     leaves a listener unable to tell which theme they are actually in.
+     One signal, and it is the one that says what the button will do. */
   if (themeBtn) {
-    themeBtn.setAttribute('aria-pressed', name === 'light' ? 'true' : 'false');
     themeBtn.setAttribute('aria-label',
       name === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }

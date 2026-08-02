@@ -6,7 +6,18 @@
   align-items: center;
   max-width: 82rem;
 }
-.wordmark { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; }
+/* The wordmark carries its own type, rather than inheriting whatever the
+   h1 rule happens to say. It appears twice — as the cover's h1 and as the
+   end frame's h2, which is a fact about document structure and not about
+   how big the word "Unplugged" should be. */
+.wordmark {
+  display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap;
+  font-size: 4.6rem; line-height: 1.02; letter-spacing: -0.035em;
+  margin: 0; font-weight: 650;
+}
+@media (max-width: 900px) {
+  .wordmark { font-size: 3.2rem; }
+}
 .wordmark .unplugged {
   color: var(--accent);
   text-shadow: 0 0 2.5rem var(--accent-glow);
