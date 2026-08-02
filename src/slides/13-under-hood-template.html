@@ -1,0 +1,61 @@
+  <!-- ---- 2 · the chat template gotcha ---- -->
+  <!-- The one failure in the whole deck that produces no error message.
+       Told as before-and-after on the wire: the LEFT panel is the exact
+       string the app hands the model, the RIGHT panel is what comes
+       back. Six presets against one model — the correct one, three real
+       templates belonging to other families, no template at all, and
+       the right template with the wrong stop string.
+
+       The scripts live in js/20-template.js. Outputs are illustrations
+       of documented failure classes, not captured transcripts, and the
+       caveat says so. -->
+  <section class="slide" data-section="2" id="s-tmpl">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; The invisible failure</div>
+      <h2>One model, six ways of addressing it. Five are wrong.</h2>
+
+      <div class="tp-tabs">
+        <div class="tp-group ok">
+          <span class="tp-g-k">This model was trained on</span>
+          <div class="seg" id="tpA" role="group" aria-label="Correct template">
+            <button type="button" class="on" aria-pressed="true" data-s="gemma">Gemma 3</button>
+          </div>
+        </div>
+        <div class="tp-group bad">
+          <span class="tp-g-k">Send it instead</span>
+          <div class="seg" id="tpB" role="group" aria-label="Mismatched templates">
+            <button type="button" aria-pressed="false" data-s="chatml">ChatML</button>
+            <button type="button" aria-pressed="false" data-s="llama">Llama&nbsp;3</button>
+            <button type="button" aria-pressed="false" data-s="mistral">Mistral</button>
+            <button type="button" aria-pressed="false" data-s="none">No template</button>
+            <button type="button" aria-pressed="false" data-s="stop">Wrong stop</button>
+          </div>
+        </div>
+        <button type="button" class="tp-replay" id="tpReplay">Replay &#8635;</button>
+      </div>
+
+      <div class="tp-panes">
+        <div class="tp-pane">
+          <div class="tp-k">What actually reaches the model
+            <i class="tp-tag" id="tpTag"></i></div>
+          <pre class="tp-wire" id="tpWire"></pre>
+          <div class="tp-meta" id="tpMeta"></div>
+        </div>
+        <div class="tp-pane">
+          <div class="tp-k">What comes back <i class="tp-tag mute">Gemma 3 1B &middot; same weights, same prompt</i></div>
+          <div class="tp-out" id="tpOut"></div>
+        </div>
+      </div>
+
+      <p class="tp-v" id="tpVerdict">&nbsp;</p>
+
+      <p class="caveat"><strong>Nothing here errors, and that is the whole problem.</strong>
+        The template lives in the GGUF&rsquo;s metadata and LM Studio normally reads it,
+        so you meet this when you override the preset by hand, load an oddly converted
+        GGUF, or drive the model from the raw completion endpoint. Symptom to remember:
+        output that is fluent but stops obeying you, ignores the system prompt, echoes
+        stray markers, or never shuts up. Check the template before you blame the model.
+        These outputs illustrate the documented failure classes; they are not captured
+        transcripts.</p>
+    </div>
+  </section>

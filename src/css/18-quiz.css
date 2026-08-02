@@ -49,7 +49,7 @@
 /* Green is the recommendation, and it is the only green on the slide. */
 .qq.revealed .qq-card[data-best] {
   border-color: var(--ok); border-top-color: var(--ok);
-  background: rgba(74, 222, 128, 0.06);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
 }
 .qq.revealed .qq-card[data-best] .qq-size,
 .qq.revealed .qq-card[data-best] .qq-tag { color: var(--ok); }
@@ -58,7 +58,7 @@
   position: absolute; top: 1.15rem; right: 1.1rem;
   font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
   padding: 0.2rem 0.5rem; border-radius: var(--r-pill);
-  background: var(--ok); color: #05271a;
+  background: var(--ok); color: var(--on-ok);
 }
 .qq.revealed .qq-card:not([data-best]) { opacity: 0.72; }
 .qq.revealed .qq-card { cursor: default; transform: none; }
@@ -81,7 +81,7 @@
   flex: 1; margin: 0; font-size: 1.05rem; color: var(--ink-mid);
   border-left: 2px solid var(--ok);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: rgba(74, 222, 128, 0.05);
+  background: color-mix(in srgb, var(--ok) 6%, transparent);
   padding: 0.8rem 1.1rem;
 }
 .qq-rule strong { color: var(--ink); }

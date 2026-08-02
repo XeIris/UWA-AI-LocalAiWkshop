@@ -36,6 +36,28 @@
   --warn: #fbbf24;
   --bad:  #f87171;
 
+  /* Text sitting ON a filled swatch. A fill flips lightness between the
+     two themes, so its label has to flip with it — otherwise the light
+     theme paints dark ink on a dark chip. Never hardcode these at the
+     use site; that is exactly what broke when light mode arrived. */
+  --on-accent: #04262b;
+  --on-ink:    #06101a;   /* the filled-white third state */
+  --on-ok:     #05271a;
+  --on-bad:    #2b0707;
+
+  /* Cover art. The canvas is painted in JS, which cannot read rem or
+     a hex token by itself — these are the two numbers its shade ramp
+     needs, so the art follows the theme like everything else. */
+  /* The floating glossary panel is the only thing in the deck that
+     casts one, and it needs to survive both backgrounds. */
+  --shadow: rgba(0, 0, 0, 0.5);
+
+  --art-bg:   #060a0e;
+  --art-l0:   6;          /* lightness % of the lowest weight */
+  --art-span: 52;         /* added at the highest; may be negative */
+  --art-s0:   46;         /* saturation % at the lowest weight */
+  --art-sspan: 30;
+
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
           "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
@@ -58,6 +80,67 @@
   --r-pill: calc(999px * var(--r-scale));  /* tracks, tags            */
 
   --fade: 260ms;
+}
+
+/* ============================================================
+   DAYLIGHT — the same blueprint, printed rather than projected.
+
+   Dark is the identity and stays the default: a deck opens dark
+   even on a machine set to light, because the room is usually dim
+   and a white 1080p projection is painful. The toggle (top-left)
+   is for the attendee reading this on a laptop by a window, and
+   its choice persists. There is deliberately NO
+   prefers-color-scheme rule — auto-switching would mean some
+   presenters discover their deck is white as they plug in.
+
+   Every value here is a token override and nothing else. If a
+   component needs a colour that is not derivable from these, the
+   fix belongs in this block, not in the component.
+   ============================================================ */
+:root[data-theme="light"] {
+  --bg:        #f1f5f7;
+  --bg-panel:  #ffffff;
+  --bg-raise:  #e6eef2;
+  --grid-line: rgba(10, 108, 122, 0.085);
+  --rule:      rgba(10, 108, 122, 0.30);
+  --rule-soft: rgba(10, 108, 122, 0.17);
+
+  --ink:       #08161a;
+  --ink-mid:   #3a545e;
+  /* Darker than a straight tonal inversion would give: --ink-dim carries
+     real body text (captions, glosses, the 0.84rem reference lines), so it
+     has to clear 4.5:1 on paper white, not merely look recessive. */
+  --ink-dim:   #556a74;
+
+  /* The cyan has to darken or it stops being legible as text on
+     paper-white; it is the same hue, not a second accent. */
+  --accent:    #0a6c7a;
+  --accent-lo: #63bcc9;
+  --accent-glow: rgba(10, 108, 122, 0.22);
+
+  /* Semantics keep their meaning and lose their neon. Green/amber/red
+     at dark-theme brightness are unreadable on white, and washing them
+     out would break the one rule the palette has. */
+  --ok:   #15803d;
+  --warn: #b45309;
+  --bad:  #c02626;
+
+  /* Fills are now dark, so their labels invert. */
+  --on-accent: #f0fdff;
+  --on-ink:    #f4fbfd;
+  --on-ok:     #f2fdf5;
+  --on-bad:    #fff5f5;
+
+  /* Ink on paper: the ramp runs the other way, and pulls a lot of
+     saturation out — the projected version can be neon, a laptop
+     screen a foot from your face cannot. */
+  --shadow: rgba(8, 22, 26, 0.16);
+
+  --art-bg:   #eef4f6;
+  --art-l0:   93;
+  --art-span: -48;
+  --art-s0:   20;
+  --art-sspan: 34;
 }
 /* ============================================================
    POSTER BASE — shared by every src/posters/*.html

@@ -28,7 +28,7 @@
   width: 100%; height: auto; display: block;
   border: 1px solid var(--rule-soft);
   border-radius: var(--r-md);
-  background: #060a0e;
+  background: var(--art-bg);
 }
 .art-readout {
   display: flex; align-items: baseline; justify-content: space-between;

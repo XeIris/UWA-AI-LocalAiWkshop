@@ -1,5 +1,5 @@
 var SECTIONS = [
-  ['00', 'Why bother?'],
+  ['00', 'What &amp; why'],
   ['01', 'First win'],
   ['02', 'Under the hood'],
   ['03', 'Hardware + formula'],

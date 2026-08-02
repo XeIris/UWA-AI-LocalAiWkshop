@@ -39,7 +39,7 @@
   font-size: 0.86rem; color: var(--ink);
   font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
 }
-.qz-cell.drift { border-color: rgba(251, 191, 36, 0.35); }
+.qz-cell.drift { border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
 .qz-cell.drift .qz-val { color: var(--warn); }
 
 .qz-store {

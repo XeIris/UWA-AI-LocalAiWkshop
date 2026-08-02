@@ -1,0 +1,170 @@
+/* --- §2 · the chat template gotcha --------------------------- */
+/* Two panels: the wire on the left, the consequence on the right.
+   Warm colour appears here because a mismatched template is a genuine
+   failure — green marks the tokens this model actually knows, red the
+   markers it has never seen. Nothing else on the slide is warm. */
+
+.tp-tabs {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.tp-group { display: flex; align-items: center; gap: 0.6rem; }
+.tp-tabs .seg { gap: 0.3rem; }
+.tp-tabs .seg button { padding: 0.35rem 0.62rem; letter-spacing: 0.08em; }
+.tp-g-k {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;
+}
+.tp-group.ok  .tp-g-k { color: var(--ok); }
+.tp-group.bad .tp-g-k { color: var(--bad); }
+.tp-group.ok  .seg button.on { background: var(--ok);  border-color: var(--ok);  color: var(--on-ok); }
+.tp-group.bad .seg button.on { background: var(--bad); border-color: var(--bad); color: var(--on-bad); }
+
+.tp-replay {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill); cursor: pointer; margin-left: auto;
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.tp-replay:hover { color: var(--accent); border-color: var(--rule); }
+
+/* Fixed height, both panels scrolling internally: a runaway generation
+   is one of the scenarios, and it must not push the caveat off the
+   slide to make its point. */
+.tp-panes {
+  display: grid; grid-template-columns: 1.08fr 1fr; gap: 1rem;
+  height: 17.5rem; margin-top: 0.9rem;
+}
+.tp-pane {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.tp-k {
+  display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--ink-dim); flex: none;
+}
+.tp-tag {
+  font-style: normal; font-size: 0.6rem; letter-spacing: 0.1em;
+  margin-left: auto; text-align: right;
+}
+.tp-tag.ok  { color: var(--ok); }
+.tp-tag.bad { color: var(--bad); }
+.tp-tag.mute { color: var(--ink-dim); opacity: 0.75; text-transform: none; letter-spacing: 0.04em; }
+
+/* ---- the wire ---- */
+.tp-wire {
+  flex: 1; min-height: 0; overflow: auto; margin: 0;
+  padding: 0.8rem 0.9rem;
+  font-family: var(--mono); font-size: 0.76rem; line-height: 1.5;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  color: var(--ink-mid);
+}
+/* A special token this model owns: one id in the vocabulary, drawn as
+   one solid object. The point is that it is NOT text. */
+.tp-wire .w-tok {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
+  border-radius: var(--r-xs); padding: 0 0.25rem;
+}
+/* A marker this model has no token for. Struck through with a dotted
+   underline rather than a block fill, because the whole idea is that
+   it dissolves into ordinary characters. */
+.tp-wire .w-bad {
+  color: var(--bad);
+  border-bottom: 1px dashed color-mix(in srgb, var(--bad) 60%, transparent);
+}
+.tp-wire .w-txt { color: var(--ink); }
+
+.tp-meta {
+  flex: none; padding: 0.55rem 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: 0.64rem; line-height: 1.5;
+  letter-spacing: 0.04em; color: var(--ink-dim);
+}
+.tp-meta b { color: var(--ink-mid); font-weight: 500; }
+.tp-meta b.no { color: var(--bad); }
+.tp-meta span {
+  display: block; margin-top: 0.3rem;
+  font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0;
+}
+
+/* ---- the output ---- */
+/* overflow: hidden, matching §6's thread and for the same reason. The JS
+   sets scrollTop after each append, which still works when overflow is
+   hidden, so the panel follows the tail; what hidden removes is a
+   scrollbar appearing mid-slide on the one scenario that runs long. A
+   projected deck should not grow furniture. */
+.tp-out {
+  flex: 1; min-height: 0; overflow: hidden;
+  padding: 0.8rem 0.9rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.tp-msg {
+  background: var(--bg-raise);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  border-bottom-left-radius: var(--r-sm);
+  padding: 0.5rem 0.7rem;
+  font-size: 0.86rem; line-height: 1.42; color: var(--ink-mid);
+  white-space: pre-wrap;
+  animation: cs-in 220ms ease both;
+}
+.tp-caret {
+  display: none; width: 0.42rem; height: 0.85rem;
+  background: var(--accent); vertical-align: -0.12rem; margin-left: 0.15rem;
+  animation: cs-blink 1s steps(2, start) infinite;
+}
+.tp-msg.typing .tp-caret { display: inline-block; }
+
+/* The clean run's stop marker — the only thing on this slide that is
+   good news, so it is the only green chip in the output column. */
+.tp-stop {
+  align-self: flex-start;
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.28rem 0.7rem; border-radius: var(--r-pill);
+  color: var(--ok);
+  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);
+  background: color-mix(in srgb, var(--ok) 9%, transparent);
+  animation: cs-in 220ms ease both;
+}
+.tp-note {
+  font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--bad); animation: cs-in 220ms ease both;
+}
+
+/* ---- verdict ---- */
+.tp-v {
+  margin: 0.8rem 0 0; padding-left: 0.9rem;
+  /* Transparent until there is something to say — the space is
+     reserved so nothing below it jumps, but an empty rule reads as a
+     component that failed to load. */
+  border-left: 2px solid transparent;
+  font-size: 1rem; line-height: 1.4; color: var(--ink-mid);
+  min-height: 2.8rem;
+}
+.tp-v.ok  { border-left-color: var(--ok); }
+.tp-v.bad { border-left-color: var(--bad); }
+
+/* This slide borrows §6's cs-in/cs-blink keyframes, so it has to opt out
+   of them the same way §6 does — borrowing an animation means borrowing
+   its reduced-motion rule. */
+@media (prefers-reduced-motion: reduce) {
+  .tp-msg, .tp-stop, .tp-note, .tp-caret { animation: none; }
+}
+
+@media (max-width: 900px) {
+  .tp-panes { grid-template-columns: 1fr; height: auto; }
+  .tp-wire { max-height: 12rem; }
+  .tp-out { min-height: 9rem; }
+}

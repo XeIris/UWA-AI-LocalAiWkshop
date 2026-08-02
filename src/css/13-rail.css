@@ -3,7 +3,9 @@
   position: fixed; left: 0; right: 0; bottom: 0; height: 4.6rem;
   display: flex; align-items: stretch;
   border-top: 1px solid var(--rule-soft);
-  background: linear-gradient(180deg, rgba(5,8,11,0.4), rgba(5,8,11,0.95));
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--bg) 40%, transparent),
+              color-mix(in srgb, var(--bg) 95%, transparent));
   backdrop-filter: blur(6px);
   z-index: 5;
   padding: 0 1.2rem;

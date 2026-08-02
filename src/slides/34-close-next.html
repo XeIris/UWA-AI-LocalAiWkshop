@@ -1,0 +1,72 @@
+  <!-- ---- close 2 · where to go next ----
+       The slide that stays on screen through questions, so it has to
+       be useful to look at for ten minutes: something to do this week,
+       the rabbit holes this deck deliberately skipped, and where to
+       read. Nothing here is a cliffhanger.
+
+       EVENT DETAILS — edit these, rebuild, do not touch index.html:
+       the deck link at the bottom is a placeholder. -->
+  <section class="slide" data-section="7">
+    <div class="slide-inner">
+      <div class="eyebrow">Thanks for coming</div>
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <div class="next-col">
+          <div class="next-k">This week</div>
+          <ol class="next-list">
+            <li><b>Run the same prompt through both.</b> The 1&nbsp;B you downloaded and a
+              4&nbsp;B. The gap is the whole of &sect;6 in ninety seconds.</li>
+            <li><b>Point it at your own PDF.</b> Attach a document and ask about it. That is
+              the thing a small model is genuinely good at.</li>
+            <li><b>Measure your own machine.</b> LM Studio reports tok/s. Check it against
+              bandwidth &divide; file size and see how much of the ceiling you actually get.</li>
+          </ol>
+        </div>
+
+        <div class="next-col">
+          <div class="next-k">Rabbit holes we skipped</div>
+          <ul class="next-list">
+            <li><b>Speculative decoding</b> &mdash; a small model drafts, a big one checks.
+              Real speedups, heavy concepts.</li>
+            <li><b>Embeddings and a proper RAG stack</b> &mdash; what tonight&rsquo;s
+              &ldquo;chat with your files&rdquo; is doing underneath.</li>
+            <li><b>Fine-tuning and LoRA</b> &mdash; changing the weights rather than the
+              prompt. Start here only after RAG has failed you.</li>
+            <li><b>Serving it</b> &mdash; LM Studio and Ollama both expose a local API, which
+              is how you point other software at your own model.</li>
+          </ul>
+        </div>
+
+        <div class="next-col">
+          <div class="next-k">Where to read</div>
+          <!-- No glossary marks in here: the repo and domain names are the
+               reference, and a dotted underline through "llama.cpp" reads as
+               part of the path. -->
+          <ul class="next-list refs" data-noglossary>
+            <li><b>ggml-org/llama.cpp</b><span>The engine. Its discussions are where the
+              quantization work actually gets argued out.</span></li>
+            <li><b>lmstudio.ai/docs</b><span>The app, including the local server and the
+              chat-template settings from &sect;2.</span></li>
+            <li><b>huggingface.co</b><span>Model cards first, downloads second. bartowski and
+              lmstudio-community for quants.</span></li>
+            <li><b>artificialanalysis.ai</b><span>Independent scoring, open and closed models
+              side by side. Read it as a ranking, not a verdict.</span></li>
+            <li><b>r/LocalLLaMA</b><span>Noisy, fast, and the first place a new release gets
+              tested on consumer hardware.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="caveat"><strong>One honest closing note.</strong> Half the specifics in this
+        deck will be wrong within a year &mdash; the model names certainly, the hardware
+        probably. The arithmetic will not be: a model is a file, it has to fit, and it is
+        read once per token. That is what you came for.
+        <!-- Where the deck's own link goes. Uncomment and fill in — kept out of
+             the rendered slide until it is real, because a placeholder projected
+             at a room reads as an unfinished deck, and this is the frame they
+             look at longest.
+        <span class="next-link">These slides &middot; <b>example.org/unplugged</b></span>
+        --></p>
+    </div>
+  </section>

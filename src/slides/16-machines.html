@@ -59,6 +59,11 @@
 
       <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
         the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
-        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.</p>
+        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.
+        <strong>Weights only.</strong> The bars count nothing but the model, so the
+        opening state &mdash; 32&nbsp;GB of weights in 32&nbsp;GB of VRAM &mdash; is the
+        theoretical edge, not a configuration to copy: the KV cache of &sect;5 and a
+        couple of gigabytes of runtime have to live there too, and in practice that
+        machine falls off this cliff a little before the slider says it does.</p>
     </div>
   </section>

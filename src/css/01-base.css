@@ -28,7 +28,7 @@ body {
 }
 .vignette {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(ellipse 90% 70% at 50% 40%, rgba(53,214,232,0.045), transparent 70%);
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%);
 }
 
 /* --- slide plumbing ----------------------------------------- */

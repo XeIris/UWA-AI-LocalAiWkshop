@@ -32,7 +32,7 @@
 }
 .bg-seg span {
   font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
-  color: #04262b; white-space: nowrap; opacity: 1;
+  color: var(--on-accent); white-space: nowrap; opacity: 1;
   transition: opacity 200ms ease;
 }
 .bg-seg.narrow span { opacity: 0; }
@@ -43,7 +43,7 @@
 .bg-k {
   background-color: var(--accent-lo);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(53,214,232,0.55) 0 4px, transparent 4px 9px);
+    -45deg, color-mix(in srgb, var(--accent) 55%, transparent) 0 4px, transparent 4px 9px);
 }
 .bg-k span { color: var(--ink); }
 .bg-o { background: var(--ink-dim); opacity: 0.35; }
@@ -54,7 +54,7 @@
   background-image: repeating-linear-gradient(
     -45deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);
 }
-.bg-bar.over .bg-k span { color: #2b0707; }
+.bg-bar.over .bg-k span { color: var(--on-bad); }
 
 .bg-cap {
   position: absolute; top: -0.35rem; bottom: -0.35rem; width: 0;
@@ -85,7 +85,7 @@
 .sw-kv {
   background-color: var(--accent-lo); border-color: var(--accent-lo);
   background-image: repeating-linear-gradient(
-    -45deg, rgba(53,214,232,0.6) 0 2px, transparent 2px 4px);
+    -45deg, color-mix(in srgb, var(--accent) 60%, transparent) 0 2px, transparent 2px 4px);
 }
 
 /* --- readouts --------------------------------------------------- */
@@ -111,9 +111,9 @@
   font-family: var(--mono); font-size: 1.5rem;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok);
 }
-.bg-verdict.tight { border-color: rgba(251,191,36,0.4); }
+.bg-verdict.tight { border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
 .bg-verdict.tight .bg-v-k { color: var(--warn); }
-.bg-verdict.over  { border-color: rgba(248,113,113,0.45); }
+.bg-verdict.over  { border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
 .bg-verdict.over  .bg-v-k { color: var(--bad); }
 .bg-out.over .bg-num { color: var(--bad); }
 .bg-out.tight .bg-num { color: var(--warn); }

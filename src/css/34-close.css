@@ -1,0 +1,98 @@
+/* --- the two closing slides --------------------------------- */
+/* The recap reuses §0's tile grid so the deck ends in the same shape
+   it opened in. The only new thing is that a tile is now a button. */
+.tile.jump {
+  font: inherit; color: inherit; text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.tile.jump:hover, .tile.jump:focus-visible {
+  outline: none;
+  border-color: var(--rule);
+  border-top-color: var(--accent);
+  background: var(--bg-raise);
+}
+
+/* ---- where to go next ---- */
+.next {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+  margin-top: 0.6rem;
+}
+.next-col {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.next-k {
+  font-family: var(--mono); font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls); text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 0.6rem; margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+/* Counter rather than a marker glyph: the numbered column is a set of
+   instructions and the unnumbered ones are not, and the two have to
+   line up on the same left edge across the three panels. */
+.next-list { list-style: none; margin: 0; padding: 0; counter-reset: n; }
+.next-list li {
+  position: relative; padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.92rem; line-height: 1.4; color: var(--ink-mid);
+}
+.next-list li:last-child { margin-bottom: 0; }
+.next-list li b { color: var(--ink); font-weight: 600; }
+.next-list li::before {
+  position: absolute; left: 0; top: 0.05rem;
+  font-family: var(--mono); font-size: 0.7rem;
+  color: var(--ink-dim); content: "\2014";
+}
+ol.next-list li { counter-increment: n; }
+ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(--accent); }
+
+/* The reading list is name-then-what-it-is-for, so the name is mono and
+   the gloss drops to a second line rather than running on. */
+.next-list.refs li b { font-family: var(--mono); font-size: 0.84rem; font-weight: 500; }
+.next-list.refs li span {
+  display: block; margin-top: 0.15rem;
+  font-size: 0.84rem; color: var(--ink-dim);
+}
+
+.next-link {
+  display: block; margin-top: 0.5rem;
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim);
+}
+.next-link b { color: var(--accent); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .next { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile.jump { transition: none; }
+}
+
+/* ---- the end frame ---- */
+/* Centred, and the only slide besides the cover that leads with the
+   wordmark. Nothing here is interactive: it is what the projector shows
+   while the room packs up. */
+.thanks { text-align: center; max-width: 46rem; margin: 0 auto; }
+.thanks .eyebrow { justify-content: center; }
+/* The eyebrow's trailing rule only works flush left; centred, it drags
+   the label off-centre. */
+.thanks .eyebrow::after { display: none; }
+.thanks .wordmark { justify-content: center; }
+.thanks-sub {
+  font-size: 1.35rem; line-height: 1.4; color: var(--ink-mid);
+  margin: 1.4rem auto 0; max-width: 34rem;
+}
+.thanks-meta {
+  margin-top: 2.4rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: var(--label-lg);
+  letter-spacing: 0.1em; color: var(--ink-dim);
+  display: flex; gap: 1.6rem; flex-wrap: wrap; justify-content: center;
+}
+.thanks-q {
+  margin-top: 1.6rem; font-size: 0.98rem; color: var(--ink-dim);
+}

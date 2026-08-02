@@ -24,8 +24,8 @@
 }
 /* Below the floor the readout itself goes amber, then red — the number is
    the warning, so it carries the colour. */
-.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem rgba(251,191,36,0.28); }
-.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem rgba(248,113,113,0.28); }
+.cl-side.warn .cl-bits { color: var(--warn); text-shadow: 0 0 2.4rem color-mix(in srgb, var(--warn) 28%, transparent); }
+.cl-side.bad  .cl-bits { color: var(--bad);  text-shadow: 0 0 2.4rem color-mix(in srgb, var(--bad) 28%, transparent); }
 
 .cl-stats { margin: 1.2rem 0 0; display: grid; gap: 0.7rem; }
 .cl-stats div { border-top: 1px solid var(--rule-soft); padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
