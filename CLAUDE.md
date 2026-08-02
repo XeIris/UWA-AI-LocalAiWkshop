@@ -174,7 +174,12 @@ word is spoken.
    screen; LINEAR is the drama and LOG is where you read the numbers.
    A second BY YEAR view carries the disclosure story — OpenAI and
    Google published parameter counts up to 2022/23 and then stopped, so
-   every solid point after 2023 is open weights. Closed models are drawn
+   every solid point after 2023 is open weights. Say that precisely on
+   the slide: OpenAI's last real number was GPT-3's and Google's was
+   PaLM's, both superseded in 2023 by releases that gave no figure, and
+   **Anthropic never published one at all**. "OpenAI stopped after 2023"
+   is wrong (GPT-4 is where they stopped, not where they last disclosed)
+   and "Google never started" is wrong the other way. Closed models are drawn
    as **ranges**, not points: the two public attempts to estimate them
    from the outside (arXiv 2604.24827 and the LessWrong re-analysis)
    disagree by roughly 6x, and pretending otherwise would be the one
