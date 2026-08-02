@@ -271,6 +271,9 @@ function buildGlossPanel() {
   el.className = 'gloss';
   el.id = 'gloss';
   el.setAttribute('role', 'dialog');
+  /* Focusable but not tabbable: it is announced and reachable when the
+     panel opens, and stays out of the tab order the rest of the time. */
+  el.tabIndex = -1;
   el.hidden = true;
   el.innerHTML =
     '<div class="gloss-k"></div>' +
@@ -282,10 +285,19 @@ function buildGlossPanel() {
   return el;
 }
 
-function closeGloss() {
+/* restore: hand focus back to the word the panel came from. Only the
+   keyboard path (Escape) asks for it. Doing it on EVERY close would be
+   wrong twice over — a slide change would move focus onto a button on a
+   now-hidden slide, and a focused button makes the deck's keydown guard
+   hand the arrow keys to that button instead of navigating. */
+function closeGloss(restore) {
   if (!glossPanel || glossPanel.hidden) return;
   glossPanel.hidden = true;
-  if (glossTerm) glossTerm.setAttribute('aria-expanded', 'false');
+  if (glossTerm) {
+    glossTerm.setAttribute('aria-expanded', 'false');
+    glossTerm.removeAttribute('aria-controls');
+    if (restore && glossTerm.closest('.slide.active')) glossTerm.focus();
+  }
   glossTerm = null;
 }
 
@@ -330,7 +342,13 @@ function openGloss(btn) {
   glossPanel.hidden = false;
   glossTerm = btn;
   btn.setAttribute('aria-expanded', 'true');
+  btn.setAttribute('aria-controls', 'gloss');
   placeGloss(btn);
+  /* The panel is appended to <body>, nowhere near the word in the tab
+     order, so without this a keyboard user opens a definition they then
+     cannot reach. Focusing a div (not a control) also keeps the deck's
+     arrow keys working while it is open. */
+  glossPanel.focus();
 }
 
 /* Anchored under the word, clamped to the viewport, and flipped above
@@ -365,7 +383,7 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeGloss();
+  if (e.key === 'Escape') closeGloss(true);
 });
 /* Navigating away from the word the panel is pointing at would leave it
    floating over an unrelated slide. */

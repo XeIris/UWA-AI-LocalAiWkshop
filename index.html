@@ -2840,6 +2840,11 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
   text-underline-offset: 0.22em;
 }
+
+/* The panel takes focus when it opens (see 19-glossary.js) — that is for
+   screen readers and the tab order, not something to draw a ring around.
+   Every control inside it keeps its own :focus-visible. */
+.gloss:focus { outline: none; }
 /* --- §2 · the chat template gotcha --------------------------- */
 /* Two panels: the wire on the left, the consequence on the right.
    Warm colour appears here because a mismatched template is a genuine
@@ -2940,6 +2945,11 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 
 /* ---- the output ---- */
+/* overflow: hidden, matching §6's thread and for the same reason. The JS
+   sets scrollTop after each append, which still works when overflow is
+   hidden, so the panel follows the tail; what hidden removes is a
+   scrollbar appearing mid-slide on the one scenario that runs long. A
+   projected deck should not grow furniture. */
 .tp-out {
   flex: 1; min-height: 0; overflow: hidden;
   padding: 0.8rem 0.9rem;
@@ -3266,9 +3276,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="eyebrow">00 &mdash; What is a local LLM?</div>
       <h2>A file of numbers, and a program that reads it</h2>
 
-      <p class="def">An <strong>open-weight</strong> language model whose
-        <strong>inference</strong> &mdash; the arithmetic that produces each word &mdash;
-        runs on hardware you own. Same kind of model as the one in the browser tab.
+      <p class="def">A language model whose <strong>inference</strong> &mdash; the
+        arithmetic that produces each word &mdash; runs on hardware you own. In practice
+        that means an <strong>open-weight</strong> model, because someone has to publish
+        the file before you can hold it. Same kind of model as the one in the browser tab.
         Different address.</p>
 
       <div class="anat">
@@ -3277,7 +3288,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <h3>The weights</h3>
           <p>One file you download once. A few billion numbers, learned during
             training and then frozen &mdash; nothing about it changes as you use it.</p>
-          <span class="anat-m">GEMMA-3-1B-Q4_K_M.GGUF &middot; 0.7 GB</span>
+          <span class="anat-m">GEMMA-3-1B-IT-Q4_0.GGUF &middot; 720 MB</span>
         </div>
         <div class="anat-part">
           <span class="anat-n">02</span>
@@ -3311,7 +3322,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
 
-      <p class="caveat"><strong>Open weights is not open source.</strong> You get the
+      <p class="caveat"><strong>Open weights are not the same as open source.</strong> You get the
         finished numbers to keep, run and fine-tune. The training data and the code that
         made them usually stay private &mdash; and a license can still restrict what you
         do with the output. Read the model card.</p>
@@ -5389,21 +5400,16 @@ function draw(now) {
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
   if (!reduced) requestAnimationFrame(draw);
-
-/* A running loop repaints itself on the next frame anyway. Reduced motion
-   drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops. */
-if (reduced) {
-  document.addEventListener('deck:theme', function () {
-    requestAnimationFrame(draw);
-  });
-}
 }
 requestAnimationFrame(draw);
 
 /* A running loop repaints itself on the next frame anyway. Reduced motion
    drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops. */
+   only that case may schedule here, or the deck ends up with two loops.
+
+   Registered ONCE, here at module level. This block briefly lived inside
+   draw() as well, which under reduced motion added a listener per repaint
+   and turned every later theme toggle into a growing burst of frames. */
 if (reduced) {
   document.addEventListener('deck:theme', function () {
     requestAnimationFrame(draw);
@@ -8271,6 +8277,9 @@ function buildGlossPanel() {
   el.className = 'gloss';
   el.id = 'gloss';
   el.setAttribute('role', 'dialog');
+  /* Focusable but not tabbable: it is announced and reachable when the
+     panel opens, and stays out of the tab order the rest of the time. */
+  el.tabIndex = -1;
   el.hidden = true;
   el.innerHTML =
     '<div class="gloss-k"></div>' +
@@ -8282,10 +8291,19 @@ function buildGlossPanel() {
   return el;
 }
 
-function closeGloss() {
+/* restore: hand focus back to the word the panel came from. Only the
+   keyboard path (Escape) asks for it. Doing it on EVERY close would be
+   wrong twice over — a slide change would move focus onto a button on a
+   now-hidden slide, and a focused button makes the deck's keydown guard
+   hand the arrow keys to that button instead of navigating. */
+function closeGloss(restore) {
   if (!glossPanel || glossPanel.hidden) return;
   glossPanel.hidden = true;
-  if (glossTerm) glossTerm.setAttribute('aria-expanded', 'false');
+  if (glossTerm) {
+    glossTerm.setAttribute('aria-expanded', 'false');
+    glossTerm.removeAttribute('aria-controls');
+    if (restore && glossTerm.closest('.slide.active')) glossTerm.focus();
+  }
   glossTerm = null;
 }
 
@@ -8330,7 +8348,13 @@ function openGloss(btn) {
   glossPanel.hidden = false;
   glossTerm = btn;
   btn.setAttribute('aria-expanded', 'true');
+  btn.setAttribute('aria-controls', 'gloss');
   placeGloss(btn);
+  /* The panel is appended to <body>, nowhere near the word in the tab
+     order, so without this a keyboard user opens a definition they then
+     cannot reach. Focusing a div (not a control) also keeps the deck's
+     arrow keys working while it is open. */
+  glossPanel.focus();
 }
 
 /* Anchored under the word, clamped to the viewport, and flipped above
@@ -8365,7 +8389,7 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeGloss();
+  if (e.key === 'Escape') closeGloss(true);
 });
 /* Navigating away from the word the panel is pointing at would leave it
    floating over an unrelated slide. */

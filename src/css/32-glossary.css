@@ -98,3 +98,8 @@
   text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
   text-underline-offset: 0.22em;
 }
+
+/* The panel takes focus when it opens (see 19-glossary.js) — that is for
+   screen readers and the tab order, not something to draw a ring around.
+   Every control inside it keeps its own :focus-visible. */
+.gloss:focus { outline: none; }

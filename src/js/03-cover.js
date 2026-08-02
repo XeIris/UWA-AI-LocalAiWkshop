@@ -83,21 +83,16 @@ function draw(now) {
   ctx.globalAlpha = 1;
   /* Reduced motion gets one static frame, not an endless redraw of it. */
   if (!reduced) requestAnimationFrame(draw);
-
-/* A running loop repaints itself on the next frame anyway. Reduced motion
-   drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops. */
-if (reduced) {
-  document.addEventListener('deck:theme', function () {
-    requestAnimationFrame(draw);
-  });
-}
 }
 requestAnimationFrame(draw);
 
 /* A running loop repaints itself on the next frame anyway. Reduced motion
    drew exactly one frame and would otherwise keep the old palette — but
-   only that case may schedule here, or the deck ends up with two loops. */
+   only that case may schedule here, or the deck ends up with two loops.
+
+   Registered ONCE, here at module level. This block briefly lived inside
+   draw() as well, which under reduced motion added a listener per repaint
+   and turned every later theme toggle into a growing burst of frames. */
 if (reduced) {
   document.addEventListener('deck:theme', function () {
     requestAnimationFrame(draw);

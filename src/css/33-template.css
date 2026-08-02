@@ -98,6 +98,11 @@
 }
 
 /* ---- the output ---- */
+/* overflow: hidden, matching §6's thread and for the same reason. The JS
+   sets scrollTop after each append, which still works when overflow is
+   hidden, so the panel follows the tail; what hidden removes is a
+   scrollbar appearing mid-slide on the one scenario that runs long. A
+   projected deck should not grow furniture. */
 .tp-out {
   flex: 1; min-height: 0; overflow: hidden;
   padding: 0.8rem 0.9rem;
