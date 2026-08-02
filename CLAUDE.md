@@ -198,7 +198,7 @@ word is spoken.
    memory) because every later section is about one of those three parts.
    Adding it forced a second full renumber of `src/slides/`, and splitting the
    old `02-why-bother.html` into a card file and a reasons file.
-8. ~~The §2 **chat-template gotcha** and the two **closing slides**.~~ These were
+8. ~~The §2 **chat-template gotcha** and the three **closing slides**.~~ These were
    the last two things the plan named and the deck did not have. §2's is the
    only interactive in the deck whose subject is a *failure*, and the closers
    are what the deck ends on instead of the diffusion animation stopping.
@@ -585,12 +585,24 @@ Two examples, **both presenter-demo only** (see accuracy notes below):
   1.58-bit BitNet-style scheme. 8B scores ~5 points higher on average than 1-bit Bonsai
   for only ~600MB more (1.75 GB vs 1.15 GB). Apache 2.0.
 - A 27B generation exists with vision and tool calling.
-- **Catch:** mainstream engines don't support 1-bit weights yet — it will *not* load in
-  LM Studio or stock llama.cpp. Requires PrismML's own demo repo. Re-checked Aug 2026:
-  the `prism-ml/*-gguf` repos now exist and their card names LM Studio and Ollama, but
-  the quant they ship is `Q2_0`, which is **not in mainline llama.cpp** — it needs the
-  `PrismML-Eng/llama.cpp` fork. Read the card carefully; the app names on it are
-  aspirational and an attendee who tries this in LM Studio tonight will fail.
+- **Catch — and this one moved under us, twice.** The original note said no mainstream
+  engine could load it at all. Re-checked against `PrismML-Eng/Bonsai-demo` (Aug 2026),
+  that is now out of date, and the honest position is narrower:
+  - 1-bit `*-Q1_0.gguf` is **merged upstream** — "works out of the box" on CPU, Metal,
+    CUDA and Vulkan.
+  - Ternary ships in **two** builds. `*-Q2_0_g64.gguf` (group 64) is the format the repo
+    calls "the official llama.cpp format": CPU, Metal and Vulkan **merged in mainline**,
+    CUDA still "in review upstream". The older group-128 `*-Q2_0.gguf` is fork-only.
+  - `*-PQ2_0.gguf` is announced and not yet supported anywhere.
+  - The repo says **nothing about LM Studio or Ollama**, so neither does the slide.
+    Whether a given LM Studio ships a new-enough llama.cpp is a version question — check
+    the machine you will present from, and check it again on the night.
+
+  The teaching point survives the correction and is better for it: the catch is no longer
+  "impossible", it is "which build, which backend, which version" — which is a truer
+  picture of running frontier formats than the original absolute was.
+  **Re-verify this section before every delivery.** It has been wrong in both directions
+  now, and the §7 slide copy has to move with it.
 - Published throughput, for the §7 slide's honesty note: 82 tok/s on an M4 Pro, 27 tok/s
   on an iPhone 17 Pro Max — about half of what `bandwidth ÷ size` predicts, which is the
   normal ratio and worth saying out loud.
@@ -599,8 +611,11 @@ Two examples, **both presenter-demo only** (see accuracy notes below):
 256 tokens in parallel rather than one token at a time. Reported >1,000 tok/s on a single
 H100. A 26B-class MoE with ~3.8B active parameters per step. Apache 2.0, weights on
 Hugging Face.
-- **Catch:** ~18 GB VRAM even quantized, quality below standard Gemma 4, no hosted API.
-  Above the beginner hardware ceiling.
+- **Catch:** quality below standard Gemma 4 and no hosted API to try it on. On memory,
+  say *whose* ceiling: Google put the quantized model inside the **24 GB** of an RTX 5090
+  or 4090, which is a graphics card, not a laptop — and §3's demo PC has 32 GB of VRAM,
+  so "above tonight's hardware ceiling" is only true of the room's laptops. Name them, or
+  an attentive attendee will catch the contradiction with the slide two sections back.
 
 **The closing beat:** *both* examples being un-runnable in LM Studio today is the point —
 "everything you learned about bytes-per-parameter is already being rewritten; come back

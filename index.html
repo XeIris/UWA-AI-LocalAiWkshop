@@ -107,7 +107,10 @@
 
   --ink:       #08161a;
   --ink-mid:   #3a545e;
-  --ink-dim:   #647d88;
+  /* Darker than a straight tonal inversion would give: --ink-dim carries
+     real body text (captions, glosses, the 0.84rem reference lines), so it
+     has to clear 4.5:1 on paper white, not merely look recessive. */
+  --ink-dim:   #556a74;
 
   /* The cyan has to darken or it stops being legible as text on
      paper-white; it is the same hue, not a second accent. */
@@ -2833,14 +2836,6 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .gl, .gloss-go { transition: none; }
 }
 
-/* Sample of the treatment, on the orientation slide. Not a term — there
-   is nothing to define about the phrase "dotted underline". */
-.gl-demo {
-  text-decoration: underline dotted;
-  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  text-underline-offset: 0.22em;
-}
-
 /* The panel takes focus when it opens (see 19-glossary.js) — that is for
    screen readers and the tab order, not something to draw a ring around.
    Every control inside it keeps its own :focus-visible. */
@@ -2911,7 +2906,7 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   flex: 1; min-height: 0; overflow: auto; margin: 0;
   padding: 0.8rem 0.9rem;
   font-family: var(--mono); font-size: 0.76rem; line-height: 1.5;
-  white-space: pre-wrap; word-break: break-word;
+  white-space: pre-wrap; overflow-wrap: anywhere;
   color: var(--ink-mid);
 }
 /* A special token this model owns: one id in the vocabulary, drawn as
@@ -3002,6 +2997,13 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
 }
 .tp-v.ok  { border-left-color: var(--ok); }
 .tp-v.bad { border-left-color: var(--bad); }
+
+/* This slide borrows §6's cs-in/cs-blink keyframes, so it has to opt out
+   of them the same way §6 does — borrowing an animation means borrowing
+   its reduced-motion rule. */
+@media (prefers-reduced-motion: reduce) {
+  .tp-msg, .tp-stop, .tp-note, .tp-caret { animation: none; }
+}
 
 @media (max-width: 900px) {
   .tp-panes { grid-template-columns: 1fr; height: auto; }
@@ -3244,10 +3246,14 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </nav>
       </div>
 
+      <!-- The example has to be a REAL term. A span merely dressed to look
+           like one was the first thing on the slide that failed when clicked,
+           which is a poor advertisement for the feature it is advertising. The
+           marking pass picks "quantization" up here like anywhere else. -->
       <p class="caveat">Any line above is clickable, and so is the index along the
-        bottom edge &mdash; nothing here has to be walked through in order. A word with a
-        <span class="gl-demo">dotted underline</span> anywhere in the deck will define
-        itself if you click it.</p>
+        bottom edge &mdash; nothing here has to be walked through in order. A word
+        carrying a faint dotted underline, like quantization, will define itself if
+        you click it.</p>
     </div>
   </section>
   <!-- ============ §0 ============ -->
@@ -3300,8 +3306,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <div class="anat-part">
           <span class="anat-n">03</span>
           <h3>Your memory</h3>
-          <p>The file has to fit in RAM or VRAM, and gets read once per word.
-            That is why the next two hours are mostly about memory.</p>
+          <p>The file has to fit in RAM or VRAM, and is read end to end for every
+            word it writes. That is why the next two hours are mostly about memory.</p>
           <span class="anat-m">CAPACITY &rarr; FITS &middot; BANDWIDTH &rarr; SPEED</span>
         </div>
       </div>
@@ -3956,7 +3962,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat">Both machines hold 64 GB, and that is the point &mdash; capacity is not
         the number that decides speed. Drag past 16B and watch the PC fall off a cliff the
-        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.</p>
+        Mac does not have. Then drop to 4&#8209;bit and watch the cliff move.
+        <strong>Weights only.</strong> The bars count nothing but the model, so the
+        opening state &mdash; 32&nbsp;GB of weights in 32&nbsp;GB of VRAM &mdash; is the
+        theoretical edge, not a configuration to copy: the KV cache of &sect;5 and a
+        couple of gigabytes of runtime have to live there too, and in practice that
+        machine falls off this cliff a little before the slider says it does.</p>
     </div>
   </section>
   <!-- ---- 3 · the other half of the formula ---- -->
@@ -4734,9 +4745,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
-        format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
-        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        1&#8209;bit version that had no zero. <strong>The catch is a version number</strong>
+        &mdash; PrismML ship two ternary builds, and only the group&#8209;64 one
+        (<span class="mono">*-Q2_0_g64.gguf</span>) is the format mainline llama.cpp took:
+        CPU, Metal and Vulkan are merged, CUDA is still in review, and the older
+        group&#8209;128 files need their fork. Whether the llama.cpp inside <em>your</em>
+        LM Studio is new enough is a question to settle before tonight, not during it. The decode figure is §3&rsquo;s
         formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
         measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
         roughly half to four fifths of it.</p>
@@ -4802,9 +4816,11 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
         compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
-        experts with 3.8&nbsp;B active, wants roughly 18&nbsp;GB even quantized, scores
-        below standard Gemma&nbsp;4, and has no hosted API. Apache 2.0, weights on Hugging
-        Face &mdash; and above tonight&rsquo;s hardware ceiling. Rates are Google&rsquo;s
+        experts with 3.8&nbsp;B active, scores below standard Gemma&nbsp;4, and has no
+        hosted API to try it on. Quantized, Google put it inside the 24&nbsp;GB of an
+        RTX&nbsp;5090 or 4090 &mdash; which is a graphics card, not a laptop, and well
+        past what anything in this room downloaded tonight. Apache 2.0, weights on
+        Hugging Face. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>
   </section>
@@ -4931,7 +4947,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         deck will be wrong within a year &mdash; the model names certainly, the hardware
         probably. The arithmetic will not be: a model is a file, it has to fit, and it is
         read once per token. That is what you came for.
-        <span class="next-link">These slides &middot; <b>[ LINK GOES HERE ]</b></span></p>
+        <!-- Where the deck's own link goes. Uncomment and fill in — kept out of
+             the rendered slide until it is real, because a placeholder projected
+             at a room reads as an unfinished deck, and this is the frame they
+             look at longest.
+        <span class="next-link">These slides &middot; <b>example.org/unplugged</b></span>
+        --></p>
     </div>
   </section>
   <!-- ---- close 3 · the end frame ----

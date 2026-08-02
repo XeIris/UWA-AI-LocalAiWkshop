@@ -99,7 +99,10 @@
 
   --ink:       #08161a;
   --ink-mid:   #3a545e;
-  --ink-dim:   #647d88;
+  /* Darker than a straight tonal inversion would give: --ink-dim carries
+     real body text (captions, glosses, the 0.84rem reference lines), so it
+     has to clear 4.5:1 on paper white, not merely look recessive. */
+  --ink-dim:   #556a74;
 
   /* The cyan has to darken or it stops being legible as text on
      paper-white; it is the same hue, not a second accent. */

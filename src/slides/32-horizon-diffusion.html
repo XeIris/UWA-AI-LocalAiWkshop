@@ -58,9 +58,11 @@
         produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
         compute more. <strong>The catch:</strong> DiffusionGemma is a 26&nbsp;B mixture of
-        experts with 3.8&nbsp;B active, wants roughly 18&nbsp;GB even quantized, scores
-        below standard Gemma&nbsp;4, and has no hosted API. Apache 2.0, weights on Hugging
-        Face &mdash; and above tonight&rsquo;s hardware ceiling. Rates are Google&rsquo;s
+        experts with 3.8&nbsp;B active, scores below standard Gemma&nbsp;4, and has no
+        hosted API to try it on. Quantized, Google put it inside the 24&nbsp;GB of an
+        RTX&nbsp;5090 or 4090 &mdash; which is a graphics card, not a laptop, and well
+        past what anything in this room downloaded tonight. Apache 2.0, weights on
+        Hugging Face. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>
   </section>

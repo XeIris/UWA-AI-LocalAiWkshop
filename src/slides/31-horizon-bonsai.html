@@ -68,9 +68,12 @@
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
         8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is real</strong> &mdash; its
-        format is not in mainline llama.cpp, so it needs PrismML&rsquo;s own fork or their
-        MLX build, and will not appear in LM Studio tonight. The decode figure is §3&rsquo;s
+        1&#8209;bit version that had no zero. <strong>The catch is a version number</strong>
+        &mdash; PrismML ship two ternary builds, and only the group&#8209;64 one
+        (<span class="mono">*-Q2_0_g64.gguf</span>) is the format mainline llama.cpp took:
+        CPU, Metal and Vulkan are merged, CUDA is still in review, and the older
+        group&#8209;128 files need their fork. Whether the llama.cpp inside <em>your</em>
+        LM Studio is new enough is a question to settle before tonight, not during it. The decode figure is §3&rsquo;s
         formula on a published bandwidth, so it is a <em>ceiling</em>: for ternary PrismML
         measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an iPhone&nbsp;17 Pro&nbsp;Max,
         roughly half to four fifths of it.</p>
