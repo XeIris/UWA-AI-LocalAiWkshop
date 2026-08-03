@@ -42,21 +42,31 @@ PRE = re.compile(
 def audit(page: pathlib.Path) -> str:
     chrome = find_chrome()
     url = page.resolve().as_uri() + "?audit"
-    proc = subprocess.run(
-        [
-            chrome,
-            "--headless",
-            "--disable-gpu",
-            # The marking pass runs at parse time and the audit right after
-            # it, but the deck's own modules paint canvases on load; give
-            # the page a moment rather than racing it.
-            "--virtual-time-budget=4000",
-            "--dump-dom",
-            url,
-        ],
-        capture_output=True,
-        text=True,
-    )
+    try:
+        proc = subprocess.run(
+            [
+                chrome,
+                "--headless",
+                "--disable-gpu",
+                # The marking pass runs at parse time and the audit right after
+                # it, but the deck's own modules paint canvases on load; give
+                # the page a moment rather than racing it.
+                "--virtual-time-budget=4000",
+                "--dump-dom",
+                url,
+            ],
+            capture_output=True,
+            text=True,
+            # --virtual-time-budget bounds the page's clock, not the process:
+            # a Chrome held up by a locked profile or a dead GPU process waits
+            # for a human. Turn that into a failure that says so.
+            timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        raise BuildError(
+            "chrome did not finish within 120s — another instance may be "
+            "holding the profile. Open index.html?audit in a browser instead."
+        )
     if proc.returncode != 0:
         raise BuildError(f"chrome exited {proc.returncode}: {proc.stderr.strip()[:400]}")
     found = PRE.search(proc.stdout)
@@ -79,7 +89,15 @@ def main() -> None:
 
     if "--strict" in sys.argv[1:]:
         tail = re.search(r"^AUDIT: (\d+) issue", report, re.M)
-        if tail and int(tail.group(1)):
+        # No summary line means the report format moved and this script can no
+        # longer read the verdict. Passing would be worse than failing: a check
+        # that cannot fail is a check nobody notices has stopped working.
+        if not tail:
+            raise BuildError(
+                "no 'AUDIT: N issue' line in the report — the audit module's "
+                "format changed and --strict cannot judge it"
+            )
+        if int(tail.group(1)):
             sys.exit(f"\nglossary audit: {tail.group(1)} issue(s) — see A and D above")
 
 

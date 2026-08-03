@@ -3133,7 +3133,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   .next { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tile.jump { transition: none; }
+  .tile.jump, .next-list a { transition: none; }
 }
 
 /* ---- the end frame ---- */
