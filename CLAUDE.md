@@ -64,12 +64,59 @@ out instead would break the one rule the palette has.
 **Glossary.** Terms are marked by a DOM pass at load (`js/19-glossary.js`), not by hand
 in the slide source — hand-marked spans would drift the first time a sentence was
 reworded. The pass is timid on purpose: prose containers only (never a heading, readout
-or control, where an underline reads as part of the number), one mark per *definition*
-per slide, at most six per slide, longest term first so "memory bandwidth" beats
-"bandwidth". Opt out with `data-noglossary`. Definitions are one sentence and say what
-the thing **is** — the slide is already doing the job of saying why it matters. Each
-carries the section that covers it properly, as a `data-goto` button, which the deck's
-existing delegated listener handles for free.
+or control, where an underline reads as part of the number), never inside a link, one
+mark per *definition* per slide, at most six per slide. Opt out with `data-noglossary`.
+Definitions are one sentence and say what the thing **is** — the slide is already doing
+the job of saying why it matters. Each carries the section that covers it properly, as a
+`data-goto` button, which the deck's existing delegated listener handles for free.
+
+**The budget is spent in reading order, and tier 1 first** (revised Aug 2026, from
+"some words are underlined and some are not"). Two rules changed:
+
+- **Reading order, not term length.** Whichever six keys happened to be *longest* used
+  to take the slide, which is why the marking looked arbitrary from the back of the
+  room — "mixture of experts" underlined and "token", four words earlier, not. Longest
+  still wins a *tie* at the same character, so "memory bandwidth" beats "bandwidth".
+- **Tier.** Entries default to tier 1, the deck's own subject vocabulary. `t: 2` is
+  general computing — bit, RAM, GPU, API, licence, prompt — which the room needs
+  (a hobbyist club is not a CS cohort) and which must never take a slot from the words
+  the deck exists to teach. A slide fills its budget from tier 1, then from tier 2 with
+  whatever is left.
+
+**Neither the spaces nor the hyphens in a term are the characters they look like.** Both
+bit the same way, and both are handled in `glossRe`:
+
+- A space is as often a newline and an indent, or an `&nbsp;` holding a phrase together
+  at a line break, so it expands to `[\s\u00a0]+`. With a literal space, *every*
+  two-word entry in the glossary was silently dead — that was most of the reported
+  inconsistency.
+- A hyphen may be `-`, `&#8209;` (the deck writes `4&#8209;bit` so a quantization never
+  wraps) or a minus, so the term's own hyphens and the word-boundary class both cover
+  all of them. Until they did, "bit" matched the **tail of "4-bit"** on six slides:
+  three letters of a compound underlined, offering to explain what a binary digit is.
+  A term must never match half a word, whichever dash is holding it together.
+
+**Nothing is checked by eye.** `js/21-glossary-audit.js` runs the audit in the page,
+against the real DOM with the real selectors and the real regexes, and reports: **A**
+entries no slide contains, **B** terms in prose that lost the budget, **C** terms that
+appear only in a heading or readout (where the pass will not mark, by design), **D**
+jargon used and never defined, and **E** what each slide actually marked. A and D fail;
+B and C are reports, because both have legitimate instances and a check that cries wolf
+gets skimmed.
+
+```bash
+python3 tools/glossary-audit.py --strict
+```
+
+That opens the built deck at `?audit` in headless Chrome — the same Chrome `--pdf`
+already needs — and reads the report back out of the DOM. Or open `index.html?audit` in
+a browser and read the overlay. **`?audit`, never `#audit`:** `00-deck.js` rewrites the
+hash for its deep link before the audit module runs. Do not reimplement the audit in
+Python against `src/slides/*.html` — a second definition of "what counts as prose" would
+agree on the day it was written and quietly stop agreeing, which is the exact failure
+the audit exists to catch. **D is the category to act on.** When it names a word, either
+define it or add it to `AUDIT_STOP` — product names (H100, M5, a GGUF filename) are
+proper nouns and the slide is already saying what they are.
 
 Each entry may also carry a **"not the same as"** list, and that half is the one people
 actually need. Nearly every wrong mental model in the room is a *collision* between two
@@ -264,6 +311,7 @@ src/assets/             logos/*.svg (one <symbol> each), mlx.png
 src/posters/NN-name.html  one file per promo poster (A3)
 src/posters/_poster.css   shared poster base; the _ keeps it out of the glob
 build.py                stdlib only
+tools/glossary-audit.py   runs the deck's own glossary audit; stdlib only
 index.html              BUILT, committed — never edit by hand
 posters/*.html          BUILT, committed — never edit by hand
 posters/*.pdf           BUILT on demand (--pdf), gitignored
@@ -623,6 +671,23 @@ deliberately skipped (speculative decoding, embeddings/RAG internals, fine-tunin
 LoRA, serving a local API), and where to read. The **deck link is a placeholder**
 (`[ LINK GOES HERE ]`) under a marked comment, like the posters' event details — fill it
 in the source and rebuild.
+
+**Everything on it is a real link** (Aug 2026), because the deck is also mailed round
+afterwards and "go and search for llama.cpp" is not a reading list. Two rules:
+
+- **The link text is the address**, written as you would type it
+  (`github.com/ggml-org/llama.cpp`), so the slide works projected at a room that cannot
+  click and in a browser that can. No "click here", no bare domain hiding a deep path.
+- **Primary sources.** Each rabbit hole cites the paper that started it — speculative
+  decoding `arxiv.org/abs/2211.17192`, RAG `2005.11401`, LoRA `2106.09685` — and the
+  serving link is LM Studio's own API docs. A paper does not move; a blog post about it
+  does. Everything else is first-party except r/LocalLLaMA, which has no first party.
+
+They open in a new tab (`target="_blank" rel="noopener noreferrer"`) so a click during
+Q&A does not lose the deck, and they use the download slide's link treatment — accent,
+faint rule, no browser-default blue underline anywhere in the deck. **Re-check the URLs
+before a delivery**: this is the frame that stays on screen longest, and it is the worst
+possible place for a 404.
 
 **"Thank you"** — the cover reprised: same wordmark, same NO CLOUD / NO SUBSCRIPTION /
 NO WI-FI strapline, one line of instruction and one line inviting questions. It carries

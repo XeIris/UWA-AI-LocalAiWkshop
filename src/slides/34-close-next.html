@@ -26,15 +26,28 @@
 
         <div class="next-col">
           <div class="next-k">Rabbit holes we skipped</div>
+          <!-- Each one gets the paper that started it rather than a blog
+               post about it: the primary source is the thing that will
+               still be there in three years, and all four are readable
+               abstracts even if the rest is not. Links open in a new tab
+               so nobody loses their place in the deck mid-question. -->
           <ul class="next-list">
             <li><b>Speculative decoding</b> &mdash; a small model drafts, a big one checks.
-              Real speedups, heavy concepts.</li>
+              Real speedups, heavy concepts.
+              <a class="ref-src" href="https://arxiv.org/abs/2211.17192"
+                 target="_blank" rel="noopener noreferrer">arxiv.org/abs/2211.17192</a></li>
             <li><b>Embeddings and a proper RAG stack</b> &mdash; what tonight&rsquo;s
-              &ldquo;chat with your files&rdquo; is doing underneath.</li>
+              &ldquo;chat with your files&rdquo; is doing underneath.
+              <a class="ref-src" href="https://arxiv.org/abs/2005.11401"
+                 target="_blank" rel="noopener noreferrer">arxiv.org/abs/2005.11401</a></li>
             <li><b>Fine-tuning and LoRA</b> &mdash; changing the weights rather than the
-              prompt. Start here only after RAG has failed you.</li>
+              prompt. Start here only after RAG has failed you.
+              <a class="ref-src" href="https://arxiv.org/abs/2106.09685"
+                 target="_blank" rel="noopener noreferrer">arxiv.org/abs/2106.09685</a></li>
             <li><b>Serving it</b> &mdash; LM Studio and Ollama both expose a local API, which
-              is how you point other software at your own model.</li>
+              is how you point other software at your own model.
+              <a class="ref-src" href="https://lmstudio.ai/docs/api/rest-api"
+                 target="_blank" rel="noopener noreferrer">lmstudio.ai/docs/api/rest-api</a></li>
           </ul>
         </div>
 
@@ -42,18 +55,34 @@
           <div class="next-k">Where to read</div>
           <!-- No glossary marks in here: the repo and domain names are the
                reference, and a dotted underline through "llama.cpp" reads as
-               part of the path. -->
+               part of the path.
+
+               The name IS the address, so it is both the link and the thing
+               you can type off a projector — no "click here", and nothing
+               that only works for whoever has the file. All first-party
+               except the last, which has no first party by definition.
+               VERIFIED Aug 2026; re-check before a delivery, a dead link on
+               the frame that stays up through Q&A is the worst place for one. -->
           <ul class="next-list refs" data-noglossary>
-            <li><b>ggml-org/llama.cpp</b><span>The engine. Its discussions are where the
-              quantization work actually gets argued out.</span></li>
-            <li><b>lmstudio.ai/docs</b><span>The app, including the local server and the
-              chat-template settings from &sect;2.</span></li>
-            <li><b>huggingface.co</b><span>Model cards first, downloads second. bartowski and
-              lmstudio-community for quants.</span></li>
-            <li><b>artificialanalysis.ai</b><span>Independent scoring, open and closed models
-              side by side. Read it as a ranking, not a verdict.</span></li>
-            <li><b>r/LocalLLaMA</b><span>Noisy, fast, and the first place a new release gets
-              tested on consumer hardware.</span></li>
+            <li><a href="https://github.com/ggml-org/llama.cpp"
+                   target="_blank" rel="noopener noreferrer">github.com/ggml-org/llama.cpp</a><span>The
+              engine. Its discussions are where the quantization work actually gets argued
+              out.</span></li>
+            <li><a href="https://lmstudio.ai/docs"
+                   target="_blank" rel="noopener noreferrer">lmstudio.ai/docs</a><span>The app,
+              including the local server and the chat-template settings from &sect;2.</span></li>
+            <li><a href="https://huggingface.co/models"
+                   target="_blank" rel="noopener noreferrer">huggingface.co/models</a><span>Model
+              cards first, downloads second. bartowski and lmstudio-community for
+              quants.</span></li>
+            <li><a href="https://artificialanalysis.ai"
+                   target="_blank" rel="noopener noreferrer">artificialanalysis.ai</a><span>Independent
+              scoring, open and closed models side by side. Read it as a ranking, not a
+              verdict.</span></li>
+            <li><a href="https://www.reddit.com/r/LocalLLaMA/"
+                   target="_blank" rel="noopener noreferrer">reddit.com/r/LocalLLaMA</a><span>Noisy,
+              fast, and the first place a new release gets tested on consumer
+              hardware.</span></li>
           </ul>
         </div>
       </div>

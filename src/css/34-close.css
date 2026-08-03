@@ -51,11 +51,36 @@ ol.next-list li { counter-increment: n; }
 ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(--accent); }
 
 /* The reading list is name-then-what-it-is-for, so the name is mono and
-   the gloss drops to a second line rather than running on. */
-.next-list.refs li b { font-family: var(--mono); font-size: 0.84rem; font-weight: 500; }
+   the gloss drops to a second line rather than running on. The name is
+   also the link, and it is written as the address you would type — the
+   deck is projected at a room that cannot click, and mailed afterwards
+   to people who can. Both readings have to work off the same string. */
+.next-list.refs li b,
+.next-list.refs li > a { font-family: var(--mono); font-size: 0.84rem; font-weight: 500; }
 .next-list.refs li span {
   display: block; margin-top: 0.15rem;
   font-size: 0.84rem; color: var(--ink-dim);
+}
+
+/* Links follow the download slide's treatment: accent, no underline of
+   its own, a faint rule that firms up on hover. A blue underlined link
+   would be the one piece of default browser chrome in the deck. */
+.next-list a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid var(--accent-lo);
+  transition: border-color 140ms ease;
+}
+.next-list a:hover, .next-list a:focus-visible { border-bottom-color: var(--accent); }
+.next-list a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+  border-radius: var(--r-xs);
+}
+/* The source under a rabbit hole is a citation, not a call to action:
+   its own line, smaller, and it does not compete with the sentence. */
+.ref-src {
+  display: inline-block; margin-top: 0.2rem;
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: -0.01em;
 }
 
 .next-link {
