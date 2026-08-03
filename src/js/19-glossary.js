@@ -18,17 +18,41 @@
        "open weights" does not mark twice under two spellings;
      - PER_SLIDE marks at most, because past half a dozen the treatment
        stops reading as faint and starts reading as a page of links;
-     - longest term first, so "memory bandwidth" wins over "bandwidth"
-       and "KV cache" over "cache";
-     - anything inside [data-noglossary] is left alone.
+     - the budget is spent in READING ORDER, not in order of term
+       length. It used to be the latter, and that is what made the
+       marking look arbitrary from the back of the room: whichever six
+       glossary keys happened to be longest took the slide, so a
+       beginner met "mixture of experts" underlined and "token", four
+       words earlier, not. Now the first six terms a reader actually
+       reaches are the six that answer. Where two terms start at the
+       same character the longer still wins, so "memory bandwidth"
+       beats "bandwidth" and "KV cache" beats "cache";
+     - anything inside [data-noglossary], or inside a link, is left
+       alone — a dotted word inside an anchor is two things to click
+       occupying one word, and nesting a button in an <a> is invalid
+       besides.
+
+   Which terms lost the budget on which slide is not something to guess
+   at: 21-glossary-audit.js reports it, along with terms defined and
+   never used and jargon used and never defined. Open the deck with
+   ?audit, or run tools/glossary-audit.py.
 
    Definitions are one sentence, in the deck's own terms, and say what
    the thing IS rather than why it matters — the slide is already doing
    the second job.
    ========================================================== */
 
-/* term -> { d: definition, s: section to jump to, vs: [[thing, how it
-   differs], ...] }
+/* term -> { d: definition, s: section to jump to, t: tier,
+             vs: [[thing, how it differs], ...] }
+
+   TIER. Everything defaults to tier 1 — the deck's own subject
+   vocabulary, the words it exists to teach. Tier 2 (t: 2) is general
+   computing: bit, RAM, GPU, API, licence. They are in here because the
+   room is a hobbyist club and not a CS cohort, and the terms that need
+   defining are never the ones that feel advanced to whoever wrote the
+   slide — but they must not take the marking budget away from the
+   deck's own words. A slide spends its budget on tier 1 first and only
+   then, with whatever is left, on tier 2.
 
    The "not the same as" list is the half people actually need. Nearly
    every wrong mental model in this room is a COLLISION between two
@@ -62,8 +86,12 @@ var GLOSSARY = {
   'parameters': { s: 4,
     d: 'The weights, counted rather than described. "8B" means eight billion of them, and that count is the first half of every memory calculation in this deck.',
     vs: [['Active parameters', 'In a mixture-of-experts model only a slice runs per token. The active count sets the speed; the total still sets the memory.']] },
+  /* Singular as an alias, not an entry of its own: the deck writes
+     "parameters" in prose and "parameter" only inside compounds like
+     "active-parameter", which the pass will not mark. */
   'parameter': { s: 4,
-    d: 'One weight. Model sizes count them: "8B" is eight billion.' },
+    d: 'The weights, counted rather than described. "8B" means eight billion of them, and that count is the first half of every memory calculation in this deck.',
+    vs: [['Active parameters', 'In a mixture-of-experts model only a slice runs per token. The active count sets the speed; the total still sets the memory.']] },
 
   'token': { s: 1,
     d: 'The chunk of text a model reads and writes — roughly three quarters of a word in English, so a common word is one token and an unusual one is three or four.',
@@ -98,8 +126,6 @@ var GLOSSARY = {
     d: 'The single-file model format llama.cpp reads: weights, tokenizer, chat template and metadata in one file you can copy to a USB stick. Quantized builds are distributed this way.',
     vs: [['safetensors', 'The full-precision format models are published in first. A GGUF is usually converted and quantized FROM safetensors.'],
          ['GGML', 'The older format GGUF replaced in 2023. Old links and old blog posts still say GGML; the file will not load.']] },
-  'safetensors': { s: 2,
-    d: 'The format models are usually published in before conversion — the full-precision original a GGUF is quantized from. What you want if you intend to fine-tune rather than just run.' },
   'llama.cpp': { s: 2,
     d: 'The C++ inference engine most local apps are built on, LM Studio and Ollama included. No dependencies, runs on anything from a Raspberry Pi to a server, and reads GGUF.',
     vs: [['Llama', 'Meta’s family of models. The engine is named after them but runs almost every open model, and you never have to touch a Llama to use it.']] },
@@ -154,7 +180,16 @@ var GLOSSARY = {
     d: 'Tokens per second — the rate words appear once the model has started. Roughly memory bandwidth divided by model size, and always meaningfully lower than that ceiling in practice.',
     vs: [['Time to first token', 'How long you wait before anything appears. That is prefill, and a slow prefill with fast decode still feels sluggish.']] },
 
+  /* Two spellings, one definition — the deck's own slides say "context
+     length"; "context window" is what everyone else's UI calls it, and
+     an entry nobody can reach is not an entry. Keep the strings
+     byte-identical: sharing a definition is what makes the pass treat
+     them as one term. */
   'context window': { s: 5,
+    d: 'The maximum number of tokens the model can have in front of it at once: the conversation so far, anything you pasted, and the reply it is writing. Everything outside it does not exist as far as the model is concerned.',
+    vs: [['Memory', 'It does not remember you between chats, and nothing in the window is learned. Close the window and it is gone.'],
+         ['The KV cache', 'The window is the limit. The cache is the RAM that filling it actually costs, and it grows with every token.']] },
+  'context length': { s: 5,
     d: 'The maximum number of tokens the model can have in front of it at once: the conversation so far, anything you pasted, and the reply it is writing. Everything outside it does not exist as far as the model is concerned.',
     vs: [['Memory', 'It does not remember you between chats, and nothing in the window is learned. Close the window and it is gone.'],
          ['The KV cache', 'The window is the limit. The cache is the RAM that filling it actually costs, and it grows with every token.']] },
@@ -169,8 +204,6 @@ var GLOSSARY = {
     d: 'Grouped-query attention. Several attention heads share one set of keys and values, which cuts the KV cache several-fold against the textbook formula — so a beginner computing it the old way over-estimates badly.',
     vs: [['MHA', 'The original, where every head keeps its own keys and values — much larger cache.'],
          ['MQA', 'The extreme version: one shared set for all heads. GQA sits between the two and is what nearly everything ships with now.']] },
-  'overhead': { s: 4,
-    d: 'Everything resident besides the weights and the cache — the runtime, compute buffers, the OS, whatever else you have open. Budget a couple of gigabytes and do not plan to use the last one.' },
 
   'rag': { s: 6,
     d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
@@ -179,18 +212,43 @@ var GLOSSARY = {
   'hallucination': { s: 6,
     d: 'A fluent, confident answer that is simply wrong. The failure mode of asking a model for facts it was never given, and small models reach it sooner because they were given less.',
     vs: [['Lying', 'There is no intent and no awareness. The model has no separate store of "things I know" to check an answer against.']] },
+  'hallucinate': { s: 6,
+    d: 'A fluent, confident answer that is simply wrong. The failure mode of asking a model for facts it was never given, and small models reach it sooner because they were given less.',
+    vs: [['Lying', 'There is no intent and no awareness. The model has no separate store of "things I know" to check an answer against.']] },
   'fine-tune': { s: 6,
     d: 'Continue training a published model on your own data to specialise it — tone, format, a domain’s vocabulary. Cheaper than training from scratch, and still not a weekend job.',
     vs: [['RAG', 'If the goal is "know about my documents", retrieval beats fine-tuning on cost, freshness and accuracy. Fine-tune for HOW it answers, retrieve for WHAT it answers with.']] },
+  'fine-tuning': { s: 6,
+    d: 'Continue training a published model on your own data to specialise it — tone, format, a domain’s vocabulary. Cheaper than training from scratch, and still not a weekend job.',
+    vs: [['RAG', 'If the goal is "know about my documents", retrieval beats fine-tuning on cost, freshness and accuracy. Fine-tune for HOW it answers, retrieve for WHAT it answers with.']] },
+  'lora': { s: 6,
+    d: 'Low-rank adaptation: fine-tuning that freezes the original weights and trains a small extra layer alongside them, so the result is a file of a few tens of megabytes rather than a second copy of the model.',
+    vs: [['A quant', 'Both produce a small file. A quant is the same model stored coarser; a LoRA is a patch that changes what the model does.']] },
+  'speculative decoding': { s: 7,
+    d: 'A trick where a small fast model drafts several tokens and the real model checks them all in one pass, keeping whatever it agrees with. Same output as the big model alone, arrived at faster.',
+    vs: [['Using a smaller model', 'The big model still decides every token. Nothing is traded away for the speed except memory for the second model.']] },
+  'training': { s: 0,
+    d: 'The one-time process that produced the weights: thousands of GPUs reading a very large amount of text over weeks. It happened before you downloaded the file, and nothing you do afterwards repeats any part of it.',
+    vs: [['Inference', 'Running the finished model, which is all your laptop ever does. Chatting with a model does not train it.'],
+         ['Fine-tuning', 'A short continuation of training on your own data. Far cheaper, and still not something that happens by using the model.']] },
+  'attention': { s: 5,
+    d: 'The step where every token being generated looks back over the tokens already there and weighs which of them matter. It is the reason a model needs the whole conversation in memory, and the reason that memory is called the KV cache.',
+    vs: [['Paying attention in the everyday sense', 'Nothing is being noticed or ignored on purpose. It is a weighted sum, computed for every token, every time.']] },
+  'head': { s: 5,
+    d: 'One of the parallel attention channels in a layer — a model has dozens, each looking back over the conversation for something different. How many of them share a set of keys and values is what GQA is about.' },
 
   'mixture of experts': { s: 6,
     d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
-    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.']] },
+    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
+         ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  /* Alias, sharing the definition above verbatim. "Active parameters"
+     used to be an entry of its own and no slide ever writes the phrase —
+     it lives in the two "not the same as" lines instead, which is where
+     someone actually meets the confusion. */
   'moe': { s: 6,
-    d: 'Mixture of experts: a model split into sub-networks where only a few run per token. Fast for its size, but the whole thing still has to fit in memory.',
-    vs: [['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
-  'active parameters': { s: 6,
-    d: 'In a mixture-of-experts model, the slice actually used for one token. It sets the speed; the total parameter count still sets the memory.' },
+    d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
+    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
+         ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
 
   'autoregressive': { s: 7,
     d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',
@@ -202,7 +260,65 @@ var GLOSSARY = {
 
   'benchmark': { s: 6,
     d: 'A fixed test set used to score models. Useful for ranking, weak evidence for how a model will do on your particular job — and every published number was produced at a precision and context length that may not match yours.',
-    vs: [['Your use case', 'The only benchmark that decides anything is running your own prompts on your own machine.']] }
+    vs: [['Your use case', 'The only benchmark that decides anything is running your own prompts on your own machine.']] },
+
+  /* ---- tier 2: general computing ----------------------------------
+     Not the deck's subject, but words it uses on the way there. The
+     room is a hobbyist club: some of it writes firmware for fun and
+     some of it has never opened a terminal, and the second half is the
+     half that goes quiet rather than asking what a bit is. These never
+     take a marking slot from tier 1 — see markSlide. */
+
+  /* Both numbers, one definition. Standalone "bit" is rare in the deck —
+     it is nearly always the tail of "4-bit", which is exactly what the
+     pass must NOT mark — so the plural is the spelling that earns its
+     place, and the singular is here for the day a sentence uses it. */
+  'bit': { s: 4, t: 2,
+    d: 'One binary digit, a single 0 or 1 — the smallest thing a computer stores. Eight of them make a byte, which is why a model held at 8 bits per weight weighs one byte per weight, and a 4-bit one weighs half that.',
+    vs: [['A byte', 'Eight bits. Model sizes are quoted in bits per weight and file sizes in gigabytes, and the ÷8 between them is where most napkin arithmetic goes wrong.']] },
+  'bits': { s: 4, t: 2,
+    d: 'One binary digit, a single 0 or 1 — the smallest thing a computer stores. Eight of them make a byte, which is why a model held at 8 bits per weight weighs one byte per weight, and a 4-bit one weighs half that.',
+    vs: [['A byte', 'Eight bits. Model sizes are quoted in bits per weight and file sizes in gigabytes, and the ÷8 between them is where most napkin arithmetic goes wrong.']] },
+  'ram': { s: 3, t: 2,
+    d: 'The fast working memory a running program lives in — measured in gigabytes, and emptied every time you shut down. A model has to be in it, in full, to run.',
+    vs: [['Storage', 'Your SSD holds the file when nothing is running. It is roughly a hundred times slower, which is why "it fits on disk" says nothing about whether it will run.']] },
+  'gpu': { s: 3, t: 2,
+    d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work tonight.',
+    vs: [['The CPU', 'A handful of fast general-purpose cores. It can run a model — just several times slower, because it does far fewer sums at a time.']] },
+  'cuda': { s: 3, t: 2,
+    d: 'NVIDIA’s way of running general-purpose code on their graphics cards, and the backend most local inference uses on a PC.',
+    vs: [['Metal / Vulkan / ROCm', 'The same job on Apple, cross-vendor and AMD hardware. A build that says "CUDA only" is saying "NVIDIA only".']] },
+  'compute': { s: 3, t: 2,
+    d: 'Raw arithmetic throughput — how many sums per second the chip can do. It is what prefill runs out of, and it is a different limit from memory bandwidth, which is what decode runs out of.',
+    vs: [['Memory bandwidth', 'How fast numbers can be fetched, rather than how fast they can be multiplied. Nearly every surprise in this deck comes from confusing the two.']] },
+  'prompt': { s: 1, t: 2,
+    d: 'Everything you hand the model for one turn — your question, the system prompt, and the conversation so far. It is read in one pass before any reply starts, which is the phase called prefill.',
+    vs: [['Your question alone', 'The app quietly sends far more than you typed. That is why a long chat gets slower to start each reply.']] },
+  'api': { s: 2, t: 2,
+    d: 'A way for one program to ask another for something, over the network or on your own machine. LM Studio and Ollama can both expose one, so other software can use your local model as if it were a cloud service.',
+    vs: [['A cloud API key', 'Nothing here needs an account. A local API listens on your own machine and answers nobody else.']] },
+  'endpoint': { s: 2, t: 2,
+    d: 'One specific address an API answers on. The distinction that matters tonight is the chat endpoint, which applies the model’s template for you, versus the raw completion endpoint, which hands your text over exactly as typed.' },
+  'runtime': { s: 2, t: 2,
+    d: 'The program that actually runs the model — llama.cpp or MLX here. LM Studio is the window around it, and the runtime is the part that has to understand a new format before you can open one.' },
+  'metadata': { s: 2, t: 2,
+    d: 'The information a file carries about itself. In a GGUF that means the tokenizer, the chat template and the architecture — which is why a single file is enough for an app to know how to talk to the model inside it.' },
+  'repo': { s: 2, t: 2,
+    d: 'A repository: one folder of files published under an owner’s name, on Hugging Face or GitHub. A model page is a repo, not a product page, which is why two "same" models can differ file by file.' },
+  'model card': { s: 2, t: 2,
+    d: 'The README on a model’s repo — what it was trained for, how to prompt it, what it must not be used for, and the licence. The one page worth reading before a multi-gigabyte download.' },
+  'license': { s: 0, t: 2,
+    d: 'The terms the weights are published under: whether you may use them commercially, redistribute them, or train other models on their output. It is a property of the download, not of the app you run it in.',
+    vs: [['Open source', 'A licence can be permissive without the model being open source in the usual sense — the training data and code are normally still private.']] },
+  'apache 2.0': { s: 0, t: 2,
+    d: 'A permissive licence: use it commercially, modify it, redistribute it, keep the notice. On a model page it is about as unrestricted as published weights get.',
+    vs: [['A community licence', 'Meta’s and others add conditions — user thresholds, naming, acceptable-use terms. Same download button, different terms.']] },
+  'open source': { s: 0, t: 2,
+    d: 'Software published with the source code anyone can read, change and redistribute. llama.cpp and LM Studio’s engine are open source; a model’s weights are a different thing under a different licence.',
+    vs: [['Open weights', 'You get the finished numbers, not the recipe. The training data and the code that made them are usually private, which is why "open-source model" is nearly always the wrong phrase.']] },
+  'agent': { s: 6, t: 2,
+    d: 'A model given tools and a loop — search, read a file, run a command — so it takes several steps on its own instead of answering once. Every step is another chance to be wrong, which is why long agent runs are where small models struggle most.',
+    vs: [['A chatbot', 'One turn, one answer, nothing done on your behalf. That is what tonight’s download is until you wire something up to it.']] }
 };
 
 var glossPanel = null;
@@ -218,35 +334,97 @@ function glossKeys() {
 
 /* \b does not do what you want next to a dot or a slash: "llama.cpp" and
    "tok/s" end at a non-word character, so the trailing \b never matches.
-   Guard with explicit "not a word character" lookarounds instead. */
+   Guard with explicit "not a word character" lookarounds instead.
+
+   The space in a multi-word term is NOT a space. In the slide source it
+   is as often a newline and an indent, or an &nbsp; holding "context
+   window" together at a line break — so a literal space matched almost
+   none of them, and every two-word entry in the glossary was quietly
+   dead. That is where "some words are underlined and some are not"
+   came from, and it is why the audit's first category is entries that
+   never match anything. */
+/* HYPH is every character that joins two halves of a compound: the
+   ASCII hyphen and the Unicode ones the slide source actually uses. The
+   deck writes "4&#8209;bit" with a NON-BREAKING hyphen, so that a
+   quantization never wraps across a line — and with only "-" in the
+   boundary class, the term "bit" matched the tail of every one of them.
+   Six slides underlined the last three letters of "4‑bit" and offered
+   to explain what a binary digit is. A term must not match half a
+   compound word, whichever dash is holding it together. */
+var HYPH = '\\u002d\\u2010\\u2011\\u2212';
+
 function glossRe(term) {
-  var esc = term.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
-  return new RegExp('(^|[^\\w-])(' + esc + ')(?![\\w-])', 'i');
+  /* Same argument inside the term: an entry written "fine-tune" has to
+     match a slide that wrote it with a non-breaking hyphen. */
+  var esc = term.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&')
+                .replace(/ /g, '[\\s\\u00a0]+')
+                .replace(/-/g, '[' + HYPH + ']');
+  return new RegExp('(^|[^\\w' + HYPH + '])(' + esc + ')(?![\\w' + HYPH + '])', 'i');
 }
+
+/* Built once. The reading-order pass tests every key against every prose
+   node, which is a few hundred thousand execs over the whole deck —
+   cheap on short strings, and not cheap at all if each one also compiles
+   a regex first. */
+var GLOSS_RE = {};
+glossKeys().forEach(function (term) { GLOSS_RE[term] = glossRe(term); });
 
 var PER_SLIDE = 6;
 
-function markSlide(slide) {
-  var nodes = Array.prototype.slice.call(slide.querySelectorAll(PROSE));
-  var used = {}, n = 0;
+/* Where each term first appears in this node, or null. Positions are
+   taken once and stay valid: marking splits text nodes and wraps a word
+   in a <button> with the same text, so textContent never changes. */
+function glossHits(node) {
+  var text = node.textContent;
+  var hits = [];
   glossKeys().forEach(function (term) {
-    if (n >= PER_SLIDE) return;
-    /* Two spellings of one idea share a definition and count as one. */
-    var def = GLOSSARY[term].d;
-    if (used[def]) return;
-    var re = glossRe(term);
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i].closest('[data-noglossary], button, .gl')) continue;
-      if (markIn(nodes[i], re, term)) { used[def] = true; n++; return; }
-    }
+    var m = GLOSS_RE[term].exec(text);
+    if (m) hits.push({ term: term, at: m.index + m[1].length, len: term.length });
   });
+  /* Reading order, longer term first on a tie. */
+  hits.sort(function (a, b) { return a.at - b.at || b.len - a.len; });
+  return hits;
+}
+
+/* One reading-order pass over the slide, restricted to one tier. Called
+   twice: the deck's own vocabulary gets first refusal on the budget, and
+   general computing terms take whatever is left. Within a tier the order
+   is the reader's. */
+function markPass(nodes, tier, used, n) {
+  for (var i = 0; i < nodes.length && n < PER_SLIDE; i++) {
+    var node = nodes[i];
+    var hits = glossHits(node);
+    for (var h = 0; h < hits.length && n < PER_SLIDE; h++) {
+      var entry = GLOSSARY[hits[h].term];
+      if ((entry.t || 1) !== tier) continue;
+      /* Two spellings of one idea share a definition and count as one. */
+      if (used[entry.d]) continue;
+      /* A term can match the node's text and still be unmarkable — the
+         only occurrence sits inside a <code> or a word already marked.
+         Leave it unused so a later node on the slide may still take it. */
+      if (markIn(node, GLOSS_RE[hits[h].term], hits[h].term)) {
+        used[entry.d] = true;
+        n++;
+      }
+    }
+  }
+  return n;
+}
+
+function markSlide(slide) {
+  var nodes = Array.prototype.slice.call(slide.querySelectorAll(PROSE))
+    .filter(function (node) {
+      return !node.closest('[data-noglossary], button, a, .gl');
+    });
+  var used = {};
+  markPass(nodes, 2, used, markPass(nodes, 1, used, 0));
 }
 
 function markIn(el, re, term) {
   var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
   var node;
   while ((node = walker.nextNode())) {
-    if (node.parentNode.closest('.gl, button, code, [data-noglossary]')) continue;
+    if (node.parentNode.closest('.gl, button, a, code, [data-noglossary]')) continue;
     var m = re.exec(node.nodeValue);
     if (!m) continue;
 

@@ -1,0 +1,30 @@
+/* --- the ?audit overlay ------------------------------------- */
+/* Never on screen during a talk: 21-glossary-audit.js only builds this
+   when the URL says ?audit. It is a maintenance readout, so it gets the
+   deck's tokens and none of its restraint — full height, monospace, and
+   over the top of everything. */
+.audit {
+  position: fixed; z-index: 100;
+  top: 0; right: 0; bottom: 0;
+  width: min(52rem, 100vw);
+  overflow: auto;
+  padding: 1.2rem 1.4rem 2rem;
+  background: var(--bg-panel);
+  border-left: 2px solid var(--accent);
+  box-shadow: -1.2rem 0 2.6rem var(--shadow);
+}
+.audit pre {
+  margin: 0;
+  font-family: var(--mono); font-size: 0.72rem; line-height: 1.55;
+  color: var(--ink-mid);
+  white-space: pre-wrap; word-break: break-word;
+}
+.audit-x {
+  float: right;
+  padding: 0.2rem 0.6rem;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: pointer;
+  color: var(--ink-dim); background: none;
+  border: 1px solid var(--rule-soft); border-radius: var(--r-pill);
+}
+.audit-x:hover { color: var(--accent); border-color: var(--accent); }

@@ -125,6 +125,7 @@ src/js/NN-name.js         one file per feature
 src/slides/NN-name.html   one file per slide
 src/assets/               logos/*.svg (one <symbol> each), mlx.png
 build.py                  stdlib only
+tools/glossary-audit.py   glossary coverage check, stdlib only
 index.html                BUILT, committed
 dist/index.html           BUILT release, gitignored
 ```
@@ -136,6 +137,20 @@ deck. Renaming without renumbering silently reorders the presentation.
 The JS files are concatenated inside one shared IIFE, so they behave as a single script —
 helpers defined in one file are used by another. No per-file IIFEs, and no file is
 independently loadable.
+
+### Checking the glossary
+
+Terms in the slides are underlined and defined by a DOM pass at load, not by hand — so
+nothing guarantees the glossary and the slides still describe the same deck. This does:
+
+```bash
+python3 tools/glossary-audit.py --strict
+```
+
+It opens the built deck at `?audit` in headless Chrome and prints what the page found:
+entries no slide uses, jargon no entry defines, terms that lost a slide's marking budget,
+and what each slide actually marked. The first two fail the check. You can also open
+`index.html?audit` in a browser and read the same report as an overlay.
 
 ## Conventions
 
