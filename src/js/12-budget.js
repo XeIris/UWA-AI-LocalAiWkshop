@@ -41,11 +41,23 @@ if (bgSlide) {
     vtext:  document.getElementById('bgVText')
   };
 
+  /* A segment's label is hidden when the segment is too small to hold
+     it — measured, not guessed at with a percentage. The old `pct < 9`
+     let "6.0 GB cache" stay visible in a segment narrower than the
+     words: the label overflowed its own fill and finished on top of the
+     weights block, where it is --ink on solid cyan and simply cannot be
+     read. Measure against the width the segment is heading for, not
+     el.clientWidth, because the width transition is still running. */
   function bgSeg(el, lab, gb, scale, text) {
     var pct = gb / scale * 100;
     el.style.width = pct + '%';
-    el.classList.toggle('narrow', pct < 9);
-    if (lab) lab.textContent = text;
+    if (lab) {
+      lab.textContent = text;
+      var room = pct / 100 * el.parentNode.clientWidth;
+      el.classList.toggle('narrow', room < lab.offsetWidth + 12);
+    } else {
+      el.classList.toggle('narrow', pct < 9);
+    }
   }
 
   function bgDraw() {
@@ -104,5 +116,8 @@ if (bgSlide) {
   [bgMem, bgW, bgCtx].forEach(function (el) {
     el.addEventListener('input', bgDraw);
   });
+  /* The bar is CSS, but whether a label fits inside its own fill is a
+     pixel measurement, so it has to be taken again at the new width. */
+  window.addEventListener('resize', bgDraw);
   bgDraw();
 }

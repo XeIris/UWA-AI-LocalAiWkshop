@@ -154,6 +154,17 @@ Retina laptop you present from. Give the container a definite height (an explici
 row) and let the canvas take `height: 100%` or `flex: 1 1 0; min-height: 0`. Never leave
 a canvas sized by its own content.
 
+**A label never sits on the line it names.** Canvas has no z-order to hide behind, so a
+label placed a few pixels above a *rising* line is struck through by that line further
+along — which is exactly what happened to `WEIGHTS — FIXED` and `+ KV CACHE`, the two
+words §5's chart exists to name. Put the label in the *band* it names (`+ KV CACHE` sits
+inside the wedge, midway between the flat line and the sloping one) and, where gridlines
+run through that band, knock the background out from under it with `knockLabel` in
+`06-util.js`. `--bg-panel` is opaque in both themes, which is what makes the knock-out
+total rather than a wash. The same rule applies in HTML: §5's bar labels are hidden by
+*measuring* the segment against the text, never by guessing a percentage — `6.0 GB cache`
+used to overflow its own fill and finish as `--ink` on solid cyan.
+
 **Corner radius is a single dial.** `--r-scale` in `:root` drives every rounded corner
 in the deck (`--r-sm` / `--r-md` / `--r-lg` / `--r-pill` all derive from it). `1` is the
 current app-like rounding; `0` returns the whole deck to the original hard-edged
@@ -164,6 +175,36 @@ Note the tension this creates: rounded corners pull *away* from "technical drawi
 What keeps the blueprint identity is the measurement grid, the thin rules, the mono
 labels and the numeric readouts — not the corners. The corner-bracket panel treatment
 was removed when rounding came in because the two fight each other.
+
+**No coloured top edge on a card** (decided Aug 2026, and this one is settled — do not
+reintroduce it). Panels used to wear a 2px accent band across the top: the reason tiles,
+the anatomy parts, prefill/decode, the quiz cards, the chat lanes, the catch-up pair, the
+glossary popup. It never sat right and it is gone. A card is now a **uniform 1px
+`--rule-soft` frame** and nothing else, which is also the more honest blueprint idiom —
+one weight of rule everywhere, and the panel gets its emphasis from what is printed
+inside it.
+
+If a card has to be told apart from its neighbour, encode that **inside** the card, not
+on its edge:
+
+- the catch-up pair is coded by `.cu-tag` — filled cyan for open weights, an outline
+  for closed;
+- the chat lanes by the avatar in the header — cyan for the model on this laptop,
+  filled `--ink` for the cloud one, none for the two panels that are not conversations;
+- the revealed quiz answer by its `--ok` frame, its `--ok` figures and the BEST BUY
+  badge;
+- a recap tile's hover by the whole frame going `--accent-lo`.
+
+**And no coloured bar down the side either** — same decision, one round later. The
+callout panels wore one (`.caveat` amber, `.qq-rule` green, `.cs-why` and `.tp-v`
+green/red, `.cu-line` and `.df-verdict` cyan) and they are all now **framed panels**:
+`1px` border and a `7–8%` tint, both `color-mix`ed from the same semantic token so they
+follow the theme and the palette rule at once. A warm panel still reads as "this one has
+a catch" from the back of the room without a bar to announce it, and `.caveat` alone
+appears on a third of the deck, so what it looks like is close to a house style.
+
+There is deliberately **no token** for a coloured panel edge any more. If one seems
+necessary, the answer is a tint.
 
 **Brand assets.** All logos are inlined as `<symbol>` elements in a hidden `<svg>` at the
 top of `<body>`, used via `<use href="#lg-…">`. Nothing is fetched at runtime — the
@@ -624,6 +665,39 @@ Also cover:
 
 This is the linear-vs-nonlinear relationships section. Include the GQA nuance as a nice
 "theory says X, but the model cheats" moment.
+
+**The chart is a comparison and an instrument** (Aug 2026). The model buttons are
+**toggles**, not a radio group: one selected is the hero picture and is deliberately
+pixel-for-pixel what it always was — shaded wedge, `WEIGHTS — FIXED`, `+ KV CACHE`. Two
+or three turn it into a comparison, which drops the wedge (overlapping wedges argue
+nothing) and draws each model as its own pair of lines. **The intercept is the weights
+and the slope is the cache** — that difference *is* the lesson, and you can now show it
+rather than assert it. Something is always selected; an empty chart leaves the equation
+with no model and the axis with nothing to scale to.
+
+**Model colour is fixed per model and comes from the only three non-semantic colours the
+deck has.** 8B keeps `--accent` because it is the reference model everywhere else in the
+deck and this slide's default, so the first picture the room sees is unchanged; 30B takes
+filled `--ink` for the same reason §6's scale chart does (a different category — most
+laptops in the room cannot hold it); 1B recedes to `--ink-dim`. **Do not reach for a warm
+hue here**: no model on this chart is a warning, and an amber line would say one of them
+is wrong. The selected button is filled with its own line's colour, so the control *is*
+the legend — and each line is captioned on the plot as well, because a projector can eat
+the difference between three colours but not between three words.
+
+**The equation and the three stats stay bound to one model**, named in `.kv-eq-for`: the
+last one you switched on. Three columns of arithmetic would bury the one number the
+section is about. The chart is where the comparison lives.
+
+**Pointing at the plot reads it off.** A crosshair reports the true total for every
+selected model at that x, rounded to 1k so it names a context length someone might
+actually set. It listens on `pointermove` and lets **touch through untouched** — there is
+no hover on a finger, and swallowing the event would take scrolling away from anyone
+following along on a phone. The readout box measures its own contents (without GQA a 30B
+at 128k is a six-figure cache, and a readout that clips its own number is worse than
+none) and flips to the other side of its line past halfway, the same clipping trap the
+fit bar and the context ceiling both hit. The crosshair is cleared on `deck:slide` or it
+comes back parked wherever the pointer last left it.
 
 ### 6. What small models are actually good and bad at (10 min)
 - **Good:** summarizing, text transforms, RAG over your own documents, privacy-sensitive

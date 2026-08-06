@@ -36,11 +36,18 @@
 }
 .hw-row .out small { font-size: 0.8rem; color: var(--ink-dim); letter-spacing: 0; }
 
+/* The caveat panel appears on a third of the deck, so what it looks like
+   is close to a house style. It used to be an amber bar down the left
+   with a square left edge; it is now a framed panel like everything
+   else, and the amber survives where the palette rule wants it — in the
+   tint and the frame, both mixed from --warn so they follow the theme.
+   Nothing else in the deck is warm, so a warm panel still reads as
+   "this one has a catch" without a bar to announce it. */
 .caveat {
   margin-top: 1.5rem; padding: 0.7rem 1rem;
-  border-left: 2px solid var(--warn);
-  border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: color-mix(in srgb, var(--warn) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--warn) 8%, transparent);
   font-size: 0.98rem; color: var(--ink-mid);
 }
 

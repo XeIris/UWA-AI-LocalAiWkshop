@@ -6,10 +6,12 @@
   cursor: pointer;
   transition: border-color 160ms ease, background 160ms ease;
 }
+/* A recap tile is the board you stand on during questions, so hover has
+   to be unmistakable from the back of the room. The top edge used to
+   light up; now the whole frame does. */
 .tile.jump:hover, .tile.jump:focus-visible {
   outline: none;
-  border-color: var(--rule);
-  border-top-color: var(--accent);
+  border-color: var(--accent-lo);
   background: var(--bg-raise);
 }
 

@@ -45,11 +45,11 @@
   border-radius: var(--r-md);
   display: flex; flex-direction: column; overflow: hidden;
 }
-.cs-lane.k-local { border-top: 2px solid var(--accent); }
-/* Cloud is the deck's third state — filled white, a different category
-   rather than a worse one. Same rule as the PRESENTER DEMO badge. */
-.cs-lane.k-cloud { border-top: 2px solid var(--ink-dim); }
-.cs-lane.k-math, .cs-lane.k-truth { border-top: 2px solid var(--rule); }
+/* The lanes carried a coloured top edge until the caps came out. What
+   codes the category now is the avatar in the header: cyan for the
+   model on this laptop, filled --ink for the cloud one — the deck's
+   third state, a different category rather than a worse one — and none
+   at all for the two panels that are not conversations. */
 
 .cs-head {
   display: flex; align-items: center; gap: 0.7rem;
@@ -285,14 +285,24 @@
 .cs-m-note { margin: 0.6rem 0 0 !important; font-size: 0.72rem; color: var(--ink-dim); }
 
 /* ---- the lesson line ---- */
+/* Framed rather than barred, like .caveat. The verdict is carried by the
+   tint and the frame, so it still lands from the back of the room while
+   the deck keeps one rule weight everywhere. */
 .cs-why {
-  margin: 0.7rem 0 0; padding: 0.55rem 0 0.55rem 0.9rem;
+  margin: 0.7rem 0 0; padding: 0.55rem 0.9rem;
   font-size: 1rem; color: var(--ink-mid);
-  border-left: 2px solid var(--rule);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
   min-height: 2.6rem;
 }
-.cs-why.good { border-left-color: var(--ok); }
-.cs-why.bad  { border-left-color: var(--bad); }
+.cs-why.good {
+  border-color: color-mix(in srgb, var(--ok) 30%, transparent);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
+}
+.cs-why.bad {
+  border-color: color-mix(in srgb, var(--bad) 30%, transparent);
+  background: color-mix(in srgb, var(--bad) 7%, transparent);
+}
 .cs-why em { color: var(--ink); font-style: italic; }
 
 @media (max-width: 900px) {

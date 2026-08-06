@@ -144,17 +144,25 @@
 }
 
 /* ---- verdict ---- */
+/* Nothing at all until there is something to say — the space is
+   reserved so nothing below it jumps, but an empty frame reads as a
+   component that failed to load. Framed rather than barred once it has
+   a verdict, like .caveat and .cs-why. */
 .tp-v {
-  margin: 0.8rem 0 0; padding-left: 0.9rem;
-  /* Transparent until there is something to say — the space is
-     reserved so nothing below it jumps, but an empty rule reads as a
-     component that failed to load. */
-  border-left: 2px solid transparent;
+  margin: 0.8rem 0 0; padding: 0.55rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
   font-size: 1rem; line-height: 1.4; color: var(--ink-mid);
   min-height: 2.8rem;
 }
-.tp-v.ok  { border-left-color: var(--ok); }
-.tp-v.bad { border-left-color: var(--bad); }
+.tp-v.ok {
+  border-color: color-mix(in srgb, var(--ok) 30%, transparent);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
+}
+.tp-v.bad {
+  border-color: color-mix(in srgb, var(--bad) 30%, transparent);
+  background: color-mix(in srgb, var(--bad) 7%, transparent);
+}
 
 /* This slide borrows §6's cs-in/cs-blink keyframes, so it has to opt out
    of them the same way §6 does — borrowing an animation means borrowing
