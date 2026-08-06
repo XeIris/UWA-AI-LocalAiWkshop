@@ -212,8 +212,23 @@ offline rule applies to logos too. Most come from **lobehub/lobe-icons**, which 
 because every icon there is a 1:1 24×24 glyph; mixing official brand assets would mean
 mixing wildly different aspect ratios. Exceptions: llama.cpp uses the official
 `ggml-org/llama.brand` 600×600 icon, MLX is Apple's square PNG base64'd (it has no
-dark-background square mark, so it fills its chip as an app icon), and GPT4All has no
-logo at all and gets a typographic chip.
+dark-background square mark, so it fills its chip as an app icon), and Unsloth is the
+same treatment for a different reason — see below.
+
+**Unsloth is a sticker, and a sticker is not an icon.** The only mark they publish is a
+round green sticker with a *peeled corner*, which reads as a sticker at any size and
+puts an asymmetric silver notch in a row of square chips. `tools/unsloth-icon.py`
+rebuilds it as a full-bleed square: it separates the sloth from the peel, discards the
+peel and the disc, and re-lays the mark on the sticker gradient's flat midpoint
+(`#24BC91`). **Full-bleed square, not a pre-rounded tile** — the corner has to stay on
+`--r-scale`, so `.chip.fill`'s `overflow: hidden` does the rounding, exactly as MLX
+does. Re-run the script rather than hand-editing the PNG if the sticker is ever
+reissued.
+
+Note this is the one full-colour mark whose hue collides with a semantic token —
+Unsloth's green is not `--ok`. It survives because a chip is unmistakably a logo and
+because nothing else on §2's alternatives slide encodes fit, quality or risk. Do not
+take it as licence to put green anywhere else on that slide.
 
 When adding a logo, namespace any `id` inside it — brand gradients collide otherwise.
 If a mark relied on `fill="currentColor"` on its root `<svg>`, that attribute is lost in
@@ -353,6 +368,7 @@ src/posters/NN-name.html  one file per promo poster (A3)
 src/posters/_poster.css   shared poster base; the _ keeps it out of the glob
 build.py                stdlib only
 tools/glossary-audit.py   runs the deck's own glossary audit; stdlib only
+tools/unsloth-icon.py     rebuilds assets/unsloth.png from the sticker; needs Pillow
 index.html              BUILT, committed — never edit by hand
 posters/*.html          BUILT, committed — never edit by hand
 posters/*.pdf           BUILT on demand (--pdf), gitignored
@@ -606,10 +622,31 @@ Sampling (temperature, top-p, min-p) gets a ~2 minute aside here — where the k
 and what temperature does. Nothing deeper.
 
 ### 2. What just happened + where models come from (15 min)
-- Hugging Face as the source; the **GGUF** format; who publishes quants (e.g. bartowski).
-  Beginners get stuck here constantly.
+- Hugging Face as the source; the **GGUF** format; who publishes quants (bartowski,
+  Unsloth, lmstudio-community, mlx-community). Beginners get stuck here constantly.
 - One sentence that LM Studio is a wrapper around **llama.cpp** (and **MLX** on Mac), so
-  the tool isn't magic and alternatives exist: Ollama, Open WebUI, GPT4All.
+  the tool isn't magic and alternatives exist: Ollama, Open WebUI, Unsloth.
+
+  **The alternatives slide is a ladder, not a list** (revised Aug 2026). Its title is
+  "if you outgrow LM Studio", so every row has to be a step *up* in control: change how
+  you invoke it (Ollama) → change the face (Open WebUI) → change the weights themselves
+  (Unsloth). That last rung is what makes the slide pay off §2's own closing line, that
+  the app is a face on top of an engine and either one can be swapped.
+
+  It used to end on **GPT4All**, which was a sideways move even when it worked — "the
+  other friendly desktop app" is not an outgrowth of a friendly desktop app. It is also
+  now dead: last release v3.10.0, **Feb 2025**, last substantive commit Feb 2025, 772
+  open issues, never archived and never acknowledged. It shipped nothing after the R1
+  distills, so a beginner following the deck's advice would install it and fail to find
+  any model the deck names.
+
+  Unsloth is on the slide for the **fine-tuning**, not the chat — Unsloth Studio (beta,
+  ~Mar 2026) does run GGUF and finds the ones you already downloaded, but so does
+  everything else here. Naming fine-tuning is consistent with deferring it: §7's "where
+  to go next" already cites the LoRA paper as a rabbit hole, and a signpost on §2 and a
+  paper on §7 are the same decision. **Say what it costs on the slide** — it installs a
+  Python toolchain rather than a `.dmg`, and the UI is still labelled beta. Re-check
+  both before a delivery; beta labels come off.
 - **Chat/prompt template gotcha — BUILT.** The wrong template produces bad output and it
   is an *invisible* failure: nothing errors, the text is just worse.
 
