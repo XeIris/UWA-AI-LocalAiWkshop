@@ -63,7 +63,12 @@
         why they are drawn as ranges. The lesson survives the uncertainty. Even the
         <em>floor</em> of the most conservative estimate is fifty times the largest model
         a laptop can hold, and over a thousand times the one you downloaded tonight. Note
-        too that a sparse model only ever <em>runs</em> a small slice of that total at a
-        time, which is the dot on each bar.</p>
+        too that the dot on each bar is what actually <em>runs</em> per token: a sparse
+        model holds the whole total in memory but reads only that slice for each word.
+        <strong>Memory is set by the big number, speed by the small one</strong> &mdash;
+        which is the one place section 03&rsquo;s formula forks. Not
+        tonight&rsquo;s problem &mdash; everything on the download slide is dense, so
+        the two numbers are the same &mdash; but it is why a sparse model can feel
+        faster than its file size says it has any right to.</p>
     </div>
   </section>

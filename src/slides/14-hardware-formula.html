@@ -20,7 +20,7 @@
         <span class="eq-rel">&asymp;</span>
         <span class="frac">
           <span class="num">memory bandwidth<span class="unit">GB / SEC</span></span>
-          <span class="den">model size<span class="unit">GB</span></span>
+          <span class="den">active model size<span class="unit">GB</span></span>
         </span>
       </div>
       <p class="eq-caption">The through-line of this entire workshop</p>
@@ -40,7 +40,7 @@
         <div class="phase">
           <div class="ph-k">Decode</div>
           <div class="ph-t">Writing the answer</div>
-          <div class="ph-b">One token at a time, and <strong>every weight in the model</strong>
+          <div class="ph-b">One token at a time, and <strong>every active weight</strong>
             must be read from memory for each one.</div>
           <div class="ph-bound">Limited by <strong>memory bandwidth</strong> &mdash; GB/s</div>
           <div class="ph-feel">Feels like: the speed the words appear</div>
@@ -49,6 +49,9 @@
 
       <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
         thinks slowly. A big discrete GPU is fast at both, right up until the model stops
-        fitting in its VRAM.</p>
+        fitting in its VRAM.
+        <strong>Everything you run tonight is dense</strong> &mdash; every weight is
+        active for every token, so active size is simply file size. Section 06 has the
+        models where those two part company.</p>
     </div>
   </section>
