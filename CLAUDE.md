@@ -363,12 +363,13 @@ src/index.html          shell; everything else is spliced into it
 src/css/NN-name.css     one file per component
 src/js/NN-name.js       one file per feature
 src/slides/NN-name.html one file per slide
-src/assets/             logos/*.svg (one <symbol> each), mlx.png
+src/assets/             logos/*.svg (one <symbol> each), mlx.png, unsloth.png
+src/assets/unsloth-sticker.png  upstream source for unsloth.png; not shipped
 src/posters/NN-name.html  one file per promo poster (A3)
 src/posters/_poster.css   shared poster base; the _ keeps it out of the glob
 build.py                stdlib only
 tools/glossary-audit.py   runs the deck's own glossary audit; stdlib only
-tools/unsloth-icon.py     rebuilds assets/unsloth.png from the sticker; needs Pillow
+tools/unsloth-icon.py     rebuilds src/assets/unsloth.png from the sticker; needs Pillow
 index.html              BUILT, committed — never edit by hand
 posters/*.html          BUILT, committed — never edit by hand
 posters/*.pdf           BUILT on demand (--pdf), gitignored
