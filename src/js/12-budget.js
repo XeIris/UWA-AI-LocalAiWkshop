@@ -41,11 +41,27 @@ if (bgSlide) {
     vtext:  document.getElementById('bgVText')
   };
 
-  function bgSeg(el, lab, gb, scale, text) {
+  /* A segment's label is hidden when the segment is too small to hold
+     it — measured, not guessed at with a percentage. The old `pct < 9`
+     let "6.0 GB cache" stay visible in a segment narrower than the
+     words: the label overflowed its own fill and finished on top of the
+     weights block, where it is --ink on solid cyan and simply cannot be
+     read. Measure against the width the segment is heading for, not
+     el.clientWidth, because the width transition is still running.
+
+     trackW is passed in rather than read off el.parentNode here: reading
+     a layout property immediately after writing style.width forces a
+     synchronous reflow, and doing that once per segment turns one into
+     three on every drag of a slider. */
+  function bgSeg(el, lab, gb, scale, trackW, text) {
     var pct = gb / scale * 100;
     el.style.width = pct + '%';
-    el.classList.toggle('narrow', pct < 9);
-    if (lab) lab.textContent = text;
+    if (lab) {
+      lab.textContent = text;
+      el.classList.toggle('narrow', pct / 100 * trackW < lab.offsetWidth + 12);
+    } else {
+      el.classList.toggle('narrow', pct < 9);
+    }
   }
 
   function bgDraw() {
@@ -61,9 +77,11 @@ if (bgSlide) {
     bgEl.ctxOut.textContent = fmtTokens(ctxLen);
 
     var scale = Math.max(total, mem) * 1.03;
-    bgSeg(bgEl.segW, bgEl.labW, weights, scale, weights.toFixed(1) + ' GB');
-    bgSeg(bgEl.segK, bgEl.labK, kv, scale, kv.toFixed(kv < 10 ? 1 : 0) + ' GB cache');
-    bgSeg(bgEl.segO, null, BG_OVERHEAD, scale);
+    /* Read once, before anything writes a width. */
+    var trackW = bgEl.segW.parentNode.clientWidth;
+    bgSeg(bgEl.segW, bgEl.labW, weights, scale, trackW, weights.toFixed(1) + ' GB');
+    bgSeg(bgEl.segK, bgEl.labK, kv, scale, trackW, kv.toFixed(kv < 10 ? 1 : 0) + ' GB cache');
+    bgSeg(bgEl.segO, null, BG_OVERHEAD, scale, trackW);
     var capPct = mem / scale * 100;
     bgEl.cap.style.left = capPct + '%';
     bgEl.cap.classList.toggle('flip', capPct > 55);
@@ -104,5 +122,8 @@ if (bgSlide) {
   [bgMem, bgW, bgCtx].forEach(function (el) {
     el.addEventListener('input', bgDraw);
   });
+  /* The bar is CSS, but whether a label fits inside its own fill is a
+     pixel measurement, so it has to be taken again at the new width. */
+  window.addEventListener('resize', bgDraw);
   bgDraw();
 }

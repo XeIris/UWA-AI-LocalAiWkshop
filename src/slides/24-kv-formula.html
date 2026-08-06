@@ -5,8 +5,11 @@
       <h2>It re-reads the whole conversation, and refuses to do it twice</h2>
 
       <!-- Live formula: every term is a control below, so the arithmetic on
-           screen is the arithmetic being performed. -->
+           screen is the arithmetic being performed. With more than one model
+           selected the chart compares all of them but the equation can only
+           be about one, so it says which — the last model you switched on. -->
       <div class="kv-eq">
+        <span class="kv-eq-for" id="kvFor">8B&#8209;class</span>
         <span class="kv-t"><b>2</b><em>K and V</em></span><span class="kv-x">&times;</span>
         <span class="kv-t"><b id="kvL">32</b><em>layers</em></span><span class="kv-x">&times;</span>
         <span class="kv-t"><b id="kvH">8</b><em>KV heads</em></span><span class="kv-x">&times;</span>
@@ -19,16 +22,21 @@
       <div class="kv">
         <div class="kv-panel kv-controls">
           <div class="ctrl">
-            <span class="ctrl-label" id="kvModelLabel">Model</span>
+            <span class="ctrl-label" id="kvModelLabel">Models &mdash; pick more than one to compare</span>
             <!-- data-kv is the shared-KV count, data-q the query-head count the
                  same model would need without GQA. Representative configs, not
                  any one checkpoint's config.json. data-w is the weights figure
                  at Q4_K_M, and must match what §4's cliff chart shows for the
-                 same model — 30B lands at 18.1 GB in both places. -->
+                 same model — 30B lands at 18.1 GB in both places.
+
+                 These are TOGGLES, not a radio group: any combination may be
+                 on and at least one always is. data-key ties a model to its
+                 colour, in both the button fill and the line on the chart —
+                 see #kvModel in 20-kv.css. -->
             <div class="seg" id="kvModel" role="group" aria-labelledby="kvModelLabel">
-              <button type="button" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8">1B&#8209;class</button>
-              <button type="button" data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
-              <button type="button" data-l="48" data-kv="8" data-q="64" data-d="128" data-w="18.1">30B&#8209;class</button>
+              <button type="button" data-key="xs" data-l="26" data-kv="1" data-q="4"  data-d="256" data-w="0.8" aria-pressed="false">1B&#8209;class</button>
+              <button type="button" data-key="s"  data-l="32" data-kv="8" data-q="32" data-d="128" data-w="4.9" class="on" aria-pressed="true">8B&#8209;class</button>
+              <button type="button" data-key="l"  data-l="48" data-kv="8" data-q="64" data-d="128" data-w="18.1" aria-pressed="false">30B&#8209;class</button>
             </div>
           </div>
 
@@ -48,6 +56,9 @@
             </div>
           </div>
 
+          <!-- Also the equation's model, not every selected one: three
+               columns of figures would bury the one number the section is
+               about. The chart is where the comparison lives. -->
           <dl class="kv-stats">
             <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.13 GB</dd></div>
             <div><dt>At 32k context</dt><dd id="kv32">4.0 GB</dd></div>
@@ -57,10 +68,13 @@
 
         <div class="kv-panel kv-chart">
           <div class="kv-head">
-            <span>Memory against context length</span>
+            <!-- "Hover", not "point at it": the crosshair is a pointer
+                 affordance and touch is deliberately let through, so on a
+                 phone this instruction would do nothing. -->
+            <span>Memory against context length <i>&middot; hover to read any figure</i></span>
             <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
           </div>
-          <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline"></canvas>
+          <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline. Each selected model is a separate line; the steeper the line, the faster its cache grows."></canvas>
         </div>
       </div>
 

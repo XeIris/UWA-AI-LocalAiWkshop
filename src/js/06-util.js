@@ -71,6 +71,7 @@ function readTheme() {
   THEME.bad = v('--bad');        THEME.ink = v('--ink');
   THEME.inkMid = v('--ink-mid'); THEME.inkDim = v('--ink-dim');
   THEME.rule = v('--rule-soft'); THEME.raise = v('--bg-raise');
+  THEME.panel = v('--bg-panel');
   THEME.mono = v('--mono');
   THEME.artBg = v('--art-bg');
   THEME.artL0 = parseFloat(v('--art-l0'));
@@ -80,6 +81,33 @@ function readTheme() {
 }
 readTheme();
 document.addEventListener('deck:theme', readTheme);
+
+/* A label that has to sit near a line knocks out what is behind it.
+   Canvas has no z-order to hide behind and no text-shadow worth the
+   name, so the rule the deck's own gridlines and plots kept breaking —
+   type struck through by the very line it names — is fixed by painting
+   the panel colour under the glyphs first. Baseline is 'middle' and
+   `align` is the horizontal alignment, both set here rather than left
+   to the caller's leftover ctx state. --bg-panel is opaque in both
+   themes, which is what makes the knock-out total rather than a wash. */
+function knockLabel(ctx, text, x, y, align, colour) {
+  var w = ctx.measureText(text).width;
+  var h = parseFloat(ctx.font) || 12;
+  var padX = h * 0.4, padY = h * 0.34;
+  var left = align === 'right' ? x - w : (align === 'center' ? x - w / 2 : x);
+  /* Wrapped, so the helper cannot leave a caller painting in the wrong
+     colour or alignment three statements later. Every caller today sets
+     all three before its next fillText, which is exactly the kind of
+     thing that stops being true silently. */
+  ctx.save();
+  ctx.fillStyle = THEME.panel;
+  ctx.fillRect(left - padX, y - h / 2 - padY, w + padX * 2, h + padY * 2);
+  ctx.textAlign = align || 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = colour;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
 
 var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

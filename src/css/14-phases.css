@@ -9,12 +9,14 @@
 .phase {
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
-  border-top: 2px solid var(--accent-lo);
   border-radius: var(--r-md);
   padding: 0.95rem 1.15rem 1rem;
 }
-/* Decode is the one the whole workshop hangs on, so it gets the lit edge. */
-.phase:last-child { border-top-color: var(--accent); }
+/* Decode is the one the whole workshop hangs on. It used to say so with a
+   lit top edge, then briefly with a brighter frame — which quietly broke
+   the rule the caps were removed to establish, that every panel wears the
+   same 1px --rule-soft. It is lifted instead: same frame, raised surface. */
+.phase:last-child { background: var(--bg-raise); }
 
 .phase .ph-k {
   font-family: var(--mono); font-size: var(--label-sm);

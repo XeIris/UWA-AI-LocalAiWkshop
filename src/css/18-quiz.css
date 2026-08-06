@@ -9,7 +9,6 @@
   text-align: left; font: inherit; cursor: pointer;
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
-  border-top: 2px solid var(--accent-lo);
   border-radius: var(--r-md);
   padding: 1.3rem 1.3rem 1.5rem;
   color: var(--ink);
@@ -48,7 +47,7 @@
 
 /* Green is the recommendation, and it is the only green on the slide. */
 .qq.revealed .qq-card[data-best] {
-  border-color: var(--ok); border-top-color: var(--ok);
+  border-color: var(--ok);
   background: color-mix(in srgb, var(--ok) 7%, transparent);
 }
 .qq.revealed .qq-card[data-best] .qq-size,
@@ -79,9 +78,11 @@
 .qq-answer[hidden] { display: none; }
 .qq-rule {
   flex: 1; margin: 0; font-size: 1.05rem; color: var(--ink-mid);
-  border-left: 2px solid var(--ok);
-  border-radius: 0 var(--r-sm) var(--r-sm) 0;
-  background: color-mix(in srgb, var(--ok) 6%, transparent);
+  /* Framed, not barred — same treatment as .caveat, with green instead
+     of amber because this one is the answer rather than a warning. */
+  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
   padding: 0.8rem 1.1rem;
 }
 .qq-rule strong { color: var(--ink); }

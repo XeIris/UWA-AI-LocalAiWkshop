@@ -10,10 +10,9 @@
   padding: 1rem 1.2rem 1.1rem;
   display: flex; flex-direction: column;
 }
-/* Closed is the deck's third state (filled white); open is cyan, the
-   colour everything you can actually run has worn all evening. */
-.cu-closed { border-top: 2px solid var(--ink-dim); }
-.cu-open   { border-top: 2px solid var(--accent); }
+/* The two cards used to be told apart by a coloured top edge. With the
+   caps gone that job falls entirely to .cu-tag: the open model's badge
+   is filled cyan, the closed one's is an outline in --ink-dim. */
 
 .cu-top { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; }
 .cu-tag {
@@ -92,7 +91,6 @@
   margin-top: 1.1rem; padding: 0.8rem 1.2rem;
   background: var(--bg-panel);
   border: 1px solid var(--rule-soft);
-  border-left: 2px solid var(--accent);
   border-radius: var(--r-md);
   display: flex; align-items: baseline; gap: 1.2rem; flex-wrap: wrap;
 }
