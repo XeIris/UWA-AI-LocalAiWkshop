@@ -741,8 +741,10 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   padding: 0.95rem 1.15rem 1rem;
 }
 /* Decode is the one the whole workshop hangs on. It used to say so with a
-   lit top edge; with the caps gone it says so with a brighter frame. */
-.phase:last-child { border-color: var(--rule); }
+   lit top edge, then briefly with a brighter frame — which quietly broke
+   the rule the caps were removed to establish, that every panel wears the
+   same 1px --rule-soft. It is lifted instead: same frame, raised surface. */
+.phase:last-child { background: var(--bg-raise); }
 
 .phase .ph-k {
   font-family: var(--mono); font-size: var(--label-sm);
@@ -1513,7 +1515,14 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .kv-t { min-width: 2.6rem; }
   .kv-x { padding-bottom: 0.9rem; font-size: 0.9rem; }
   .kv-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-
+  /* Out of the flow it costs nothing at projector width, where the six
+     terms sit on one centred row with room either side. Narrow, they
+     wrap and the first row reaches the left edge — straight through an
+     absolutely positioned label. So here it rejoins the flow and takes
+     a row of its own, which is cheaper than reserving the band in
+     .kv-eq's padding on a slide already tight enough to have needed
+     trimming once. */
+  .kv-eq-for { position: static; flex: 0 0 100%; }
 }
 /* --- the context ceiling -------------------------------------- */
 .bg-controls { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
@@ -4556,7 +4565,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
         <div class="kv-panel kv-chart">
           <div class="kv-head">
-            <span>Memory against context length <i>&middot; point at it to read any figure</i></span>
+            <!-- "Hover", not "point at it": the crosshair is a pointer
+                 affordance and touch is deliberately let through, so on a
+                 phone this instruction would do nothing. -->
+            <span>Memory against context length <i>&middot; hover to read any figure</i></span>
             <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
           </div>
           <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline. Each selected model is a separate line; the steeper the line, the faster its cache grows."></canvas>
@@ -6275,12 +6287,18 @@ function knockLabel(ctx, text, x, y, align, colour) {
   var h = parseFloat(ctx.font) || 12;
   var padX = h * 0.4, padY = h * 0.34;
   var left = align === 'right' ? x - w : (align === 'center' ? x - w / 2 : x);
+  /* Wrapped, so the helper cannot leave a caller painting in the wrong
+     colour or alignment three statements later. Every caller today sets
+     all three before its next fillText, which is exactly the kind of
+     thing that stops being true silently. */
+  ctx.save();
   ctx.fillStyle = THEME.panel;
   ctx.fillRect(left - padX, y - h / 2 - padY, w + padX * 2, h + padY * 2);
   ctx.textAlign = align || 'left';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = colour;
   ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -7179,14 +7197,18 @@ if (bgSlide) {
      words: the label overflowed its own fill and finished on top of the
      weights block, where it is --ink on solid cyan and simply cannot be
      read. Measure against the width the segment is heading for, not
-     el.clientWidth, because the width transition is still running. */
-  function bgSeg(el, lab, gb, scale, text) {
+     el.clientWidth, because the width transition is still running.
+
+     trackW is passed in rather than read off el.parentNode here: reading
+     a layout property immediately after writing style.width forces a
+     synchronous reflow, and doing that once per segment turns one into
+     three on every drag of a slider. */
+  function bgSeg(el, lab, gb, scale, trackW, text) {
     var pct = gb / scale * 100;
     el.style.width = pct + '%';
     if (lab) {
       lab.textContent = text;
-      var room = pct / 100 * el.parentNode.clientWidth;
-      el.classList.toggle('narrow', room < lab.offsetWidth + 12);
+      el.classList.toggle('narrow', pct / 100 * trackW < lab.offsetWidth + 12);
     } else {
       el.classList.toggle('narrow', pct < 9);
     }
@@ -7205,9 +7227,11 @@ if (bgSlide) {
     bgEl.ctxOut.textContent = fmtTokens(ctxLen);
 
     var scale = Math.max(total, mem) * 1.03;
-    bgSeg(bgEl.segW, bgEl.labW, weights, scale, weights.toFixed(1) + ' GB');
-    bgSeg(bgEl.segK, bgEl.labK, kv, scale, kv.toFixed(kv < 10 ? 1 : 0) + ' GB cache');
-    bgSeg(bgEl.segO, null, BG_OVERHEAD, scale);
+    /* Read once, before anything writes a width. */
+    var trackW = bgEl.segW.parentNode.clientWidth;
+    bgSeg(bgEl.segW, bgEl.labW, weights, scale, trackW, weights.toFixed(1) + ' GB');
+    bgSeg(bgEl.segK, bgEl.labK, kv, scale, trackW, kv.toFixed(kv < 10 ? 1 : 0) + ' GB cache');
+    bgSeg(bgEl.segO, null, BG_OVERHEAD, scale, trackW);
     var capPct = mem / scale * 100;
     bgEl.cap.style.left = capPct + '%';
     bgEl.cap.classList.toggle('flip', capPct > 55);

@@ -68,7 +68,10 @@
 
         <div class="kv-panel kv-chart">
           <div class="kv-head">
-            <span>Memory against context length <i>&middot; point at it to read any figure</i></span>
+            <!-- "Hover", not "point at it": the crosshair is a pointer
+                 affordance and touch is deliberately let through, so on a
+                 phone this instruction would do nothing. -->
+            <span>Memory against context length <i>&middot; hover to read any figure</i></span>
             <span class="kv-head-hi">straight line, no surprises &mdash; that is the problem</span>
           </div>
           <canvas role="img" id="kvCanvas" aria-label="Total memory rises linearly with context length on top of a flat weights baseline. Each selected model is a separate line; the steeper the line, the faster its cache grows."></canvas>

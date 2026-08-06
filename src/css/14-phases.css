@@ -13,8 +13,10 @@
   padding: 0.95rem 1.15rem 1rem;
 }
 /* Decode is the one the whole workshop hangs on. It used to say so with a
-   lit top edge; with the caps gone it says so with a brighter frame. */
-.phase:last-child { border-color: var(--rule); }
+   lit top edge, then briefly with a brighter frame — which quietly broke
+   the rule the caps were removed to establish, that every panel wears the
+   same 1px --rule-soft. It is lifted instead: same frame, raised surface. */
+.phase:last-child { background: var(--bg-raise); }
 
 .phase .ph-k {
   font-family: var(--mono); font-size: var(--label-sm);

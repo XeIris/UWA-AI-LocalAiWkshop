@@ -125,5 +125,12 @@
   .kv-t { min-width: 2.6rem; }
   .kv-x { padding-bottom: 0.9rem; font-size: 0.9rem; }
   .kv-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-
+  /* Out of the flow it costs nothing at projector width, where the six
+     terms sit on one centred row with room either side. Narrow, they
+     wrap and the first row reaches the left edge — straight through an
+     absolutely positioned label. So here it rejoins the flow and takes
+     a row of its own, which is cheaper than reserving the band in
+     .kv-eq's padding on a slide already tight enough to have needed
+     trimming once. */
+  .kv-eq-for { position: static; flex: 0 0 100%; }
 }

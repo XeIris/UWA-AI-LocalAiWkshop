@@ -95,12 +95,18 @@ function knockLabel(ctx, text, x, y, align, colour) {
   var h = parseFloat(ctx.font) || 12;
   var padX = h * 0.4, padY = h * 0.34;
   var left = align === 'right' ? x - w : (align === 'center' ? x - w / 2 : x);
+  /* Wrapped, so the helper cannot leave a caller painting in the wrong
+     colour or alignment three statements later. Every caller today sets
+     all three before its next fillText, which is exactly the kind of
+     thing that stops being true silently. */
+  ctx.save();
   ctx.fillStyle = THEME.panel;
   ctx.fillRect(left - padX, y - h / 2 - padY, w + padX * 2, h + padY * 2);
   ctx.textAlign = align || 'left';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = colour;
   ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
