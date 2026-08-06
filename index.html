@@ -3901,7 +3901,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <span class="eq-rel">&asymp;</span>
         <span class="frac">
           <span class="num">memory bandwidth<span class="unit">GB / SEC</span></span>
-          <span class="den">model size<span class="unit">GB</span></span>
+          <span class="den">active model size<span class="unit">GB</span></span>
         </span>
       </div>
       <p class="eq-caption">The through-line of this entire workshop</p>
@@ -3921,7 +3921,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <div class="phase">
           <div class="ph-k">Decode</div>
           <div class="ph-t">Writing the answer</div>
-          <div class="ph-b">One token at a time, and <strong>every weight in the model</strong>
+          <div class="ph-b">One token at a time, and <strong>every active weight</strong>
             must be read from memory for each one.</div>
           <div class="ph-bound">Limited by <strong>memory bandwidth</strong> &mdash; GB/s</div>
           <div class="ph-feel">Feels like: the speed the words appear</div>
@@ -3930,7 +3930,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
         thinks slowly. A big discrete GPU is fast at both, right up until the model stops
-        fitting in its VRAM.</p>
+        fitting in its VRAM.
+        <strong>Everything you run tonight is dense</strong> &mdash; every weight is
+        active for every token, so active size is simply file size. Section 06 has the
+        models where those two part company.</p>
     </div>
   </section>
   <!-- ---- 3 · decode speed estimator ---- -->
@@ -4638,8 +4641,13 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         why they are drawn as ranges. The lesson survives the uncertainty. Even the
         <em>floor</em> of the most conservative estimate is fifty times the largest model
         a laptop can hold, and over a thousand times the one you downloaded tonight. Note
-        too that a sparse model only ever <em>runs</em> a small slice of that total at a
-        time, which is the dot on each bar.</p>
+        too that the dot on each bar is what actually <em>runs</em> per token: a sparse
+        model holds the whole total in memory but reads only that slice for each word.
+        <strong>Memory is set by the big number, speed by the small one</strong> &mdash;
+        which is the one place section 03&rsquo;s formula forks. Not
+        tonight&rsquo;s problem &mdash; everything on the download slide is dense, so
+        the two numbers are the same &mdash; but it is why a sparse model can feel
+        faster than its file size says it has any right to.</p>
     </div>
   </section>
   <!-- ---- 6 · what it is for ---- -->
@@ -8503,6 +8511,12 @@ var GLOSSARY = {
     d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
     vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
          ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  /* The counterpart, and the one §3 needs: the formula's denominator is
+     the ACTIVE size, which for everything in the room is just the file
+     size. Section 3, not 6, because that is where the word first lands. */
+  'dense': { s: 3,
+    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything you download tonight is dense.',
+    vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
   'autoregressive': { s: 7,
     d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',

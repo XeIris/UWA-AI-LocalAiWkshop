@@ -249,6 +249,12 @@ var GLOSSARY = {
     d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
     vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
          ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  /* The counterpart, and the one §3 needs: the formula's denominator is
+     the ACTIVE size, which for everything in the room is just the file
+     size. Section 3, not 6, because that is where the word first lands. */
+  'dense': { s: 3,
+    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything you download tonight is dense.',
+    vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
   'autoregressive': { s: 7,
     d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',
