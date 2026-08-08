@@ -1,0 +1,50 @@
+  <section class="slide" data-section="2" id="s-loop">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; What just happened</div>
+      <h2>It only ever does one thing: guess what comes next.</h2>
+
+      <div class="lp-stages" id="lpStages">
+        <span data-st="tok"><i>01</i>Chop the text into tokens</span>
+        <span data-st="pred"><i>02</i>Score every token it knows</span>
+        <span data-st="samp"><i>03</i>Draw one</span>
+        <span data-st="app"><i>04</i>Add it to the end</span>
+        <span class="lp-again">then do it all again</span>
+      </div>
+
+      <div class="lp-main">
+        <div class="lp-panel">
+          <div class="samp-head">
+            <span>The context &mdash; re-read in full, every pass</span>
+            <span class="hi" id="lpCount">5 tokens</span>
+          </div>
+          <div class="lp-toks" id="lpToks"></div>
+        </div>
+
+        <div class="samp lp-dist">
+          <div class="samp-head">
+            <span id="lpStage">Scoring</span>
+            <span class="hi" id="lpPick">&nbsp;</span>
+          </div>
+          <div class="bars" id="lpBars"></div>
+        </div>
+      </div>
+
+      <div class="lp-ctrl">
+        <div class="seg">
+          <button type="button" id="lpPlay">Pause</button>
+          <button type="button" id="lpStepBtn">One token</button>
+          <button type="button" id="lpReplay">Replay</button>
+        </div>
+        <span class="lp-hint" id="lpHint">Six candidates shown &mdash; the real list is
+          every token in the vocabulary, around 260,000 of them.</span>
+      </div>
+
+      <p class="note lp-note">Two things worth watching. It re-reads <em>everything</em>
+        each pass, which is what Section 05 turns into a memory bill. And a token is not
+        a word &mdash; watch <span class="mono">deeper</span> and
+        <span class="mono">drained</span> arrive in two pieces. That is why it cannot
+        count the letters in <span class="mono">strawberry</span>.</p>
+    </div>
+  </section>
+
+  <!-- ---- 2 · temperature ---- -->

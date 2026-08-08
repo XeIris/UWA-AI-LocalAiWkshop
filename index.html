@@ -3267,6 +3267,205 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   border: 1px solid var(--rule-soft); border-radius: var(--r-pill);
 }
 .audit-x:hover { color: var(--accent); border-color: var(--accent); }
+/* --- §1 · say hello, then try to break it -------------------- */
+/* The download is running underneath this slide, so it is on screen
+   longer than any other in §1 and has to reward being read for
+   several minutes rather than glanced at. */
+
+.hi-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem; margin-bottom: 1.3rem;
+}
+.hi-steps span {
+  display: flex; align-items: baseline; gap: 0.6rem;
+  font-size: 0.92rem; color: var(--ink-mid); line-height: 1.3;
+}
+.hi-steps i {
+  flex: none; width: 1.4rem; height: 1.4rem;
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  font-family: var(--mono); font-style: normal; font-size: 0.68rem;
+  color: var(--accent);
+  transform: translateY(0.1rem);
+}
+
+.hi-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+.hi-p {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 0.85rem 1rem 0.95rem;
+  display: flex; flex-direction: column;
+}
+.hi-p-h {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 0.5rem; margin-bottom: 0.7rem;
+}
+
+/* Two categories, not two strengths — so the second one is the deck's
+   filled-ink third state, exactly as on the PRESENTER DEMO badge. It is
+   emphatically NOT amber: nothing here is a warning, and a warm tag would
+   say the prompt was dangerous rather than fun. */
+.hi-tag {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.2rem 0.55rem;
+  border-radius: var(--r-pill); white-space: nowrap;
+}
+.hi-tag.good { background: var(--accent); color: var(--on-accent); }
+.hi-tag.trap { background: var(--ink);    color: var(--on-ink); }
+
+.hi-copy {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 0.22rem 0.6rem;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: none; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft);
+  transition: color 140ms ease, border-color 140ms ease;
+}
+.hi-copy:hover { color: var(--accent); border-color: var(--accent); }
+.hi-copy.done { color: var(--accent); border-color: var(--accent); }
+
+/* The prompt is a string to be copied verbatim, so it is set in mono —
+   the deck's rule that every literal is monospaced, and here it also
+   signals "this is the thing, not a description of the thing". */
+.hi-p-t {
+  font-family: var(--mono); font-size: 0.86rem; line-height: 1.45;
+  color: var(--ink); margin: 0 0 0.7rem;
+}
+.hi-p-w {
+  font-size: 0.82rem; line-height: 1.35; color: var(--ink-dim);
+  margin-top: auto; padding-top: 0.6rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.hi-p-w strong { color: var(--ink-mid); font-weight: 620; }
+
+/* The jump button borrows the glossary's pill so the deck has one house
+   style for "go to that section", but inside a paragraph it cannot keep
+   the block margin that version has. */
+.caveat .gloss-go { margin-top: 0; margin-left: 0.4rem; vertical-align: 0.05em; }
+
+@media (max-width: 900px) {
+  .hi-steps { grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .hi-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+  .hi-p { padding: 0.7rem 0.8rem; }
+  .hi-p-t { font-size: 0.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hi-copy { transition: none; }
+}
+/* --- §2 · the next-token loop -------------------------------- */
+/* The animation encodes the loop itself: which stage is live, and one
+   token committed per pass. Nothing here moves decoratively. */
+
+.lp-stages {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 1.1rem; flex-wrap: wrap;
+}
+.lp-stages span {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-dim);
+  border: 1px solid var(--rule-soft); border-radius: var(--r-pill);
+  padding: 0.32rem 0.75rem;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.lp-stages span i {
+  font-style: normal; color: var(--accent-lo);
+  transition: color 160ms ease;
+}
+.lp-stages span.on {
+  color: var(--on-accent); background: var(--accent); border-color: var(--accent);
+}
+.lp-stages span.on i { color: var(--on-accent); }
+/* Not a stage — the label on the arrow back to the top. */
+.lp-again { border-style: dashed !important; opacity: 0.75; }
+
+/* Pinned to a definite height on purpose. Both panels size their inner
+   scroller with `flex: 1 1 0`, so with an auto row they would each be
+   asking the other how tall to be and the bars would collapse. */
+.lp-main {
+  display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.9rem;
+  height: 16rem;
+}
+.lp-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md);
+  padding: 1.3rem 1.4rem 1.1rem;
+  display: flex; flex-direction: column;
+}
+
+/* --- the running context, as chips --- */
+.lp-toks {
+  display: flex; flex-wrap: wrap; align-content: flex-start;
+  gap: 0.28rem 0.3rem;
+  flex: 1 1 0; min-height: 0; overflow: hidden;
+}
+.lp-tok {
+  font-family: var(--mono); font-size: 0.82rem; line-height: 1;
+  padding: 0.32rem 0.42rem;
+  border-radius: var(--r-xs);
+  background: var(--bg-raise); color: var(--ink-mid);
+  border: 1px solid transparent;
+  white-space: pre;
+}
+/* The prompt recedes; what the model wrote is the accent. */
+.lp-tok.gen { color: var(--accent); border-color: var(--accent-lo); }
+/* A token that continues the previous word butts against it, with no
+   gap — that IS the lesson about "deeper" and "drained", so it has to
+   be visible without a caption. */
+.lp-tok.cont { margin-left: -0.3rem; border-left-style: dashed; }
+.lp-tok.end {
+  background: var(--ink); color: var(--on-ink); border-color: var(--ink);
+}
+/* The one that just landed. Encodes recency, nothing else. */
+.lp-tok.fresh { animation: lp-land 320ms ease-out; }
+@keyframes lp-land {
+  from { opacity: 0; transform: translateY(-0.3rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- the candidate bars ---
+   .samp / .bars / .sbar are shared with the two sampling slides that
+   follow, on purpose: the room should recognise this picture when
+   temperature starts bending it. */
+.lp-dist { display: flex; flex-direction: column; }
+.lp-dist .bars { flex: 1 1 0; min-height: 0; height: auto; }
+.sbar.pick .stem { box-shadow: 0 0 0 1px var(--accent), 0 0 1.4rem var(--accent-glow); }
+.sbar.pick .tok { color: var(--accent); }
+.sbar.pick .pct { color: var(--accent); }
+.sbar .stem, .sbar .tok, .sbar .pct { transition-duration: 150ms; }
+
+.lp-ctrl {
+  display: flex; align-items: center; gap: 1.1rem;
+  margin-top: 1rem; flex-wrap: wrap;
+}
+.lp-hint {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+.lp-note { margin-top: 0.9rem; }
+.lp-note .mono { font-family: var(--mono); color: var(--ink-mid); }
+
+@media (max-width: 900px) {
+  .lp-stages { gap: 0.3rem; margin-bottom: 0.7rem; }
+  .lp-stages span { font-size: 0.58rem; padding: 0.24rem 0.5rem; }
+  /* Stacked, so the row can size to content again — and the two
+     scrollers get explicit heights instead of sharing one row. */
+  .lp-main { grid-template-columns: 1fr; gap: 0.5rem; height: auto; }
+  .lp-panel { padding: 0.9rem 1rem; }
+  .lp-toks { flex: none; height: 6.5rem; }
+  .lp-dist .bars { flex: none; height: 8rem; }
+  .lp-tok { font-size: 0.72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-stages span, .lp-tok { transition: none; animation: none; }
+}
 </style>
 </head>
 <body>
@@ -3365,14 +3564,14 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <button type="button" class="toc-item" data-goto="1">
             <span class="toc-n">01</span>
             <span class="toc-t">First win</span>
-            <span class="toc-m">20m</span>
+            <span class="toc-m">15m</span>
             <span class="toc-w">Install, download, send one message. Hands on keyboards.</span>
           </button>
           <button type="button" class="toc-item" data-goto="2">
             <span class="toc-n">02</span>
             <span class="toc-t">What just happened</span>
-            <span class="toc-m">15m</span>
-            <span class="toc-w">Where models come from, and what the app is wrapping.</span>
+            <span class="toc-m">20m</span>
+            <span class="toc-w">The one trick underneath it, the knobs, and where the file came from.</span>
           </button>
           <button type="button" class="toc-item" data-goto="3">
             <span class="toc-n">03</span>
@@ -3710,10 +3909,145 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
     </div>
   </section>
 
-  <!-- ---- 1 · temperature ---- -->
-  <section class="slide" data-section="1" id="s-temp">
+  <!-- ---- 1 · say hello to it ---- -->
+  <section class="slide" data-section="1" id="s-hello">
     <div class="slide-inner">
-      <div class="eyebrow">01 &mdash; Sampling</div>
+      <div class="eyebrow">01 &mdash; First win</div>
+      <h2>Load it, say hello, then try to break it.</h2>
+
+      <div class="hi-steps">
+        <span><i>1</i>Pick your model in the bar along the top and wait for it to load</span>
+        <span><i>2</i>Change nothing &mdash; the defaults are what we want</span>
+        <span><i>3</i>Say hi, and watch the words arrive one at a time</span>
+        <span><i>4</i>Then work down this list</span>
+      </div>
+
+      <!-- data-noglossary: these are strings to copy verbatim. A dotted
+           underline inside one reads as part of the prompt. -->
+      <div class="hi-grid" data-noglossary>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag good">Good at this</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">Write a four-line poem about waiting for a download.</p>
+          <div class="hi-p-w">Short, creative, nothing to get factually wrong. This is
+            the shape it is genuinely best at.</div>
+        </div>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag good">Good at this</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">I have milk, eggs, half an onion and some stale bread. Give me three things I could make.</p>
+          <div class="hi-p-w">You handed it everything it needs. Nothing had to be
+            recalled &mdash; only rearranged.</div>
+        </div>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag good">Good at this</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">Rewrite this so my landlord will take it seriously: hey the tap in the kitchen has been dripping for ages can someone look at it</p>
+          <div class="hi-p-w">A text transform. The dullest thing on this slide and the
+            one you will actually use.</div>
+        </div>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag trap">Try to break it</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">How many r's are there in strawberry?</p>
+          <div class="hi-p-w">The famous one. It usually says two. It never sees letters
+            &mdash; only chunks.</div>
+        </div>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag trap">Try to break it</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">Which is bigger, 9.9 or 9.11?</p>
+          <div class="hi-p-w"><strong>9.9 is bigger.</strong> Models that miss it are
+            reading a version number, where 9.11 comes after 9.9.</div>
+        </div>
+
+        <div class="hi-p">
+          <div class="hi-p-h"><span class="hi-tag trap">Try to break it</span>
+            <button type="button" class="hi-copy">Copy</button></div>
+          <p class="hi-p-t">A man needs to cross a river with a goat. The boat holds the man and the goat. How many trips?</p>
+          <div class="hi-p-w">One. Many models recite the wolf-and-cabbage puzzle they
+            memorised instead of reading yours.</div>
+        </div>
+
+      </div>
+
+      <p class="caveat">These are famous because they are cheap to check, not because the
+        model is stupid &mdash; frontier models miss several of them too, and the first
+        two are about how text is chopped up before the model ever sees it. That is
+        exactly what the next section opens with.
+        <button type="button" class="gloss-go" data-goto="2">Section 02</button></p>
+    </div>
+  </section>
+  <!-- ============ §2 ============ -->
+  <section class="slide section-card" data-section="2">
+    <div class="slide-inner">
+      <div class="num">02</div>
+      <div class="eyebrow">Section 02</div>
+      <h2>What just happened</h2>
+      <p class="lede">The one trick underneath it all, the two knobs worth touching,
+        and where the file you just downloaded came from.</p>
+    </div>
+  </section>
+
+  <!-- ---- 2 · the next-token loop ---- -->
+  <section class="slide" data-section="2" id="s-loop">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; What just happened</div>
+      <h2>It only ever does one thing: guess what comes next.</h2>
+
+      <div class="lp-stages" id="lpStages">
+        <span data-st="tok"><i>01</i>Chop the text into tokens</span>
+        <span data-st="pred"><i>02</i>Score every token it knows</span>
+        <span data-st="samp"><i>03</i>Draw one</span>
+        <span data-st="app"><i>04</i>Add it to the end</span>
+        <span class="lp-again">then do it all again</span>
+      </div>
+
+      <div class="lp-main">
+        <div class="lp-panel">
+          <div class="samp-head">
+            <span>The context &mdash; re-read in full, every pass</span>
+            <span class="hi" id="lpCount">5 tokens</span>
+          </div>
+          <div class="lp-toks" id="lpToks"></div>
+        </div>
+
+        <div class="samp lp-dist">
+          <div class="samp-head">
+            <span id="lpStage">Scoring</span>
+            <span class="hi" id="lpPick">&nbsp;</span>
+          </div>
+          <div class="bars" id="lpBars"></div>
+        </div>
+      </div>
+
+      <div class="lp-ctrl">
+        <div class="seg">
+          <button type="button" id="lpPlay">Pause</button>
+          <button type="button" id="lpStepBtn">One token</button>
+          <button type="button" id="lpReplay">Replay</button>
+        </div>
+        <span class="lp-hint" id="lpHint">Six candidates shown &mdash; the real list is
+          every token in the vocabulary, around 260,000 of them.</span>
+      </div>
+
+      <p class="note lp-note">Two things worth watching. It re-reads <em>everything</em>
+        each pass, which is what Section 05 turns into a memory bill. And a token is not
+        a word &mdash; watch <span class="mono">deeper</span> and
+        <span class="mono">drained</span> arrive in two pieces. That is why it cannot
+        count the letters in <span class="mono">strawberry</span>.</p>
+    </div>
+  </section>
+
+  <!-- ---- 2 · temperature ---- -->
+  <section class="slide" data-section="2" id="s-temp">
+    <div class="slide-inner">
+      <div class="eyebrow">02 &mdash; Sampling</div>
       <h2>The model never picks a word. It picks from a distribution.</h2>
       <div class="samp">
         <div class="samp-head">
@@ -3734,10 +4068,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
     </div>
   </section>
 
-  <!-- ---- 1 · top-p vs min-p ---- -->
-  <section class="slide" data-section="1" id="s-cut">
+  <!-- ---- 2 · top-p vs min-p ---- -->
+  <section class="slide" data-section="2" id="s-cut">
     <div class="slide-inner">
-      <div class="eyebrow">01 &mdash; Sampling</div>
+      <div class="eyebrow">02 &mdash; Sampling</div>
       <h2>Two ways to cut the tail off</h2>
       <p class="note" id="cutPrompt" style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
       <div class="stack two">
@@ -3774,17 +4108,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         difference.</p>
     </div>
   </section>
-  <!-- ============ §2 ============ -->
-  <section class="slide section-card" data-section="2">
-    <div class="slide-inner">
-      <div class="num">02</div>
-      <div class="eyebrow">Section 02</div>
-      <h2>What just happened</h2>
-      <p class="lede">Hugging Face, GGUF, who publishes quants &mdash; and the chat template
-        gotcha that fails silently.</p>
-    </div>
-  </section>
 
+  <!-- ---- 2 · where models come from ---- -->
   <!-- ---- 2 · where models come from ---- -->
   <section class="slide" data-section="2">
     <div class="slide-inner">
@@ -8565,6 +8890,342 @@ if (csSlide) {
      link can). Otherwise deck:slide winds it on arrival. */
   load('sum');
   if (csSlide.classList.contains('active')) csStart();
+}
+/* ==========================================================
+   §2 — THE NEXT-TOKEN LOOP
+   The deck's first mechanical statement of what the model does, and
+   the setup for the two sampling slides that follow it. Same prompt
+   as the temperature slide, and deliberately the same bar chart —
+   this is that picture before anyone touches a knob.
+
+   Every step below carries its own candidate logits, and the heights
+   on screen are softmax'd from them at T=1 by the shared helpers in
+   01-sampling.js. So the shapes are honest even though the scenario
+   is invented: a confident step really is peaked and a torn one
+   really is flat, and the two steps where the sampler takes the
+   RUNNER-UP (k: 1) are the reason the next slide has a slider.
+
+   Two things the token list has to teach on its own:
+     · "deeper" arrives as " deep" + "er", "drained" as " dra" +
+       "ined". A word is not a token, which is the whole answer to
+       the strawberry prompt on the previous slide.
+     · the run ends because the model emits an end token, not
+       because it ran out of things to say.
+
+   Clock is a setInterval, for the reason spelled out at length in
+   17-chat.js: this slide only inserts DOM nodes, so it gains nothing
+   from rAF and would be silently frozen by it on a mirrored or
+   backgrounded display. Wound on arrival, cleared on departure.
+   ========================================================== */
+var lpSlide = document.getElementById('s-loop');
+if (lpSlide) {
+  var lpToks  = document.getElementById('lpToks');
+  var lpBars  = document.getElementById('lpBars');
+  var lpCount = document.getElementById('lpCount');
+  var lpStage = document.getElementById('lpStage');
+  var lpPickL = document.getElementById('lpPick');
+  var lpHint  = document.getElementById('lpHint');
+  var lpPlayB = document.getElementById('lpPlay');
+  var lpStepB = document.getElementById('lpStepBtn');
+  var lpRepB  = document.getElementById('lpReplay');
+  var lpStages = document.getElementById('lpStages');
+
+  /* The prompt, already tokenized. sp = starts a new word. */
+  var LP_PROMPT = [
+    { t: 'the',    sp: 1 }, { t: 'sky',   sp: 1 }, { t: 'at', sp: 1 },
+    { t: 'sunset', sp: 1 }, { t: 'turns', sp: 1 }
+  ];
+
+  /* t  the token committed        k  index of it in c
+     c  candidates (6 of ~260,000) l  logits, softmax'd at T=1        */
+  var LP = [
+    { t: 'orange', sp: 1, k: 0, c: ['orange', 'red', 'pink', 'gold', 'grey', 'purple'],
+      l: [3.2, 2.6, 2.0, 1.5, 0.6, 0.2] },
+    { t: ',', sp: 0, k: 0, c: [',', 'and', '.', '—', 'in', 'before'],
+      l: [2.9, 2.3, 1.7, 1.4, 0.7, 0.2] },
+    /* runner-up: the sampler is sampling, not taking the maximum */
+    { t: 'then', sp: 1, k: 1, c: ['and', 'then', 'before', 'fading', 'but', 'with'],
+      l: [2.6, 2.5, 1.6, 1.3, 0.8, 0.4] },
+    { t: 'a', sp: 1, k: 0, c: ['a', 'deep', 'red', 'the', 'into', 'slowly'],
+      l: [2.8, 1.9, 1.5, 1.1, 0.7, 0.3] },
+    { t: 'deep', sp: 1, k: 0, c: ['deep', 'dark', 'bruised', 'soft', 'dusty', 'rich'],
+      l: [2.7, 2.1, 1.4, 1.2, 0.9, 0.6] },
+    /* the split: "deeper" is two tokens */
+    { t: 'er', sp: 0, k: 0, c: ['er', 'ening', 'red', 'blue', 'est', 'violet'],
+      l: [2.4, 1.6, 1.5, 1.0, 0.6, 0.4] },
+    { t: 'red', sp: 1, k: 0, c: ['red', 'purple', 'blue', 'crimson', 'orange', 'violet'],
+      l: [3.4, 2.0, 1.5, 1.2, 0.9, 0.5] },
+    { t: ',', sp: 0, k: 0, c: [',', '.', 'and', 'that', '—', 'as'],
+      l: [2.7, 2.2, 1.9, 1.0, 0.9, 0.5] },
+    { t: 'and', sp: 1, k: 0, c: ['and', 'until', 'before', 'then', 'with', 'as'],
+      l: [2.9, 1.8, 1.6, 1.4, 0.9, 0.6] },
+    { t: 'by', sp: 1, k: 0, c: ['by', 'the', 'then', 'soon', 'within', 'after'],
+      l: [2.2, 2.1, 1.7, 1.3, 0.8, 0.5] },
+    { t: 'the', sp: 1, k: 0, c: ['the', 'nightfall', 'dark', 'morning', 'now', 'evening'],
+      l: [3.1, 1.6, 1.4, 1.0, 0.7, 0.4] },
+    { t: 'time', sp: 1, k: 0, c: ['time', 'sun', 'light', 'stars', 'first', 'edge'],
+      l: [2.6, 2.2, 1.9, 1.1, 0.8, 0.5] },
+    { t: 'it', sp: 1, k: 0, c: ['it', 'the', 'you', 'they', 'we', 'night'],
+      l: [3.0, 2.0, 1.4, 0.9, 0.7, 0.4] },
+    { t: 'reaches', sp: 1, k: 0, c: ['reaches', 'gets', 'touches', 'sinks', 'falls', 'meets'],
+      l: [2.5, 2.0, 1.8, 1.4, 1.0, 0.7] },
+    { t: 'the', sp: 1, k: 0, c: ['the', 'those', 'our', 'its', 'a', 'distant'],
+      l: [3.3, 1.5, 1.2, 1.0, 0.8, 0.5] },
+    /* runner-up again, and this one is nearly a coin toss — the flat
+       shape is the argument for min-p two slides later */
+    { t: 'hills', sp: 1, k: 1, c: ['horizon', 'hills', 'sea', 'rooftops', 'trees', 'water'],
+      l: [2.6, 2.5, 1.9, 1.5, 1.2, 0.9] },
+    { t: 'the', sp: 1, k: 1, c: [',', 'the', 'it', 'everything', 'all', 'only'],
+      l: [2.4, 2.3, 1.3, 1.0, 0.8, 0.5] },
+    { t: 'last', sp: 1, k: 0, c: ['last', 'light', 'sky', 'colour', 'whole', 'final'],
+      l: [2.8, 2.1, 1.5, 1.2, 0.9, 0.6] },
+    { t: 'of', sp: 1, k: 0, c: ['of', 'light', 'bit', 'traces', 'warmth', 'embers'],
+      l: [3.4, 1.4, 1.2, 0.9, 0.7, 0.5] },
+    { t: 'the', sp: 1, k: 0, c: ['the', 'it', 'that', 'its', 'any', 'day'],
+      l: [3.2, 1.5, 1.1, 0.9, 0.6, 0.4] },
+    { t: 'light', sp: 1, k: 0, c: ['light', 'colour', 'day', 'sun', 'warmth', 'glow'],
+      l: [3.0, 2.2, 1.8, 1.4, 1.1, 0.8] },
+    { t: 'has', sp: 1, k: 0, c: ['has', 'drains', 'is', 'bleeds', 'slips', 'fades'],
+      l: [2.4, 2.2, 1.9, 1.3, 1.0, 0.8] },
+    /* the second split, and the candidate list is honestly mixed —
+       a vocabulary holds word fragments and whole words side by side */
+    { t: 'dra', sp: 1, k: 0, c: ['dra', 'fa', 'bled', 'gone', 'slipped', 'left'],
+      l: [2.3, 1.8, 1.5, 1.3, 0.9, 0.6] },
+    { t: 'ined', sp: 0, k: 0, c: ['ined', 'ins', 'ining', 'wn', 'ined,', 'ined.'],
+      l: [3.1, 1.6, 1.2, 0.8, 0.6, 0.4] },
+    { t: 'out', sp: 1, k: 0, c: ['out', 'away', 'from', 'off', 'down', 'into'],
+      l: [2.9, 2.0, 1.6, 1.1, 0.8, 0.5] },
+    { t: 'of', sp: 1, k: 0, c: ['of', 'from', 'over', 'behind', 'into', 'past'],
+      l: [3.5, 1.6, 1.2, 0.9, 0.7, 0.4] },
+    { t: 'the', sp: 1, k: 0, c: ['the', 'its', 'that', 'a', 'those', 'every'],
+      l: [3.4, 1.3, 1.0, 0.8, 0.6, 0.4] },
+    { t: 'sky', sp: 1, k: 0, c: ['sky', 'west', 'world', 'day', 'clouds', 'air'],
+      l: [2.7, 2.3, 1.7, 1.4, 1.0, 0.7] },
+    { t: '.', sp: 0, k: 0, c: ['.', ',', 'entirely', 'at', '…', 'and'],
+      l: [3.3, 1.5, 1.3, 0.9, 0.7, 0.5] },
+    /* the loop stops because a token says so */
+    { t: '<end>', sp: 1, k: 0, end: 1, c: ['<end>', 'newline', 'The', 'It', 'Then', 'A'],
+      l: [3.0, 1.9, 1.6, 1.2, 0.9, 0.6] }
+  ];
+
+  var lpBarSet = buildBars(lpBars, LP[0].c);
+
+  /* A continuation token is drawn butted against the one before it, so
+     "deep|er" reads as one word in two pieces without a caption. */
+  function lpChip(tok, sp, cls) {
+    var el = document.createElement('span');
+    el.className = 'lp-tok' + (sp ? '' : ' cont') + (cls ? ' ' + cls : '');
+    el.textContent = tok;
+    lpToks.appendChild(el);
+    return el;
+  }
+
+  function lpStageOn(name) {
+    Array.prototype.forEach.call(lpStages.children, function (s) {
+      s.classList.toggle('on', s.dataset.st === name);
+    });
+  }
+
+  var LP_LABEL = { tok: 'Chopping into tokens', pred: 'Scoring the whole vocabulary',
+                   samp: 'Drawing one', app: 'Adding it to the end' };
+
+  /* ---- the three phases of one pass ---- */
+  function lpPredict(i) {
+    var s = LP[i];
+    s.c.forEach(function (c, j) {
+      /* A leading ellipsis marks a token that glues onto the previous
+         word rather than starting a new one. */
+      lpBarSet[j].tok.textContent = (s.sp ? '' : '…') + c;
+    });
+    paint(lpBarSet, softmax(s.l, 1), null);
+    lpBarSet.forEach(function (b) { b.bar.classList.remove('pick'); });
+    lpStageOn('pred');
+    lpStage.textContent = LP_LABEL.pred;
+    lpPickL.innerHTML = '&nbsp;';
+  }
+  function lpSample(i) {
+    var s = LP[i];
+    lpBarSet[s.k].bar.classList.add('pick');
+    lpStageOn('samp');
+    lpStage.textContent = LP_LABEL.samp;
+    lpPickL.textContent = (s.sp ? '' : '…') + s.c[s.k];
+  }
+  function lpAppend(i) {
+    var s = LP[i];
+    var prev = lpToks.querySelector('.fresh');
+    if (prev) prev.classList.remove('fresh');
+    lpChip(s.t, s.sp, 'gen fresh' + (s.end ? ' end' : ''));
+    lpCount.textContent = (LP_PROMPT.length + i + 1) + ' tokens';
+    lpStageOn('app');
+    lpStage.textContent = LP_LABEL.app;
+  }
+
+  /* ---- clock ---- */
+  var LP_PHASE = [180, 160, 150];         /* predict, sample, append (ms) */
+  var lpI = 0, lpPh = 0, lpAcc = 0, lpTimer = null, lpPlaying = false, lpDone = false;
+  var lpReduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function lpEnter(ph) {
+    lpPh = ph; lpAcc = 0;
+    if (ph === 0) lpPredict(lpI);
+    else if (ph === 1) lpSample(lpI);
+    else lpAppend(lpI);
+  }
+
+  function lpAdvance() {
+    if (lpPh < 2) { lpEnter(lpPh + 1); return; }
+    lpI++;
+    if (lpI >= LP.length) lpFinish();
+    else lpEnter(0);
+  }
+
+  function lpFinish() {
+    lpDone = true;
+    lpSetPlaying(false);
+    lpStageOn(null);
+    lpStage.textContent = 'Stopped';
+    lpPickL.textContent = 'end token';
+    lpHint.textContent = 'It stopped because it predicted an end token — ' +
+                         'nothing outside the model decided that.';
+  }
+
+  function lpFrame() {
+    if (!lpPlaying) return;
+    lpAcc += 30;
+    if (lpAcc >= LP_PHASE[lpPh]) lpAdvance();
+  }
+
+  function lpSetPlaying(on) {
+    lpPlaying = on && !lpDone;
+    lpPlayB.textContent = lpPlaying ? 'Pause' : 'Play';
+    lpPlayB.classList.toggle('on', lpPlaying);
+  }
+
+  function lpStart() {
+    if (lpTimer) return;                 /* deck:slide fires twice on a theme change */
+    lpTimer = setInterval(lpFrame, 30);
+  }
+  function lpStop() {
+    if (!lpTimer) return;
+    clearInterval(lpTimer); lpTimer = null;
+  }
+
+  function lpReset(autoplay) {
+    lpToks.innerHTML = '';
+    LP_PROMPT.forEach(function (p) { lpChip(p.t, p.sp, null); });
+    lpCount.textContent = LP_PROMPT.length + ' tokens';
+    lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false;
+    lpHint.textContent = 'Six candidates shown — the real list is every token in the ' +
+                         'vocabulary, around 260,000 of them.';
+    lpStageOn('tok');
+    lpStage.textContent = LP_LABEL.tok;
+    lpPickL.innerHTML = '&nbsp;';
+    paint(lpBarSet, softmax(LP[0].l, 1), null);
+    lpBarSet.forEach(function (b) { b.bar.classList.remove('pick'); });
+    lpSetPlaying(!!autoplay);
+  }
+
+  /* ---- controls ---- */
+  lpPlayB.addEventListener('click', function () {
+    if (lpDone) { lpReset(true); return; }
+    lpSetPlaying(!lpPlaying);
+  });
+  /* One whole pass, not one phase: the button says "one token" and the
+     three stages of a single pass are what a token costs. */
+  lpStepB.addEventListener('click', function () {
+    if (lpDone) return;
+    lpSetPlaying(false);
+    lpPredict(lpI); lpSample(lpI); lpAppend(lpI);
+    lpI++;
+    if (lpI >= LP.length) lpFinish(); else lpPh = 0;
+  });
+  lpRepB.addEventListener('click', function () { lpReset(!lpReduced); });
+
+  /* Restart on ARRIVAL only. deck:slide also fires on a theme change,
+     and wiping a half-run generation to repaint a palette this slide
+     does not paint would be pure loss. */
+  var lpWasActive = false;
+  document.addEventListener('deck:slide', function () {
+    var on = lpSlide.classList.contains('active');
+    if (on) {
+      if (!lpWasActive) lpReset(!lpReduced);
+      lpStart();
+    } else {
+      lpStop();
+    }
+    lpWasActive = on;
+  });
+
+  lpReset(false);
+  if (lpSlide.classList.contains('active')) { lpSetPlaying(!lpReduced); lpStart(); }
+}
+/* ==========================================================
+   §1 — COPY A PROMPT
+   The prompts on the "say hello" slide are meant to be pasted into
+   LM Studio while the download finishes, and typing them off a
+   projector is exactly the friction that stops people trying.
+
+   Two paths on purpose. navigator.clipboard is the modern one, but
+   it needs a secure context and the deck's whole reason for existing
+   is that it opens from a USB stick over file:// — which some
+   browsers do not treat as secure. The execCommand fallback is
+   deprecated and works everywhere, so it stays until the day it
+   doesn't. Neither path is allowed to throw: a dead Copy button is a
+   nuisance, an exception mid-slide is a broken deck.
+   ========================================================== */
+var hiCopyBtns = document.querySelectorAll('.hi-copy');
+if (hiCopyBtns.length) {
+
+  function legacyCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    /* Off-screen rather than hidden: a display:none textarea has no
+       selection for execCommand to act on. */
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    var ok = false;
+    try {
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      ok = document.execCommand('copy');
+    } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function flash(btn, ok) {
+    btn.textContent = ok ? 'Copied' : 'Select it';
+    btn.classList.toggle('done', ok);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () {
+      btn.textContent = 'Copy';
+      btn.classList.remove('done');
+    }, 1400);
+  }
+
+  Array.prototype.forEach.call(hiCopyBtns, function (btn) {
+    btn.addEventListener('click', function () {
+      var card = btn.closest('.hi-p');
+      var el = card && card.querySelector('.hi-p-t');
+      if (!el) return;
+      /* textContent, so the entities in the source arrive as the
+         characters someone actually wants in the chat box. */
+      var text = el.textContent.trim();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { flash(btn, true); },
+          function () { flash(btn, legacyCopy(text)); }
+        );
+      } else {
+        flash(btn, legacyCopy(text));
+      }
+    });
+  });
 }
 /* ==========================================================
    THEME TOGGLE
