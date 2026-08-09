@@ -61,7 +61,7 @@ Semantics keep their meaning and lose their neon: `--ok` `#15803d`, `--warn` `#b
 `--bad` `#c02626`. Green at dark-theme brightness is unreadable on white, and washing it
 out instead would break the one rule the palette has.
 
-**Glossary.** Terms are marked by a DOM pass at load (`js/19-glossary.js`), not by hand
+**Glossary.** Terms are marked by a DOM pass at load (`js/21-glossary.js`), not by hand
 in the slide source — hand-marked spans would drift the first time a sentence was
 reworded. The pass is timid on purpose: prose containers only (never a heading, readout
 or control, where an underline reads as part of the number), never inside a link, one
@@ -96,7 +96,7 @@ bit the same way, and both are handled in `glossRe`:
   three letters of a compound underlined, offering to explain what a binary digit is.
   A term must never match half a word, whichever dash is holding it together.
 
-**Nothing is checked by eye.** `js/21-glossary-audit.js` runs the audit in the page,
+**Nothing is checked by eye.** `js/23-glossary-audit.js` runs the audit in the page,
 against the real DOM with the real selectors and the real regexes, and reports: **A**
 entries no slide contains, **B** terms in prose that lost the budget, **C** terms that
 appear only in a heading or readout (where the pass will not mark, by design), **D**
@@ -304,7 +304,9 @@ word is spoken.
    example is deliberately the deck's own tok/s formula, so the room can
    check the model's answer themselves.
    **Its clock is a `setInterval`, not `requestAnimationFrame`, and that
-   is deliberate** &mdash; the one slide in the deck that breaks the rule.
+   is deliberate** &mdash; one of the two slides in the deck that break the
+   rule, the other being §2's next-token loop, which is a DOM-only
+   animation for exactly the same reason.
    Every other animated slide paints a canvas and has to be in step with
    the compositor; this one only inserts DOM nodes, so it gains nothing
    from rAF and loses a great deal: rAF is suspended whenever the browser
@@ -341,7 +343,27 @@ word is spoken.
    the last two things the plan named and the deck did not have. §2's is the
    only interactive in the deck whose subject is a *failure*, and the closers
    are what the deck ends on instead of the diffusion animation stopping.
-9. Cover art polish.
+9. ~~The **next-token loop**, the §1 **try-it prompts**, and moving sampling into §2.~~
+   The gap this closed: the deck could say *"the model never picks a word, it picks from
+   a distribution"* — the temperature slide's opening line — without ever having said
+   that it picks a token at all. Four sections leaned on a loop nobody had described.
+   The glossary knew (`llm`: "it predicts what token comes next"), which is a popup
+   nobody reads mid-talk, not a slide.
+
+   Placement was the real decision, and it went to **§1's tail and §2's head, not §0**:
+   a mechanism slide before anyone has typed anything is theory-before-dopamine, which
+   is the trade the whole spine exists to avoid. What settled it is that §1's middle is
+   a multi-gigabyte download — sampling was already parked there to fill it — so the
+   section boundary is not a clock boundary. Start the downloads on the picker slide and
+   walk straight into §2; people send their first message whenever their own download
+   lands, which is during the loop slide, and that is *better* than holding the room.
+
+   This forced the **third full renumber** of `src/slides/` (§2 onward), a renumber of
+   `src/js/` to fit two new modules in ahead of the glossary pass — glossary must still
+   sort before template, or dynamically-built template text starts getting marked — and
+   splitting the §2 section card out of `13-under-hood-provenance.html` into its own
+   file, exactly as `02-why-bother.html` was split.
+10. Cover art polish.
 
 ## Tech constraints
 
@@ -566,8 +588,8 @@ explains everything → horizon.**
 | # | Section | Time | Notes |
 |---|---------|------|-------|
 | 0 | What it is, and why bother | 10m | Definition, then hook |
-| 1 | First win — hands-on | 20m | Everyone gets a model running |
-| 2 | What just happened + where models come from | 15m | |
+| 1 | First win — hands-on | 15m | Everyone gets a model running |
+| 2 | What just happened + where models come from | 20m | Mechanism, then sampling, then provenance |
 | 3 | Hardware + the one formula | 20m | |
 | 4 | Quantization + napkin math | 20m | |
 | 5 | Context window & KV cache | 15m | |
@@ -591,7 +613,7 @@ Then lead with **privacy** (data never leaves the machine), **offline**, **no ra
 > which loses a skeptical beginner in the first minute. "No censorship / no content
 > filtering" survives as **one bullet among several**, not the thesis.
 
-### 1. First win — hands-on (20 min)
+### 1. First win — hands-on (15 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
 
@@ -619,10 +641,93 @@ The pre-workshop "install this beforehand" checklist is **deliberately not a sli
 a job a slide in the deck can do — send it with the event reminder. §1's section card
 carries a comment saying so, in place of the old `TO BUILD` marker.
 
-Sampling (temperature, top-p, min-p) gets a ~2 minute aside here — where the knobs are
-and what temperature does. Nothing deeper.
+**Sampling used to live here and now opens §2** (moved Aug 2026). Taught during the
+download it was an aside nobody could act on; taught twenty minutes later, everyone has
+a chat window open and can go and drag the slider themselves. See §2.
 
-### 2. What just happened + where models come from (15 min)
+§1 closes on **"load it, say hello, then try to break it"** — the four mechanical steps
+(pick the model, change nothing, say hi, watch the words arrive) and six prompts with
+copy buttons, because typing a prompt off a projector is exactly the friction that stops
+people trying. Three are things a 1B is genuinely good at; three are the famous traps
+(strawberry, 9.9 vs 9.11, the memorised river-crossing puzzle).
+
+**The traps are framed, not gloating**, and the framing is load-bearing — this is the
+moment of the first win, and a slide that makes someone's brand-new model look stupid
+works against the entire section. So the tags are the deck's two *categories*, filled
+cyan and filled `--ink`, never amber (nothing here is a warning), each trap card says
+what the right answer is, and the caveat says these are cheap to check rather than
+proof of stupidity, with a jump to §2 where the tokenizer explains two of them.
+**9.9 is the bigger number** — a presenter who gets that backwards on the night loses
+the room, and the card says so in bold.
+
+This slide is also the **download cover**: it is on screen while thirty laptops pull a
+model, which is why it has six things to do on it rather than one.
+
+### 2. What just happened + where models come from (20 min)
+
+The section now answers its own title before it answers a supply-chain question. The arc
+is **what it did → the knobs you'll touch → where the file came from → what's running it
+→ how it fails silently.**
+
+- **The next-token loop — BUILT.** The deck's first mechanical statement of what a model
+  does, and the thing four later sections quietly assumed. Same prompt as the temperature
+  slide that follows it (*"the sky at sunset turns…"*) and deliberately the same bar
+  chart, so the room meets that picture once before anyone bends it with a slider.
+  Thirty tokens stream at about two per second; each pass lights the four stages, scores
+  six candidates, draws one and appends it.
+
+  Three things it has to teach on its own, all of them load-bearing later:
+  - **A token is not a word.** `deeper` arrives as ` deep` + `er` and `drained` as
+    ` dra` + `ined`, drawn as chips butted together with no gap. That is the whole
+    answer to the strawberry prompt on the previous slide, and it is shown rather
+    than asserted.
+  - **It re-reads everything, every pass.** Which is what §5 turns into a memory bill.
+  - **It stops because it predicts an end token**, not because anything outside the
+    model decided to stop. Sets up the chat template slide, where a foreign stop
+    string means it never does.
+
+  Two of the thirty steps take the **runner-up** (`k: 1`), one of them on a near-flat
+  distribution. That is not decoration — it is why the next slide has a temperature
+  slider and the one after that has min-p. Logits are authored per step and softmax'd
+  at T=1 by the shared helpers in `01-sampling.js`, so the shapes are honest even
+  though the scenario is invented.
+
+  Vocabulary size on the slide is **~260,000**, which is Gemma 3's (262,144) — the §1
+  download. If the recommended model changes, that number changes with it.
+
+  **It arrives paused**, unlike every other animated slide in the deck. This one is the
+  presenter's to open: landing on it mid-sentence and finding thirty tokens already
+  spent is the version that cannot be talked over, and the first frame is a real
+  distribution, so there is something to read before anything moves. Replay autoplays;
+  arrival does not.
+
+  **Step advances one stage, not one token** — three presses is one token, and the
+  fourth wraps the highlight back to 02, which is the loop showing itself. The stage
+  worth stopping on is *03 · draw one*: the distribution exists and nothing has been
+  chosen from it yet, which is the entire setup for temperature. A control that stepped
+  a whole pass skipped straight past that moment, so it could not be talked over.
+
+  Play and Step both call **the same one-stage advance**, one on a timer and one on a
+  press. Keep it that way: the moment stepping gets its own path through the animation,
+  the two pictures start to drift, which is exactly how the indicator ended up frozen
+  on 04 the first time.
+
+  That advance tracks **whether the current stage has been applied**, not just which one
+  it is. Without it a slide that opens paused sits on stage 0 having entered nothing, so
+  the first thing Play did was advance *past* scoring into drawing — the opening token
+  skipped the stage the slide exists to show.
+
+  **The drawn token is filled `--ink`, not a brighter cyan.** All six candidates start
+  the same colour, so "the winner keeps its colour" was no signal at all past the front
+  row, and a ring around one cyan bar among six is nothing. Filled ink is the deck's
+  third state — a different *category* (this one was taken; those five were not), the
+  same encoding as the PRESENTER DEMO badge and §6's closed models — and the other five
+  recede once the draw happens. **Do not reach for amber here**: nothing on this chart
+  is a warning, and the warm range has to stay free for the ones that are.
+
+- **Sampling** (temperature, top-p, min-p) — moved here from §1. Now that everyone has a
+  loaded model, this stops being a two-minute aside and becomes the second hands-on beat:
+  budget five minutes and tell people to go and find the slider.
 - Hugging Face as the source; the **GGUF** format; who publishes quants (bartowski,
   Unsloth, lmstudio-community, mlx-community). Beginners get stuck here constantly.
 - One sentence that LM Studio is a wrapper around **llama.cpp** (and **MLX** on Mac), so

@@ -3,7 +3,7 @@
    (or run tools/glossary-audit.py, which does exactly that in
    headless Chrome and reads the report back out of the DOM)
 
-   The marking pass in 19-glossary.js is deliberately quiet: it takes
+   The marking pass in 21-glossary.js is deliberately quiet: it takes
    the first PER_SLIDE terms it meets and says nothing about the rest.
    That is right for a projected deck and useless for maintaining one —
    "some words are underlined and some are not" is impossible to act on
