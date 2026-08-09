@@ -22,8 +22,11 @@
   color: var(--on-accent); background: var(--accent); border-color: var(--accent);
 }
 .lp-stages span.on i { color: var(--on-accent); }
-/* Not a stage — the label on the arrow back to the top. */
+/* Not a stage — the label on the arrow back to the top. It only lights
+   when a single pass has finished and the loop is waiting to go round
+   again; continuous play never parks here. */
 .lp-again { border-style: dashed !important; opacity: 0.75; }
+.lp-again.on { opacity: 1; }
 
 /* Pinned to a definite height on purpose. Both panels size their inner
    scroller with `flex: 1 1 0`, so with an auto row they would each be
@@ -76,10 +79,27 @@
    temperature starts bending it. */
 .lp-dist { display: flex; flex-direction: column; }
 .lp-dist .bars { flex: 1 1 0; min-height: 0; height: auto; }
-.sbar.pick .stem { box-shadow: 0 0 0 1px var(--accent), 0 0 1.4rem var(--accent-glow); }
-.sbar.pick .tok { color: var(--accent); }
-.sbar.pick .pct { color: var(--accent); }
-.sbar .stem, .sbar .tok, .sbar .pct { transition-duration: 150ms; }
+/* The drawn token is the deck's filled third state, not a brighter cyan.
+   All six candidates start the same colour, so "the winner keeps its
+   colour" was no signal at all from the back of a room — a ring around
+   one cyan bar among six reads as nothing. Filled --ink is a different
+   *category* (this one was taken, those five were not), it is the same
+   encoding as the PRESENTER DEMO badge and §6's closed models, and it
+   inverts with the theme instead of needing a second hue. The warm range
+   stays where it belongs: nothing on this chart is a warning. */
+.lp-dist .sbar.pick .stem { background: var(--ink); }
+.lp-dist .sbar.pick .tok,
+.lp-dist .sbar.pick .pct { color: var(--ink); font-weight: 700; }
+
+/* ...and the five that were not drawn recede once one has been. Until
+   the draw happens every candidate is live, so this only applies after. */
+.lp-dist .bars.drawn .sbar:not(.pick) .stem { opacity: 0.28; }
+.lp-dist .bars.drawn .sbar:not(.pick) .tok,
+.lp-dist .bars.drawn .sbar:not(.pick) .pct { opacity: 0.4; }
+
+.lp-dist .sbar .stem, .lp-dist .sbar .tok, .lp-dist .sbar .pct {
+  transition-duration: 150ms;
+}
 
 .lp-ctrl {
   display: flex; align-items: center; gap: 1.1rem;

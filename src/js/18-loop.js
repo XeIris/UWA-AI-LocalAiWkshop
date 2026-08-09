@@ -134,7 +134,8 @@ if (lpSlide) {
   }
 
   var LP_LABEL = { tok: 'Chopping into tokens', pred: 'Scoring the whole vocabulary',
-                   samp: 'Drawing one', app: 'Adding it to the end' };
+                   samp: 'Drawing one', app: 'Adding it to the end',
+                   again: 'Back to the top' };
 
   /* ---- the three phases of one pass ---- */
   function lpPredict(i) {
@@ -146,6 +147,8 @@ if (lpSlide) {
     });
     paint(lpBarSet, softmax(s.l, 1), null);
     lpBarSet.forEach(function (b) { b.bar.classList.remove('pick'); });
+    /* Every candidate is live again until one is drawn. */
+    lpBars.classList.remove('drawn');
     lpStageOn('pred');
     lpStage.textContent = LP_LABEL.pred;
     lpPickL.innerHTML = '&nbsp;';
@@ -153,6 +156,10 @@ if (lpSlide) {
   function lpSample(i) {
     var s = LP[i];
     lpBarSet[s.k].bar.classList.add('pick');
+    /* `drawn` recedes the five that were not taken. The winner alone
+       keeping its colour is not enough to see from the back of a room
+       when all six are the same colour to begin with. */
+    lpBars.classList.add('drawn');
     lpStageOn('samp');
     lpStage.textContent = LP_LABEL.samp;
     lpPickL.textContent = (s.sp ? '' : '…') + s.c[s.k];
@@ -170,6 +177,8 @@ if (lpSlide) {
   /* ---- clock ---- */
   var LP_PHASE = [180, 160, 150];         /* predict, sample, append (ms) */
   var lpI = 0, lpPh = 0, lpAcc = 0, lpTimer = null, lpPlaying = false, lpDone = false;
+  /* Set by "one token": run exactly one pass, then park between passes. */
+  var lpOnce = false;
   var lpReduced = window.matchMedia &&
                   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -183,8 +192,20 @@ if (lpSlide) {
   function lpAdvance() {
     if (lpPh < 2) { lpEnter(lpPh + 1); return; }
     lpI++;
-    if (lpI >= LP.length) lpFinish();
-    else lpEnter(0);
+    if (lpI >= LP.length) { lpFinish(); return; }
+    /* A single pass parks on the loop-back rather than freezing on
+       "add it to the end" — stopping on stage 04 read as though the
+       loop had ended, which is the one thing this slide must not say.
+       Continuous play never lingers here; it goes straight round. */
+    if (lpOnce) {
+      lpOnce = false;
+      lpSetPlaying(false);
+      lpPh = 0; lpAcc = 0;
+      lpStageOn('again');
+      lpStage.textContent = LP_LABEL.again;
+      return;
+    }
+    lpEnter(0);
   }
 
   function lpFinish() {
@@ -222,7 +243,8 @@ if (lpSlide) {
     lpToks.innerHTML = '';
     LP_PROMPT.forEach(function (p) { lpChip(p.t, p.sp, null); });
     lpCount.textContent = LP_PROMPT.length + ' tokens';
-    lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false;
+    lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false; lpOnce = false;
+    lpBars.classList.remove('drawn');
     lpHint.textContent = 'Six candidates shown — the real list is every token in the ' +
                          'vocabulary, around 260,000 of them.';
     lpStageOn('tok');
@@ -236,27 +258,35 @@ if (lpSlide) {
   /* ---- controls ---- */
   lpPlayB.addEventListener('click', function () {
     if (lpDone) { lpReset(true); return; }
+    lpOnce = false;                      /* Play overrides a pending single pass */
     lpSetPlaying(!lpPlaying);
   });
-  /* One whole pass, not one phase: the button says "one token" and the
-     three stages of a single pass are what a token costs. */
+  /* One whole pass, not one phase, and *animated* like any other pass.
+     It used to apply the three stages instantly, which made stepping a
+     different picture from playing — the stages flicked to 04 and sat
+     there, so the one control a presenter uses to explain the loop was
+     the one that did not show it. */
   lpStepB.addEventListener('click', function () {
     if (lpDone) return;
-    lpSetPlaying(false);
-    lpPredict(lpI); lpSample(lpI); lpAppend(lpI);
-    lpI++;
-    if (lpI >= LP.length) lpFinish(); else lpPh = 0;
+    lpOnce = true;
+    lpEnter(0);
+    lpSetPlaying(true);
   });
   lpRepB.addEventListener('click', function () { lpReset(!lpReduced); });
 
   /* Restart on ARRIVAL only. deck:slide also fires on a theme change,
      and wiping a half-run generation to repaint a palette this slide
      does not paint would be pure loss. */
+  /* Arrives PAUSED. The slide is the presenter's to open — landing on it
+     mid-sentence and finding thirty tokens already spent is the version
+     that cannot be talked over. Play and One token are both one press
+     away, and the first frame is a real distribution, so there is
+     something to read before anything moves. */
   var lpWasActive = false;
   document.addEventListener('deck:slide', function () {
     var on = lpSlide.classList.contains('active');
     if (on) {
-      if (!lpWasActive) lpReset(!lpReduced);
+      if (!lpWasActive) lpReset(false);
       lpStart();
     } else {
       lpStop();
@@ -265,5 +295,5 @@ if (lpSlide) {
   });
 
   lpReset(false);
-  if (lpSlide.classList.contains('active')) { lpSetPlaying(!lpReduced); lpStart(); }
+  if (lpSlide.classList.contains('active')) lpStart();
 }

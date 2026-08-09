@@ -693,6 +693,27 @@ is **what it did → the knobs you'll touch → where the file came from → wha
   Vocabulary size on the slide is **~260,000**, which is Gemma 3's (262,144) — the §1
   download. If the recommended model changes, that number changes with it.
 
+  **It arrives paused**, unlike every other animated slide in the deck. This one is the
+  presenter's to open: landing on it mid-sentence and finding thirty tokens already
+  spent is the version that cannot be talked over, and the first frame is a real
+  distribution, so there is something to read before anything moves. Replay autoplays;
+  arrival does not.
+
+  **One token animates the same three stages that continuous play does.** It used to
+  apply them instantly, which parked the indicator on *04 · add it to the end* — so the
+  one control a presenter uses to walk through the loop was the only one that did not
+  show it, and stopping on 04 read as though the loop had ended. A single pass now ends
+  on the dashed **loop-back** pill instead, which is the honest resting state and the
+  only time that pill lights.
+
+  **The drawn token is filled `--ink`, not a brighter cyan.** All six candidates start
+  the same colour, so "the winner keeps its colour" was no signal at all past the front
+  row, and a ring around one cyan bar among six is nothing. Filled ink is the deck's
+  third state — a different *category* (this one was taken; those five were not), the
+  same encoding as the PRESENTER DEMO badge and §6's closed models — and the other five
+  recede once the draw happens. **Do not reach for amber here**: nothing on this chart
+  is a warning, and the warm range has to stay free for the ones that are.
+
 - **Sampling** (temperature, top-p, min-p) — moved here from §1. Now that everyone has a
   loaded model, this stops being a two-minute aside and becomes the second hands-on beat:
   budget five minutes and tell people to go and find the slider.
