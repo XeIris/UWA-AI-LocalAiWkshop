@@ -699,12 +699,21 @@ is **what it did → the knobs you'll touch → where the file came from → wha
   distribution, so there is something to read before anything moves. Replay autoplays;
   arrival does not.
 
-  **One token animates the same three stages that continuous play does.** It used to
-  apply them instantly, which parked the indicator on *04 · add it to the end* — so the
-  one control a presenter uses to walk through the loop was the only one that did not
-  show it, and stopping on 04 read as though the loop had ended. A single pass now ends
-  on the dashed **loop-back** pill instead, which is the honest resting state and the
-  only time that pill lights.
+  **Step advances one stage, not one token** — three presses is one token, and the
+  fourth wraps the highlight back to 02, which is the loop showing itself. The stage
+  worth stopping on is *03 · draw one*: the distribution exists and nothing has been
+  chosen from it yet, which is the entire setup for temperature. A control that stepped
+  a whole pass skipped straight past that moment, so it could not be talked over.
+
+  Play and Step both call **the same one-stage advance**, one on a timer and one on a
+  press. Keep it that way: the moment stepping gets its own path through the animation,
+  the two pictures start to drift, which is exactly how the indicator ended up frozen
+  on 04 the first time.
+
+  That advance tracks **whether the current stage has been applied**, not just which one
+  it is. Without it a slide that opens paused sits on stage 0 having entered nothing, so
+  the first thing Play did was advance *past* scoring into drawing — the opening token
+  skipped the stage the slide exists to show.
 
   **The drawn token is filled `--ink`, not a brighter cyan.** All six candidates start
   the same colour, so "the winner keeps its colour" was no signal at all past the front

@@ -134,8 +134,7 @@ if (lpSlide) {
   }
 
   var LP_LABEL = { tok: 'Chopping into tokens', pred: 'Scoring the whole vocabulary',
-                   samp: 'Drawing one', app: 'Adding it to the end',
-                   again: 'Back to the top' };
+                   samp: 'Drawing one', app: 'Adding it to the end' };
 
   /* ---- the three phases of one pass ---- */
   function lpPredict(i) {
@@ -177,34 +176,30 @@ if (lpSlide) {
   /* ---- clock ---- */
   var LP_PHASE = [180, 160, 150];         /* predict, sample, append (ms) */
   var lpI = 0, lpPh = 0, lpAcc = 0, lpTimer = null, lpPlaying = false, lpDone = false;
-  /* Set by "one token": run exactly one pass, then park between passes. */
-  var lpOnce = false;
+  /* Whether the stage in lpPh has actually been applied yet. A fresh
+     slide sits at lpPh 0 having entered nothing, so without this the
+     first thing Play did was advance PAST scoring into drawing — the
+     opening token skipped the stage the slide exists to show. */
+  var lpEntered = false;
   var lpReduced = window.matchMedia &&
                   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function lpEnter(ph) {
-    lpPh = ph; lpAcc = 0;
+    lpPh = ph; lpAcc = 0; lpEntered = true;
     if (ph === 0) lpPredict(lpI);
     else if (ph === 1) lpSample(lpI);
     else lpAppend(lpI);
   }
 
+  /* Exactly one stage. Continuous play calls this on a timer and the
+     Step button calls it on a press, so the two cannot drift apart —
+     stepping is the same machine at a slower clock, not a second path
+     through the animation. */
   function lpAdvance() {
+    if (!lpEntered) { lpEnter(0); return; }
     if (lpPh < 2) { lpEnter(lpPh + 1); return; }
     lpI++;
     if (lpI >= LP.length) { lpFinish(); return; }
-    /* A single pass parks on the loop-back rather than freezing on
-       "add it to the end" — stopping on stage 04 read as though the
-       loop had ended, which is the one thing this slide must not say.
-       Continuous play never lingers here; it goes straight round. */
-    if (lpOnce) {
-      lpOnce = false;
-      lpSetPlaying(false);
-      lpPh = 0; lpAcc = 0;
-      lpStageOn('again');
-      lpStage.textContent = LP_LABEL.again;
-      return;
-    }
     lpEnter(0);
   }
 
@@ -243,7 +238,7 @@ if (lpSlide) {
     lpToks.innerHTML = '';
     LP_PROMPT.forEach(function (p) { lpChip(p.t, p.sp, null); });
     lpCount.textContent = LP_PROMPT.length + ' tokens';
-    lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false; lpOnce = false;
+    lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false; lpEntered = false;
     lpBars.classList.remove('drawn');
     lpHint.textContent = 'Six candidates shown — the real list is every token in the ' +
                          'vocabulary, around 260,000 of them.';
@@ -258,19 +253,15 @@ if (lpSlide) {
   /* ---- controls ---- */
   lpPlayB.addEventListener('click', function () {
     if (lpDone) { lpReset(true); return; }
-    lpOnce = false;                      /* Play overrides a pending single pass */
     lpSetPlaying(!lpPlaying);
   });
-  /* One whole pass, not one phase, and *animated* like any other pass.
-     It used to apply the three stages instantly, which made stepping a
-     different picture from playing — the stages flicked to 04 and sat
-     there, so the one control a presenter uses to explain the loop was
-     the one that did not show it. */
+  /* One stage per press: three presses is one token. Stepping a whole
+     pass at a time hid the thing worth stopping on — the moment the
+     distribution exists and nothing has been chosen from it yet. */
   lpStepB.addEventListener('click', function () {
     if (lpDone) return;
-    lpOnce = true;
-    lpEnter(0);
-    lpSetPlaying(true);
+    lpSetPlaying(false);
+    lpAdvance();
   });
   lpRepB.addEventListener('click', function () { lpReset(!lpReduced); });
 

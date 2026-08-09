@@ -22,11 +22,10 @@
   color: var(--on-accent); background: var(--accent); border-color: var(--accent);
 }
 .lp-stages span.on i { color: var(--on-accent); }
-/* Not a stage — the label on the arrow back to the top. It only lights
-   when a single pass has finished and the loop is waiting to go round
-   again; continuous play never parks here. */
+/* Not a stage, and never lit — a label on the arrow back to the top.
+   Three presses of Step is one token, and the fourth wraps the highlight
+   back to 02, which is the loop showing itself. */
 .lp-again { border-style: dashed !important; opacity: 0.75; }
-.lp-again.on { opacity: 1; }
 
 /* Pinned to a definite height on purpose. Both panels size their inner
    scroller with `flex: 1 1 0`, so with an auto row they would each be
