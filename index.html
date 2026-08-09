@@ -3327,6 +3327,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 }
 .hi-copy:hover { color: var(--accent); border-color: var(--accent); }
 .hi-copy.done { color: var(--accent); border-color: var(--accent); }
+/* Six identical buttons in a grid, so tabbing through them needs a real
+   cue — the hover state alone leaves a keyboard user guessing which card
+   they are about to copy. Same outline as .qq-card, the deck's pattern. */
+.hi-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The prompt is a string to be copied verbatim, so it is set in mono —
    the deck's rule that every literal is monospaced, and here it also
@@ -3484,6 +3488,14 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
 @media (prefers-reduced-motion: reduce) {
   .lp-stages span, .lp-tok { transition: none; animation: none; }
+  /* The bars inherit their height/colour transitions from 11-sampling.css,
+     which has no reduced-motion block of its own. There it is a drag on a
+     slider and the motion is the user's own; here it runs on a clock for
+     thirty passes unprompted, so it has to be silenced. The stage still
+     changes and the token still lands — only the tweening goes. */
+  .lp-dist .sbar .stem, .lp-dist .sbar .tok, .lp-dist .sbar .pct {
+    transition: none;
+  }
 }
 </style>
 </head>
@@ -4253,7 +4265,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
        templates belonging to other families, no template at all, and
        the right template with the wrong stop string.
 
-       The scripts live in js/20-template.js. Outputs are illustrations
+       The scripts live in js/22-template.js. Outputs are illustrations
        of documented failure classes, not captured transcripts, and the
        caveat says so. -->
   <section class="slide" data-section="2" id="s-tmpl">
@@ -4569,7 +4581,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         The 5090 has roughly three times the Mac's bandwidth but around five times its
         peak matrix compute, so which phase you are in decides how big the gap feels.
         The measured prefill gap is wider still, because llama.cpp's CUDA path is mature
-        while on the build these figures were taken from its Metal path did not yet use
+        while, on the build these figures were taken from, its Metal path did not yet use
         the matrix units built into the M5&nbsp;GPU (Apple calls them Neural
         Accelerators; they are not the separate Neural Engine, which this path does not
         touch). That is a version question and it is moving &mdash; check what your own
@@ -5362,13 +5374,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="df-verdict">
         <span class="df-v-k">Where the bottleneck went</span>
         <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
-          <b>per token</b>. Diffusion reads them once <b>per block</b> &mdash; so the memory
-          bus stops being the wall, and arithmetic becomes it instead.</span>
+          <b>per token</b>. Diffusion reads them once <b>per denoising pass</b>, and one
+          pass moves all 256 tokens forward &mdash; sixteen passes, not 256 &mdash; so the
+          memory bus stops being the wall, and arithmetic becomes it instead.</span>
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
-        produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
+        produced one token. Denoise a block instead and one pass advances 256 of them, so
+        the same read of the weights buys sixteen tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
         compute more. <strong>The catch is the hardware.</strong>
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
@@ -8954,6 +8968,10 @@ if (lpSlide) {
   var lpStepB = document.getElementById('lpStepBtn');
   var lpRepB  = document.getElementById('lpReplay');
   var lpStages = document.getElementById('lpStages');
+  /* Captured, not repeated. The slide source already carries this
+     sentence, vocabulary figure and all, and CLAUDE.md says that figure
+     moves when the recommended model does — two copies would drift. */
+  var LP_HINT = lpHint.textContent;
 
   /* The prompt, already tokenized. sp = starts a new word. */
   var LP_PROMPT = [
@@ -9158,8 +9176,7 @@ if (lpSlide) {
     lpCount.textContent = LP_PROMPT.length + ' tokens';
     lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false; lpEntered = false;
     lpBars.classList.remove('drawn');
-    lpHint.textContent = 'Six candidates shown — the real list is every token in the ' +
-                         'vocabulary, around 260,000 of them.';
+    lpHint.textContent = LP_HINT;
     lpStageOn('tok');
     lpStage.textContent = LP_LABEL.tok;
     lpPickL.innerHTML = '&nbsp;';
@@ -9356,7 +9373,7 @@ if (themeBtn) {
        besides.
 
    Which terms lost the budget on which slide is not something to guess
-   at: 21-glossary-audit.js reports it, along with terms defined and
+   at: 23-glossary-audit.js reports it, along with terms defined and
    never used and jargon used and never defined. Open the deck with
    ?audit, or run tools/glossary-audit.py.
 
@@ -9897,8 +9914,14 @@ document.addEventListener('keydown', function (e) {
 });
 /* Navigating away from the word the panel is pointing at would leave it
    floating over an unrelated slide. */
-document.addEventListener('deck:slide', closeGloss);
-window.addEventListener('resize', closeGloss);
+/* Wrapped, not passed directly: as a listener, closeGloss receives the
+   Event as its `restore` argument, which is truthy — so both of these
+   took the focus-restoring path the comment above it rules out. The
+   slide-change case was saved by the `.slide.active` guard; resize was
+   not, so resizing with a panel open put focus on the term button and
+   the deck's keydown guard then handed it the arrow keys. */
+document.addEventListener('deck:slide', function () { closeGloss(); });
+window.addEventListener('resize', function () { closeGloss(); });
 /* The panel is fixed and anchored once. On a narrow screen the slide itself
    scrolls, so it would otherwise drift away from its word — capture, because
    that scroll happens on the slide, not the window.
@@ -10195,7 +10218,7 @@ if (tpSlide) {
    (or run tools/glossary-audit.py, which does exactly that in
    headless Chrome and reads the report back out of the DOM)
 
-   The marking pass in 19-glossary.js is deliberately quiet: it takes
+   The marking pass in 21-glossary.js is deliberately quiet: it takes
    the first PER_SLIDE terms it meets and says nothing about the rest.
    That is right for a projected deck and useless for maintaining one —
    "some words are underlined and some are not" is impossible to act on

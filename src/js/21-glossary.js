@@ -33,7 +33,7 @@
        besides.
 
    Which terms lost the budget on which slide is not something to guess
-   at: 21-glossary-audit.js reports it, along with terms defined and
+   at: 23-glossary-audit.js reports it, along with terms defined and
    never used and jargon used and never defined. Open the deck with
    ?audit, or run tools/glossary-audit.py.
 
@@ -574,8 +574,14 @@ document.addEventListener('keydown', function (e) {
 });
 /* Navigating away from the word the panel is pointing at would leave it
    floating over an unrelated slide. */
-document.addEventListener('deck:slide', closeGloss);
-window.addEventListener('resize', closeGloss);
+/* Wrapped, not passed directly: as a listener, closeGloss receives the
+   Event as its `restore` argument, which is truthy — so both of these
+   took the focus-restoring path the comment above it rules out. The
+   slide-change case was saved by the `.slide.active` guard; resize was
+   not, so resizing with a panel open put focus on the term button and
+   the deck's keydown guard then handed it the arrow keys. */
+document.addEventListener('deck:slide', function () { closeGloss(); });
+window.addEventListener('resize', function () { closeGloss(); });
 /* The panel is fixed and anchored once. On a narrow screen the slide itself
    scrolls, so it would otherwise drift away from its word — capture, because
    that scroll happens on the slide, not the window.

@@ -36,6 +36,10 @@ if (lpSlide) {
   var lpStepB = document.getElementById('lpStepBtn');
   var lpRepB  = document.getElementById('lpReplay');
   var lpStages = document.getElementById('lpStages');
+  /* Captured, not repeated. The slide source already carries this
+     sentence, vocabulary figure and all, and CLAUDE.md says that figure
+     moves when the recommended model does — two copies would drift. */
+  var LP_HINT = lpHint.textContent;
 
   /* The prompt, already tokenized. sp = starts a new word. */
   var LP_PROMPT = [
@@ -240,8 +244,7 @@ if (lpSlide) {
     lpCount.textContent = LP_PROMPT.length + ' tokens';
     lpI = 0; lpPh = 0; lpAcc = 0; lpDone = false; lpEntered = false;
     lpBars.classList.remove('drawn');
-    lpHint.textContent = 'Six candidates shown — the real list is every token in the ' +
-                         'vocabulary, around 260,000 of them.';
+    lpHint.textContent = LP_HINT;
     lpStageOn('tok');
     lpStage.textContent = LP_LABEL.tok;
     lpPickL.innerHTML = '&nbsp;';

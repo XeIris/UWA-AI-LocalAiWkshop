@@ -58,6 +58,10 @@
 }
 .hi-copy:hover { color: var(--accent); border-color: var(--accent); }
 .hi-copy.done { color: var(--accent); border-color: var(--accent); }
+/* Six identical buttons in a grid, so tabbing through them needs a real
+   cue — the hover state alone leaves a keyboard user guessing which card
+   they are about to copy. Same outline as .qq-card, the deck's pattern. */
+.hi-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The prompt is a string to be copied verbatim, so it is set in mono —
    the deck's rule that every literal is monospaced, and here it also

@@ -49,13 +49,15 @@
       <div class="df-verdict">
         <span class="df-v-k">Where the bottleneck went</span>
         <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
-          <b>per token</b>. Diffusion reads them once <b>per block</b> &mdash; so the memory
-          bus stops being the wall, and arithmetic becomes it instead.</span>
+          <b>per token</b>. Diffusion reads them once <b>per denoising pass</b>, and one
+          pass moves all 256 tokens forward &mdash; sixteen passes, not 256 &mdash; so the
+          memory bus stops being the wall, and arithmetic becomes it instead.</span>
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
-        produced one token. Denoise 256 at a time and the same bus carries hundreds &mdash;
+        produced one token. Denoise a block instead and one pass advances 256 of them, so
+        the same read of the weights buys sixteen tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
         compute more. <strong>The catch is the hardware.</strong>
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a

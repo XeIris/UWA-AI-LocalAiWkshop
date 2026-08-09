@@ -125,4 +125,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .lp-stages span, .lp-tok { transition: none; animation: none; }
+  /* The bars inherit their height/colour transitions from 11-sampling.css,
+     which has no reduced-motion block of its own. There it is a drag on a
+     slider and the motion is the user's own; here it runs on a clock for
+     thirty passes unprompted, so it has to be silenced. The stage still
+     changes and the token still lands — only the tweening goes. */
+  .lp-dist .sbar .stem, .lp-dist .sbar .tok, .lp-dist .sbar .pct {
+    transition: none;
+  }
 }

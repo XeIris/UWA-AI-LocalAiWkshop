@@ -304,7 +304,9 @@ word is spoken.
    example is deliberately the deck's own tok/s formula, so the room can
    check the model's answer themselves.
    **Its clock is a `setInterval`, not `requestAnimationFrame`, and that
-   is deliberate** &mdash; the one slide in the deck that breaks the rule.
+   is deliberate** &mdash; one of the two slides in the deck that break the
+   rule, the other being §2's next-token loop, which is a DOM-only
+   animation for exactly the same reason.
    Every other animated slide paints a canvas and has to be in step with
    the compositor; this one only inserts DOM nodes, so it gains nothing
    from rAF and loses a great deal: rAF is suspended whenever the browser
@@ -611,7 +613,7 @@ Then lead with **privacy** (data never leaves the machine), **offline**, **no ra
 > which loses a skeptical beginner in the first minute. "No censorship / no content
 > filtering" survives as **one bullet among several**, not the thesis.
 
-### 1. First win — hands-on (20 min)
+### 1. First win — hands-on (15 min)
 Install LM Studio → download one small model (safe default: a 4B or 7B at Q4) → send one
 message. Dopamine before theory.
 
