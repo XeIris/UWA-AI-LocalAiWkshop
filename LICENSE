@@ -1,0 +1,52 @@
+AI, Unplugged — licensing
+=========================
+
+This repository is deliberately licensed in two halves, because it holds two
+different kinds of work, and a third that is not ours to license at all.
+
+  Code            — the MIT License below.
+                    build.py, tools/, src/js/, src/css/, src/index.html.
+
+  Deck content    — Creative Commons Attribution 4.0 International.
+                    src/slides/, src/posters/, speaker-notes.md, README.md,
+                    CLAUDE.md, docs/, and the prose and figures of the deck.
+                    See LICENSE-CONTENT.
+
+  Third-party     — NOT COVERED by either licence. Logos, brand marks and
+  assets            screenshots under src/assets/ remain the property of their
+                    respective owners, on their own terms. Several are
+                    trademarks, which no licence in this repository can grant
+                    you any right to use. Note that these assets are inlined
+                    into the built files, so the exclusion covers index.html,
+                    dist/index.html and posters/*.html as well as the sources
+                    they are built from. See ATTRIBUTIONS.md.
+
+Where a single file mixes the two — a slide is markup as well as prose — take
+whichever licence is more permissive for what you are actually reusing.
+
+The text above is a description of scope, not part of the licence text that
+follows.
+
+-----------------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2026 Xeiris
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
