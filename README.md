@@ -158,3 +158,19 @@ Design decisions, palette rules and content guidance live in [CLAUDE.md](CLAUDE.
 The short version: cyan owns all structure, warm colors are reserved for meaning
 (fit / warning / failure), numbers are always monospace, and an animation must encode a
 variable rather than decorate one.
+
+## License
+
+Two halves, because this repo holds two kinds of work:
+
+- **Code** — MIT. `build.py`, `tools/`, `src/js/`, `src/css/`, `src/index.html`. See
+  [LICENSE](LICENSE).
+- **Deck content** — CC BY 4.0. The slides, posters, speaker notes and docs. See
+  [LICENSE-CONTENT](LICENSE-CONTENT). Run it at your own club, adapt it, translate it,
+  correct the figures — just credit it and link back.
+
+**Third-party logos and screenshots are excluded from both.** They belong to their
+owners, several are trademarks, and they are inlined into the built `index.html` and
+posters as well as living in `src/assets/` — so the carve-out follows them there. One,
+the llama.cpp mark, is NonCommercial. [ATTRIBUTIONS.md](ATTRIBUTIONS.md) lists every
+asset, where it came from, and what that means if you reuse this.
