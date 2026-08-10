@@ -21,8 +21,13 @@ different kinds of work, and a third that is not ours to license at all.
                     dist/index.html and posters/*.html as well as the sources
                     they are built from. See ATTRIBUTIONS.md.
 
-Where a single file mixes the two — a slide is markup as well as prose — take
-whichever licence is more permissive for what you are actually reusing.
+Where a single file mixes the two — a slide is markup as well as prose — the
+markup, styling and script are MIT, and the prose, figures and diagrams are
+CC BY 4.0. Apply the licence covering the part you actually reuse; if you reuse
+both, comply with both. (MIT and CC BY are not two points on one scale — MIT
+asks for the copyright notice and nothing about crediting the author, CC BY
+asks for attribution, a note of any changes, and a link to the licence — so
+"whichever is more permissive" would not have been an answerable question.)
 
 The text above is a description of scope, not part of the licence text that
 follows.
@@ -31,7 +36,7 @@ follows.
 
 MIT License
 
-Copyright (c) 2026 Xeiris
+Copyright (c) 2026 XeIris
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

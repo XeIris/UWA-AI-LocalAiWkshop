@@ -163,7 +163,8 @@ variable rather than decorate one.
 
 Two halves, because this repo holds two kinds of work:
 
-- **Code** — MIT. `build.py`, `tools/`, `src/js/`, `src/css/`. See [LICENSE](LICENSE).
+- **Code** — MIT. `build.py`, `tools/`, `src/js/`, `src/css/`, `src/index.html`. See
+  [LICENSE](LICENSE).
 - **Deck content** — CC BY 4.0. The slides, posters, speaker notes and docs. See
   [LICENSE-CONTENT](LICENSE-CONTENT). Run it at your own club, adapt it, translate it,
   correct the figures — just credit it and link back.

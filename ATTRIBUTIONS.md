@@ -28,10 +28,10 @@ for. Reuse them the same way, or replace them.
 | `src/assets/logos/5-openwebui.svg` | Open WebUI | lobehub/lobe-icons | MIT (icon set) — mark is Open WebUI's |
 | `src/assets/logos/6-lmstudio.svg` | LM Studio | lobehub/lobe-icons | MIT (icon set) — mark is Element Labs' |
 | `src/assets/logos/7-llamacpp.svg` | llama.cpp | [ggml-org/llama.brand](https://github.com/ggml-org/llama.brand) | **CC BY-NC 4.0** — see the note below |
-| `src/assets/logos/8-mlx.svg`, `src/assets/mlx.png` | MLX | Apple | Apple's app icon; mark is Apple's |
+| `src/assets/logos/8-mlx.svg`, `src/assets/mlx.png` | MLX | [ml-explore/mlx](https://github.com/ml-explore/mlx) | MIT (© Apple Inc.) — the project wordmark, adapted here into a square icon |
 | `src/assets/logos/9-apple.svg` | Apple platform | drawn for this deck | mark is Apple's |
 | `src/assets/logos/a-windows.svg` | Windows platform | lobehub/lobe-icons | MIT (icon set) — mark is Microsoft's |
-| `src/assets/logos/b-linux.svg` | Linux platform | drawn for this deck | Tux was created by Larry Ewing |
+| `src/assets/logos/b-linux.svg` | Linux platform | redrawn for this deck, after Tux | Tux was created by Larry Ewing (`lewing@isc.tamu.edu`) with The GIMP; his notice permits use and modification provided he and The GIMP are credited on request. "Linux" is a trademark of Linus Torvalds. |
 | `SVG/gemma-color.svg`, `SVG/ollama.svg` | Gemma, Ollama | lobehub/lobe-icons | MIT (icon set) — marks as above |
 
 > **`llama.brand` is NonCommercial, and that is the one asset with a live
