@@ -6,13 +6,23 @@
    on the same bus.
 
    Sizes: fp16 is 8.19B x 2 bytes; Q4_K_M and Q2_K are the usual GGUF
-   effective bit-widths; Ternary Bonsai 8B is the SHIPPED Q2_0 file,
-   2.03 GiB / 2.18 GB, not the 1.75 GB headline. Three values is 1.58 bits
-   in principle, but the format packs 128 weights into 34 bytes — 32 of
-   codes plus a 16-bit scale — which is 2.125 bits per weight. Quoting the
-   headline meant the bar, the readout and the decode ceiling all came off
-   a file nobody can download, on the one slide arguing the arithmetic
-   holds. Same failure as the old 2.8 GB Q2_K row. Verified Aug 2026.
+   effective bit-widths; Ternary Bonsai 8B is the file a presenter can
+   actually run — *-Q2_0_g64.gguf, the group-64 build PrismML call the
+   official llama.cpp format, at ~2.25 bpw and so 2.3 GB. Three values is
+   1.58 bits in principle; the format packs 64 weights into 18 bytes (16
+   of codes plus a 16-bit scale).
+
+   TWO corrections live in that sentence, both found the hard way:
+     - the 1.75 GB this used to show is PrismML's headline, not a file.
+       Quoting it put the bar, the readout and the decode ceiling on a
+       download nobody can get, on the slide arguing the arithmetic holds.
+       Same failure as the old 2.8 GB Q2_K row.
+     - the replacement was first set to 2.2 GB, which is the group-128
+       Q2_0 file. That one is fork-only AND being deprecated, so it is
+       the wrong file to cost. Checking the vendor's docs page and model
+       card alone is what caused this: both describe g128 and never
+       mention g64. The demo repo README is the page that does.
+   Verified Aug 2026 against all three.
    ========================================================== */
 var bnSlide = document.getElementById('s-bonsai');
 if (bnSlide) {
@@ -34,7 +44,7 @@ if (bnSlide) {
       qual: 'Falls apart', cliff: true,
       say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
            'loops, contradictions, confident nonsense. This is the floor.' },
-    { gb: 2.2, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
+    { gb: 2.3, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
       qual: '75.5 benchmark avg.',
       say: 'Below the floor, and fine. It was never squashed: every weight was ' +
            'one of three values throughout training, so there was nothing to round away.' }
