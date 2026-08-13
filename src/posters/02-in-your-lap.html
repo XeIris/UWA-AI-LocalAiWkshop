@@ -195,7 +195,10 @@
         <span class="chip num">70B</span>
         <span><span class="nm">A 70B, squeezed as hard as it goes</span><br>
           <span class="by">Open weights &middot; 70B &middot; 4-bit</span></span>
-        <span class="gb">40 GB</span>
+        <!-- 42, not 40: 70B x Q4_K_M's 4.83 bpw / 8. The deck's calculator
+             says 42.3 for exactly this row, and 40 was neither that nor the
+             napkin's 35. -->
+        <span class="gb">42 GB</span>
         <span class="track"><i class="os"></i><i class="w bad" style="width:70%"></i>
           <span class="spill wide">&rsaquo;&rsaquo;&rsaquo;</span></span>
         <span class="verdict bad">Won&rsquo;t load</span>

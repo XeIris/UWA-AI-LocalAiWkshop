@@ -15,7 +15,11 @@ var dfSlide = document.getElementById('s-diff');
 if (dfSlide) {
   var DF_N      = 512;    /* tokens generated in both lanes   */
   var DF_BLOCK  = 256;    /* diffusion tokens per forward pass */
-  var DF_STEPS  = 16;     /* denoising steps per block         */
+  /* Google publish 256 tokens per forward pass and the 4x, but NOT the
+     number of denoising steps a block takes. Sixteen is this animation's
+     choice, not a figure from the model card — the caveat says so, and
+     the verdict copy says "a handful of passes" rather than naming it. */
+  var DF_STEPS  = 16;     /* denoising steps per block — ours, not theirs */
   var DF_SLOWMO = 2.5;
   var DF_AR_RATE = 250;   /* tok/s, autoregressive baseline    */
   var DF_DF_RATE = 1000;  /* tok/s, diffusion                  */

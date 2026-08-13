@@ -171,15 +171,20 @@ var GLOSSARY = {
     d: 'A small run of weights — 32 or 256 of them — that share one full-precision multiplier inside a quantized file. Those shared scales are the whole reason a "4-bit" model is really 4.83 bits per weight.',
     vs: [['A block of tokens', 'Section 07’s diffusion models denoise a block of 256 TOKENS at once. Same word, different thing entirely: one is a chunk of the file, the other a chunk of the answer.']] },
 
+  /* "Typically 5–10x", not a single figure: the honest range. The two
+     machines in §3 happen to be 1792 against 96, which is nearer 19x,
+     but that is one desktop pairing — a laptop dGPU against fast DDR5
+     can be five, and quoting either end as THE number would make the
+     glossary contradict whichever machine is in the room. */
   'vram': { s: 3,
-    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, at roughly a tenth of the speed.',
+    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, typically five to ten times slower.',
     vs: [['System RAM', 'Plentiful and cheap, and far slower. Spilling from one to the other is the cliff you can watch on the two-machines slide.'],
          ['Unified memory', 'On a Mac there is only one pool, shared by CPU and GPU. Large capacity, no copying, and no cliff — until the pool itself is full.']] },
   'unified memory': { s: 3,
     d: 'One pool of RAM shared by CPU and GPU, as on Apple silicon and AMD APUs. Capacity a graphics card cannot match, at bandwidth a plain PC cannot match — which is why Macs punch above their weight at generation.',
     vs: [['VRAM', 'A separate pool that has to be filled by copying across the PCIe bus, and that runs out sooner.']] },
   'dram': { s: 3,
-    d: 'Ordinary system RAM. Plentiful, cheap, and roughly ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
+    d: 'Ordinary system RAM. Plentiful, cheap, and typically five to ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
 
   'memory bandwidth': { s: 3,
     d: 'How many gigabytes per second the machine can read from memory. Because every weight is read once per token, this number divided by the size of the model is the speed ceiling for generation — the one formula the whole workshop hangs off.',
@@ -331,6 +336,12 @@ var GLOSSARY = {
   'gpu': { s: 3, t: 2,
     d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work.',
     vs: [['The CPU', 'A handful of fast general-purpose cores. It can run a model — just several times slower, because it does far fewer sums at a time.']] },
+  /* Defined because §7's Bonsai catch now names a backend list — "CPU and
+     Metal only" — and the audit was right that a room told the GPU does
+     the work has never been told what the other one is. */
+  'cpu': { s: 3, t: 2,
+    d: 'The general-purpose processor every computer has. A handful of fast cores that do one thing after another, as against a GPU’s thousands doing one thing at once.',
+    vs: [['The GPU', 'A model will run on the CPU alone, several times slower, because decode wants many simple sums at once rather than a few complicated ones in a row.']] },
   'cuda': { s: 3, t: 2,
     d: 'NVIDIA’s way of running general-purpose code on their graphics cards, and the backend most local inference uses on a PC.',
     vs: [['Metal / Vulkan / ROCm', 'The same job on Apple, cross-vendor and AMD hardware. A build that says "CUDA only" is saying "NVIDIA only".']] },

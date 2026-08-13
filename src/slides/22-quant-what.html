@@ -34,7 +34,12 @@
             <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
             <div><dt>Average error</dt><dd id="qzErr">&plusmn;0.0000</dd></div>
             <div><dt>Bits per weight</dt><dd id="qzBpw">16.00</dd></div>
-            <div><dt>A 30B model</dt><dd id="qzModel">60.0 GB</dd></div>
+            <!-- "this block", not "a 30B model": one shared 16-bit scale over
+                 24 weights is 4.67 bpw, and the next two slides both cost a
+                 4-bit 30B at Q4_K_M's real 4.83. An unqualified "A 30B model"
+                 here put 17.5 GB on screen one slide before the deck's own
+                 18.1 GB, which is the arithmetic disagreeing with itself. -->
+            <div><dt>A 30B, this block</dt><dd id="qzModel">60.0 GB</dd></div>
           </dl>
         </div>
       </div>
@@ -47,7 +52,9 @@
 
       <p class="caveat">Note the shared scale. A quant does not store 24 tiny numbers &mdash; it
         stores 24 tiny <em>integers</em> plus one full-precision multiplier for the block. That
-        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight, and real
-        GGUF blocks carry more metadata than this one. Hold that thought for one slide.</p>
+        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight. One
+        scale over 24 weights costs this block 4.67 bits each; a real Q4_K_M block is
+        larger, carries more metadata, and lands at 4.83 &mdash; which is why the 30B on the
+        next slide is 18.1&nbsp;GB and not the 17.5 above. Hold that thought for one slide.</p>
     </div>
   </section>

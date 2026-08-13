@@ -4647,7 +4647,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
             <div><dt>Average error</dt><dd id="qzErr">&plusmn;0.0000</dd></div>
             <div><dt>Bits per weight</dt><dd id="qzBpw">16.00</dd></div>
-            <div><dt>A 30B model</dt><dd id="qzModel">60.0 GB</dd></div>
+            <!-- "this block", not "a 30B model": one shared 16-bit scale over
+                 24 weights is 4.67 bpw, and the next two slides both cost a
+                 4-bit 30B at Q4_K_M's real 4.83. An unqualified "A 30B model"
+                 here put 17.5 GB on screen one slide before the deck's own
+                 18.1 GB, which is the arithmetic disagreeing with itself. -->
+            <div><dt>A 30B, this block</dt><dd id="qzModel">60.0 GB</dd></div>
           </dl>
         </div>
       </div>
@@ -4660,8 +4665,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat">Note the shared scale. A quant does not store 24 tiny numbers &mdash; it
         stores 24 tiny <em>integers</em> plus one full-precision multiplier for the block. That
-        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight, and real
-        GGUF blocks carry more metadata than this one. Hold that thought for one slide.</p>
+        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight. One
+        scale over 24 weights costs this block 4.67 bits each; a real Q4_K_M block is
+        larger, carries more metadata, and lands at 4.83 &mdash; which is why the 30B on the
+        next slide is 18.1&nbsp;GB and not the 17.5 above. Hold that thought for one slide.</p>
     </div>
   </section>
   <!-- ---- 4 · the napkin math, and what it leaves out ---- -->
@@ -4928,7 +4935,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
                columns of figures would bury the one number the section is
                about. The chart is where the comparison lives. -->
           <dl class="kv-stats">
-            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.13 GB</dd></div>
+            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.12 GB</dd></div>
             <div><dt>At 32k context</dt><dd id="kv32">4.0 GB</dd></div>
             <div><dt>Cache vs weights at 32k</dt><dd id="kvRatio">0.8&times;</dd></div>
           </dl>
@@ -5224,8 +5231,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="cu-name">Qwen3.6 <span>27B</span></div>
           <div class="cu-by">Alibaba &mdash; reasoning on, the one from the scale slide</div>
           <div class="cu-score">
-            <span class="cu-n" data-score="37">37</span>
-            <span class="cu-bar"><i style="--w:68%"></i></span>
+            <span class="cu-n" data-score="38">38</span>
+            <span class="cu-bar"><i style="--w:70%"></i></span>
           </div>
           <dl class="cu-specs">
             <div><dt>Parameters</dt><dd>27.8&nbsp;B, dense</dd></div>
@@ -5237,11 +5244,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <div class="cu-line">
-        <!-- Both scores re-read from Artificial Analysis and confirmed Aug 2026:
-             GPT-5 (high) 35, Qwen3.6 27B (Reasoning) 37. Read them from ONE
-             snapshot if you refresh them — AA rebases the index between
-             versions, so two numbers taken months apart are not comparable,
-             which is the exact mistake the caveat warns the room about. -->
+        <!-- Both scores re-read from Artificial Analysis model pages, Aug 2026:
+             GPT-5 (high) 35, Qwen3.6 27B (Reasoning) 38. The 27B was 37 at the
+             previous check and drifted a point on a rebase, which is the whole
+             argument for reading both from ONE snapshot on ONE day.
+
+             A live example of the trap: an AA post is circulating with 46 for
+             this same model. It is not a contradiction — it is a differently
+             scoped leaderboard. Never mix a figure from a post with one from a
+             model page, which is the exact mistake the caveat warns about. -->
         <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; one snapshot, verified Aug 2026</span>
         <span class="cu-line-t">Last year&rsquo;s frontier model, matched by something that
           fits on a laptop, carrying <b>one sixty&#8209;fifth</b> of the parameters of the
@@ -5296,7 +5307,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.2 GB</span></div>
           </div>
         </div>
 
@@ -5329,16 +5340,19 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
-        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is which build you
-        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
-        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
-        own docs say it still needs their fork and that Ollama cannot load it, while their
-        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
-        is already in mainline. Check the machine you are presenting from, on the night.
+        8&nbsp;B in 2.2&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. Three values is 1.58&nbsp;bits in principle;
+        the shipped format spends 2.125, because every group of 128 weights carries a
+        16&#8209;bit scale &mdash; the same block cost as &sect;4, one section later.
+        <strong>The catch is which build you grab.</strong> The 1&#8209;bit files
+        (<span class="mono">*-Q1_0.gguf</span>) are merged upstream and run on any recent
+        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it still needs
+        PrismML&rsquo;s own fork, and that fork is <strong>CPU and Metal only</strong> &mdash;
+        no CUDA, no Vulkan &mdash; with the upstream patch still pending. This has moved
+        three times in a year; check the machine you are presenting from, on the night.
         The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
-        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
+        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro against the 124
+        this slide predicts, which is the usual two thirds.</p>
     </div>
   </section>
   <!-- ---- 7 · a different shape of generation ---- -->
@@ -5360,7 +5374,11 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="df-head">
             <div>
               <span class="df-name">Autoregressive</span>
-              <span class="df-sub">Every model you ran today</span>
+              <!-- "The shape every model you ran today has", not "every model
+                   you ran today": 250 tok/s is the datacentre baseline Google's
+                   4x is measured against, and nothing in this room is close to
+                   it — the deck's own fastest machine is 186 on a 5090. -->
+              <span class="df-sub">The shape yours has &middot; same H100</span>
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
@@ -5393,16 +5411,17 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <span class="df-v-k">Where the bottleneck went</span>
         <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
           <b>per token</b>. Diffusion reads them once <b>per denoising pass</b>, and one
-          pass moves all 256 tokens forward &mdash; sixteen passes, not 256 &mdash; so the
-          memory bus stops being the wall, and arithmetic becomes it instead.</span>
+          pass moves all 256 tokens forward &mdash; a handful of passes, not 256 &mdash; so
+          the memory bus stops being the wall, and arithmetic becomes it instead.</span>
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
         <em>tok/s &asymp; bandwidth &divide; model size</em> held all the way through because one pass
         produced one token. Denoise a block instead and one pass advances 256 of them, so
-        the same read of the weights buys sixteen tokens rather than one &mdash;
+        the same read of the weights buys many tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch is the hardware.</strong>
+        compute more. Google publish the 256 per pass and the 4&times;, but not how many
+        passes a block takes; the animation picks sixteen to have something to draw. <strong>The catch is the hardware.</strong>
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
         26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
         Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
@@ -6088,7 +6107,7 @@ if (dkSlide) {
      whole demonstration and the room needs time to get uncomfortable
      watching it; at the fast end it has to still be running when the
      presenter finishes the sentence about it. Roughly 300 words, which
-     is about eight seconds at 41 tok/s and about two minutes at 3. */
+     is about ten seconds at 41 tok/s and about three minutes at 3. */
   var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
     'No request leaves the building, no key is billed, and nothing stops working ' +
     'when the wifi does. The speed you are watching right now is not a benchmark ' +
@@ -6206,7 +6225,12 @@ if (dkSlide) {
 
     if (holding > 0) { holding -= dt * 1000; if (holding <= 0) { restart(); render(); } return; }
 
-    acc += rate() * dt;
+    /* WORDS, not tokens: PASSAGE is split on spaces, so revealing one
+       element per token ran the demo at tok/s WORDS per second — a third
+       faster than the words/min figure printed directly above it. The
+       readout and the thing it describes have to agree; this is the
+       slide that teaches the formula. */
+    acc += rate() * WORDS_PER_TOKEN * dt;
     if (acc >= 1) {
       var add = Math.floor(acc);
       acc -= add;
@@ -7834,10 +7858,16 @@ if (scSlide) {
     { n: 'Qwen3.6 27B',      p: 27.8,  kind: 'local',
       say: 'About the ceiling for a good laptop &mdash; roughly 17&nbsp;GB at ' +
            '4&#8209;bit. Hold this one in mind; it comes back in the next section.' },
+    /* 175B is GPT-3's published figure. OpenAI never gave one for GPT-3.5,
+       so the bar is "the last number they published, on the generation
+       that made the noise" — not a disclosed 3.5 size. The slide's own
+       caveat says OpenAI's last real number was GPT-3's, and this copy
+       used to contradict it two elements away. */
     { n: 'GPT&#8209;3.5',    p: 175,   kind: 'closed',
-      say: 'The model that started the fuss, in 2022. The last OpenAI flagship ' +
-           'whose size we actually know &mdash; and six times bigger than your ' +
-           'laptop&rsquo;s ceiling today.' },
+      say: 'The model that started the fuss, in 2022. The 175&nbsp;billion is ' +
+           'GPT&#8209;3&rsquo;s published figure &mdash; the last one OpenAI ever gave, ' +
+           'and carried over here because they never published a size for 3.5. ' +
+           'Six times bigger than your laptop&rsquo;s ceiling today.' },
     { n: 'DeepSeek V4 Flash', p: 284,  act: 13, kind: 'open',
       say: 'Open weights, and the small one of its family. 284&nbsp;B total, but ' +
            'only 13&nbsp;B fire per token &mdash; that is what sparse means.' },
@@ -7932,9 +7962,16 @@ if (scSlide) {
     }
     var mx = scTargetMax();
     scMaxEl.textContent = scFmt(mx);
+    /* A model drawn as a RANGE has no single multiple, and reporting its
+       top as one made the readout state the ceiling of a disputed band as
+       fact — while the caveat beneath it correctly leads with the floor.
+       Report the band. */
+    var lastLo = last && last.lo ? last : null;
     scRatio.innerHTML = shownN < 2 ? '&nbsp;'
-      : Math.round(mx / SC_MODELS[0].p).toLocaleString() +
-        '&times; your download';
+      : lastLo
+        ? Math.round(lastLo.lo / SC_MODELS[0].p).toLocaleString() + '&ndash;' +
+          Math.round(lastLo.hi / SC_MODELS[0].p).toLocaleString() + '&times; your download'
+        : Math.round(mx / SC_MODELS[0].p).toLocaleString() + '&times; your download';
     if (last) scSay.innerHTML = last.say;
   }
 
@@ -8177,8 +8214,13 @@ if (scSlide) {
    on the same bus.
 
    Sizes: fp16 is 8.19B x 2 bytes; Q4_K_M and Q2_K are the usual GGUF
-   effective bit-widths; Ternary Bonsai 8B is PrismML's published 1.75 GB
-   (their GGUF build is 2.03 GiB). Verified Jul 2026.
+   effective bit-widths; Ternary Bonsai 8B is the SHIPPED Q2_0 file,
+   2.03 GiB / 2.18 GB, not the 1.75 GB headline. Three values is 1.58 bits
+   in principle, but the format packs 128 weights into 34 bytes — 32 of
+   codes plus a 16-bit scale — which is 2.125 bits per weight. Quoting the
+   headline meant the bar, the readout and the decode ceiling all came off
+   a file nobody can download, on the one slide arguing the arithmetic
+   holds. Same failure as the old 2.8 GB Q2_K row. Verified Aug 2026.
    ========================================================== */
 var bnSlide = document.getElementById('s-bonsai');
 if (bnSlide) {
@@ -8200,7 +8242,7 @@ if (bnSlide) {
       qual: 'Falls apart', cliff: true,
       say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
            'loops, contradictions, confident nonsense. This is the floor.' },
-    { gb: 1.75, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
+    { gb: 2.2, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
       qual: '75.5 benchmark avg.',
       say: 'Below the floor, and fine. It was never squashed: every weight was ' +
            'one of three values throughout training, so there was nothing to round away.' }
@@ -8211,12 +8253,14 @@ if (bnSlide) {
     { need: 6.5 },  /* 8 GB laptop  */
     { need: 3 }     /* a phone      */
   ];
-  /* No efficiency fudge. A single constant cannot reproduce both published
-     measurements — PrismML's 82 tok/s on an M4 Pro is about half of that
-     machine's ceiling, their 27 on an iPhone is about four fifths of its
-     one — and a readout that contradicts the measurement quoted in the
-     caveat beneath it is worse than no readout. So this is §3's formula
-     unmodified, labelled as the ceiling it is, exactly as §3 taught it. */
+  /* No efficiency fudge: §3's formula unmodified, labelled as the ceiling
+     it is. PrismML's 82 tok/s on an M4 Pro lands at about two thirds of
+     the 124 this computes, which is the normal ratio and is what the
+     caveat quotes. Their iPhone figure is deliberately NOT quoted there:
+     against the real 2.2 GB file and an estimated 60 GB/s it works out at
+     essentially 100% of theoretical, which no real inference achieves, so
+     one of the two inputs is wrong and Apple publishes neither. The phone
+     button stays as a bandwidth control; the measurement does not. */
 
   var bnRows  = Array.prototype.slice.call(bnSlide.querySelectorAll('.bn-row'));
   var bnStep  = document.getElementById('bnStep');
@@ -8291,7 +8335,11 @@ var dfSlide = document.getElementById('s-diff');
 if (dfSlide) {
   var DF_N      = 512;    /* tokens generated in both lanes   */
   var DF_BLOCK  = 256;    /* diffusion tokens per forward pass */
-  var DF_STEPS  = 16;     /* denoising steps per block         */
+  /* Google publish 256 tokens per forward pass and the 4x, but NOT the
+     number of denoising steps a block takes. Sixteen is this animation's
+     choice, not a figure from the model card — the caveat says so, and
+     the verdict copy says "a handful of passes" rather than naming it. */
+  var DF_STEPS  = 16;     /* denoising steps per block — ours, not theirs */
   var DF_SLOWMO = 2.5;
   var DF_AR_RATE = 250;   /* tok/s, autoregressive baseline    */
   var DF_DF_RATE = 1000;  /* tok/s, diffusion                  */
@@ -9528,15 +9576,20 @@ var GLOSSARY = {
     d: 'A small run of weights — 32 or 256 of them — that share one full-precision multiplier inside a quantized file. Those shared scales are the whole reason a "4-bit" model is really 4.83 bits per weight.',
     vs: [['A block of tokens', 'Section 07’s diffusion models denoise a block of 256 TOKENS at once. Same word, different thing entirely: one is a chunk of the file, the other a chunk of the answer.']] },
 
+  /* "Typically 5–10x", not a single figure: the honest range. The two
+     machines in §3 happen to be 1792 against 96, which is nearer 19x,
+     but that is one desktop pairing — a laptop dGPU against fast DDR5
+     can be five, and quoting either end as THE number would make the
+     glossary contradict whichever machine is in the room. */
   'vram': { s: 3,
-    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, at roughly a tenth of the speed.',
+    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, typically five to ten times slower.',
     vs: [['System RAM', 'Plentiful and cheap, and far slower. Spilling from one to the other is the cliff you can watch on the two-machines slide.'],
          ['Unified memory', 'On a Mac there is only one pool, shared by CPU and GPU. Large capacity, no copying, and no cliff — until the pool itself is full.']] },
   'unified memory': { s: 3,
     d: 'One pool of RAM shared by CPU and GPU, as on Apple silicon and AMD APUs. Capacity a graphics card cannot match, at bandwidth a plain PC cannot match — which is why Macs punch above their weight at generation.',
     vs: [['VRAM', 'A separate pool that has to be filled by copying across the PCIe bus, and that runs out sooner.']] },
   'dram': { s: 3,
-    d: 'Ordinary system RAM. Plentiful, cheap, and roughly ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
+    d: 'Ordinary system RAM. Plentiful, cheap, and typically five to ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
 
   'memory bandwidth': { s: 3,
     d: 'How many gigabytes per second the machine can read from memory. Because every weight is read once per token, this number divided by the size of the model is the speed ceiling for generation — the one formula the whole workshop hangs off.',
@@ -9688,6 +9741,12 @@ var GLOSSARY = {
   'gpu': { s: 3, t: 2,
     d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work.',
     vs: [['The CPU', 'A handful of fast general-purpose cores. It can run a model — just several times slower, because it does far fewer sums at a time.']] },
+  /* Defined because §7's Bonsai catch now names a backend list — "CPU and
+     Metal only" — and the audit was right that a room told the GPU does
+     the work has never been told what the other one is. */
+  'cpu': { s: 3, t: 2,
+    d: 'The general-purpose processor every computer has. A handful of fast cores that do one thing after another, as against a GPU’s thousands doing one thing at once.',
+    vs: [['The GPU', 'A model will run on the CPU alone, several times slower, because decode wants many simple sums at once rather than a few complicated ones in a row.']] },
   'cuda': { s: 3, t: 2,
     d: 'NVIDIA’s way of running general-purpose code on their graphics cards, and the backend most local inference uses on a PC.',
     vs: [['Metal / Vulkan / ROCm', 'The same job on Apple, cross-vendor and AMD hardware. A build that says "CUDA only" is saying "NVIDIA only".']] },
@@ -10117,10 +10176,14 @@ if (tpSlide) {
 
     mistral: {
       tag: 'MISTRAL &middot; PLAIN ASCII MARKERS',
-      wire: [['tok', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
+      /* <s> is Llama/Mistral's BOS. Gemma's is <bos>, so <s> is foreign
+         here and has to be red — it was green, which on the one slide
+         whose whole argument is the green/red split is the argument
+         itself getting the colour backwards. */
+      wire: [['bad', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
              ['bad', '[/INST]']],
       meta: '<b>[INST]</b> is ordinary ASCII &middot; it tokenizes cleanly and looks like text you typed' +
-            '<span>Nothing about it is special, so nothing about it is treated as special.</span>',
+            '<span>Nothing about it is special, so nothing about it is treated as special &mdash; and <b>&lt;s&gt;</b> is not this model&rsquo;s marker either: Gemma&rsquo;s is &lt;bos&gt;.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'I am not sure what [INST] refers to — is it a form you need to fill in? ' +
         'Before club night I would check the projector, the badges and the room ' +

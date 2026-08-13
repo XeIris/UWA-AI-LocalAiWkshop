@@ -37,7 +37,7 @@
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.2 GB</span></div>
           </div>
         </div>
 
@@ -70,15 +70,18 @@
       <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
-        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is which build you
-        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
-        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
-        own docs say it still needs their fork and that Ollama cannot load it, while their
-        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
-        is already in mainline. Check the machine you are presenting from, on the night.
+        8&nbsp;B in 2.2&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. Three values is 1.58&nbsp;bits in principle;
+        the shipped format spends 2.125, because every group of 128 weights carries a
+        16&#8209;bit scale &mdash; the same block cost as &sect;4, one section later.
+        <strong>The catch is which build you grab.</strong> The 1&#8209;bit files
+        (<span class="mono">*-Q1_0.gguf</span>) are merged upstream and run on any recent
+        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it still needs
+        PrismML&rsquo;s own fork, and that fork is <strong>CPU and Metal only</strong> &mdash;
+        no CUDA, no Vulkan &mdash; with the upstream patch still pending. This has moved
+        three times in a year; check the machine you are presenting from, on the night.
         The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
-        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
+        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro against the 124
+        this slide predicts, which is the usual two thirds.</p>
     </div>
   </section>

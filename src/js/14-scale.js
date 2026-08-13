@@ -28,10 +28,16 @@ if (scSlide) {
     { n: 'Qwen3.6 27B',      p: 27.8,  kind: 'local',
       say: 'About the ceiling for a good laptop &mdash; roughly 17&nbsp;GB at ' +
            '4&#8209;bit. Hold this one in mind; it comes back in the next section.' },
+    /* 175B is GPT-3's published figure. OpenAI never gave one for GPT-3.5,
+       so the bar is "the last number they published, on the generation
+       that made the noise" — not a disclosed 3.5 size. The slide's own
+       caveat says OpenAI's last real number was GPT-3's, and this copy
+       used to contradict it two elements away. */
     { n: 'GPT&#8209;3.5',    p: 175,   kind: 'closed',
-      say: 'The model that started the fuss, in 2022. The last OpenAI flagship ' +
-           'whose size we actually know &mdash; and six times bigger than your ' +
-           'laptop&rsquo;s ceiling today.' },
+      say: 'The model that started the fuss, in 2022. The 175&nbsp;billion is ' +
+           'GPT&#8209;3&rsquo;s published figure &mdash; the last one OpenAI ever gave, ' +
+           'and carried over here because they never published a size for 3.5. ' +
+           'Six times bigger than your laptop&rsquo;s ceiling today.' },
     { n: 'DeepSeek V4 Flash', p: 284,  act: 13, kind: 'open',
       say: 'Open weights, and the small one of its family. 284&nbsp;B total, but ' +
            'only 13&nbsp;B fire per token &mdash; that is what sparse means.' },
@@ -126,9 +132,16 @@ if (scSlide) {
     }
     var mx = scTargetMax();
     scMaxEl.textContent = scFmt(mx);
+    /* A model drawn as a RANGE has no single multiple, and reporting its
+       top as one made the readout state the ceiling of a disputed band as
+       fact — while the caveat beneath it correctly leads with the floor.
+       Report the band. */
+    var lastLo = last && last.lo ? last : null;
     scRatio.innerHTML = shownN < 2 ? '&nbsp;'
-      : Math.round(mx / SC_MODELS[0].p).toLocaleString() +
-        '&times; your download';
+      : lastLo
+        ? Math.round(lastLo.lo / SC_MODELS[0].p).toLocaleString() + '&ndash;' +
+          Math.round(lastLo.hi / SC_MODELS[0].p).toLocaleString() + '&times; your download'
+        : Math.round(mx / SC_MODELS[0].p).toLocaleString() + '&times; your download';
     if (last) scSay.innerHTML = last.say;
   }
 
