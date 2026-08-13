@@ -17,7 +17,7 @@
           <div class="df-head">
             <div>
               <span class="df-name">Autoregressive</span>
-              <span class="df-sub">Every model you ran tonight</span>
+              <span class="df-sub">Every model you ran today</span>
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
@@ -55,7 +55,7 @@
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
-        <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
+        <em>tok/s &asymp; bandwidth &divide; model size</em> held all the way through because one pass
         produced one token. Denoise a block instead and one pass advances 256 of them, so
         the same read of the weights buys sixteen tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
@@ -63,8 +63,7 @@
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
         26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
         Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
-        graphics card. That is a desk, not a lap, and well past what anything in this
-        room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served
+        graphics card. That is a desk, not a lap, and well past anything downloaded here today. Apache 2.0, weights on Hugging Face, and it is served
         on Vertex AI if you want to try it without the card. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>

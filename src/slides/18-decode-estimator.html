@@ -44,12 +44,15 @@
             <span>Live at this speed</span>
             <span class="dk-wpm" id="dkWpm">&nbsp;</span>
           </div>
-          <p class="dk-text" id="dkText"></p>
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="dk-text" id="dkText" data-noglossary></p>
         </div>
       </div>
 
       <p class="caveat"><strong>This assumes the model fits.</strong> Drag the size past
-        what the machine actually holds and the number above becomes a fantasy &mdash; that
+        what the machine actually holds and the number above becomes a fantasy. That
         is the next slide. Even when it does fit, this is a theoretical ceiling: attention,
         sampling and the KV cache all take a cut, and no chip sustains its paper bandwidth.</p>
     </div>

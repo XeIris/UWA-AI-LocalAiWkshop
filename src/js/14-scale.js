@@ -20,7 +20,7 @@ if (scSlide) {
      act:  active params per token for a sparse (MoE) model            */
   var SC_MODELS = [
     { n: 'Gemma 3 1B',       p: 1,     kind: 'local',
-      say: 'Tonight&rsquo;s download. One billion parameters, about 700&nbsp;MB on ' +
+      say: 'The one you downloaded. One billion parameters, about 700&nbsp;MB on ' +
            'disk, and it answered you in a second.' },
     { n: 'Qwen3 4B',         p: 4,     kind: 'local',
       say: 'The one worth taking home. Four times the parameters, still ' +
@@ -36,7 +36,7 @@ if (scSlide) {
       say: 'Open weights, and the small one of its family. 284&nbsp;B total, but ' +
            'only 13&nbsp;B fire per token &mdash; that is what sparse means.' },
     { n: 'GLM&#8209;5.2',    p: 753,   act: 40, kind: 'open',
-      say: 'MIT licensed. You could legally download this tonight. You would need ' +
+      say: 'MIT licensed. You could legally download this today. You would need ' +
            'about 400&nbsp;GB of memory to run it.' },
     { n: 'MiMo V2.5 Pro',    p: 1020,  act: 42, kind: 'open',
       say: 'A trillion parameters, published openly, by a phone manufacturer. ' +
@@ -128,7 +128,7 @@ if (scSlide) {
     scMaxEl.textContent = scFmt(mx);
     scRatio.innerHTML = shownN < 2 ? '&nbsp;'
       : Math.round(mx / SC_MODELS[0].p).toLocaleString() +
-        '&times; tonight&rsquo;s download';
+        '&times; your download';
     if (last) scSay.innerHTML = last.say;
   }
 

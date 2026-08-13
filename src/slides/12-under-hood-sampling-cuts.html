@@ -2,7 +2,10 @@
     <div class="slide-inner">
       <div class="eyebrow">02 &mdash; Sampling</div>
       <h2>Two ways to cut the tail off</h2>
-      <p class="note" id="cutPrompt" style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
+      <!-- data-noglossary: this paragraph is rewritten by its module, so the
+           marking pass's underlines here would be wiped by the first press
+           while still having spent the slide's budget to get there. -->
+      <p class="note" id="cutPrompt" data-noglossary style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
       <div class="stack two">
         <div class="samp">
           <div class="samp-head"><span>Top-p &middot; counts area</span><span class="hi" id="toppKept">4 kept</span></div>
@@ -31,8 +34,8 @@
         </div>
       </div>
       <p class="note" style="margin-top:0.9rem">
-        Flip between the two and watch the right-hand panel. <strong>Min&#8209;p adapts</strong> &mdash;
-        when the model is sure of itself the floor rises and almost nothing else survives;
+        Flip between the two and watch the right-hand panel. <strong>Min&#8209;p adapts.</strong>
+        When the model is sure of itself the floor rises and almost nothing else survives;
         when it is torn the floor drops and the alternatives live. Top&#8209;p cannot tell the
         difference.</p>
     </div>

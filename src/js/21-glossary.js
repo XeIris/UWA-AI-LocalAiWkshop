@@ -80,7 +80,7 @@ var GLOSSARY = {
     vs: [['Open source', 'The training data and the code that produced the weights usually stay private, and the license can still restrict commercial use or outputs. Read the model card.']] },
 
   'inference': { s: 0,
-    d: 'Running a trained model to get an answer out of it — the only half of the job your laptop is doing tonight.',
+    d: 'Running a trained model to get an answer out of it — the only half of the job your laptop is doing here.',
     vs: [['Training', 'Making the weights in the first place: thousands of GPUs, weeks, and millions of dollars. Nothing you do in LM Studio changes a weight.']] },
 
   'parameters': { s: 4,
@@ -132,7 +132,7 @@ var GLOSSARY = {
   'mlx': { s: 2,
     d: 'Apple’s array framework, built around unified memory. Meaningfully faster than llama.cpp on Apple silicon, and useless anywhere else — it has its own model format, so you download a different file.' },
   'lm studio': { s: 1,
-    d: 'The desktop app used tonight: it finds models, downloads them, and runs them through llama.cpp or MLX behind a chat window.',
+    d: 'The desktop app used in this workshop: it finds models, downloads them, and runs them through llama.cpp or MLX behind a chat window.',
     vs: [['LM Studio Bionic', 'A separate app from the same team — a local coding and document agent. It is not a newer LM Studio and does not replace the model manager. The name invites exactly the wrong guess.']] },
   'ollama': { s: 2,
     d: 'A command-line-first model runner, also built on llama.cpp. Popular for serving a model to other programs rather than chatting with it yourself.',
@@ -144,13 +144,32 @@ var GLOSSARY = {
          ['Zipping the file', 'A quantized model is smaller in memory while it runs, which is the whole point. A zip has to be unpacked back to full size first.']] },
   'quantized': { s: 4,
     d: 'Stored at reduced precision: fewer bits per weight, a smaller file, and a small loss of quality that is negligible at 4 bits and severe at 2.' },
+  /* Plurals as aliases, for the same reason "tokens" is one. The regex
+     ends a term at a word boundary, so the entry does NOT cover its own
+     plural — and the deck writes "dozens of files at different
+     quantizations", which is where a beginner actually meets the word.
+     Until these existed that sentence went unmarked on a slide with two
+     spare slots in its budget. */
+  'quantizations': { s: 4,
+    d: 'Storing each weight in fewer bits — 16 down to 8, 4 or 2 — so the file shrinks and the whole model can be read from memory faster. The model gets a little worse in a way that is nearly free down to about 4 bits, and expensive below it.',
+    vs: [['Distillation', 'Training a smaller model to imitate a bigger one. That makes a NEW model; quantization keeps the same one and rounds it.'],
+         ['Zipping the file', 'A quantized model is smaller in memory while it runs, which is the whole point. A zip has to be unpacked back to full size first.']] },
   'quant': { s: 4,
+    d: 'One quantized build of a model, named for its scheme — Q4_K_M, Q8_0, IQ4_XS. One model produces dozens of them, and picking the right one is the skill.' },
+  'quants': { s: 4,
     d: 'One quantized build of a model, named for its scheme — Q4_K_M, Q8_0, IQ4_XS. One model produces dozens of them, and picking the right one is the skill.' },
   'q4_k_m': { s: 4,
     d: 'The usual 4-bit build, and the default recommendation. "K" is the block-scale scheme, "M" the medium variant that keeps a few sensitive tensors at higher precision.',
     vs: [['Exactly 4 bits', 'It averages about 4.83 bits per weight once the per-block scales are counted — which is why the download is bigger than the napkin says.']] },
   'bits per weight': { s: 4,
     d: 'The real average storage cost of one weight, block scales and metadata included — the honest version of "4-bit", and the number that makes a download page agree with your arithmetic.' },
+  /* The deck uses "block" in two unrelated senses, four sections apart,
+     and a definition that picked one would be wrong on the other slide.
+     Naming both is the honest version, and the collision is exactly what
+     the "not the same as" half of an entry is for. */
+  'block': { s: 4,
+    d: 'A small run of weights — 32 or 256 of them — that share one full-precision multiplier inside a quantized file. Those shared scales are the whole reason a "4-bit" model is really 4.83 bits per weight.',
+    vs: [['A block of tokens', 'Section 07’s diffusion models denoise a block of 256 TOKENS at once. Same word, different thing entirely: one is a chunk of the file, the other a chunk of the answer.']] },
 
   'vram': { s: 3,
     d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, at roughly a tenth of the speed.',
@@ -209,6 +228,12 @@ var GLOSSARY = {
     d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
     vs: [['Fine-tuning', 'Fine-tuning teaches style and format by changing weights. RAG changes nothing and supplies facts at question time — for "what do my files say", RAG is almost always the right answer.'],
          ['A bigger context window', 'Pasting everything in works until it does not: the cache cost is linear and attention quality falls off long before the limit does.']] },
+  /* Alias of RAG: §6 makes the argument in plain English ("retrieval
+     over your own files") and only ever writes the acronym elsewhere. */
+  'retrieval': { s: 6,
+    d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
+    vs: [['Fine-tuning', 'Fine-tuning teaches style and format by changing weights. RAG changes nothing and supplies facts at question time — for "what do my files say", RAG is almost always the right answer.'],
+         ['A bigger context window', 'Pasting everything in works until it does not: the cache cost is linear and attention quality falls off long before the limit does.']] },
   'hallucination': { s: 6,
     d: 'A fluent, confident answer that is simply wrong. The failure mode of asking a model for facts it was never given, and small models reach it sooner because they were given less.',
     vs: [['Lying', 'There is no intent and no awareness. The model has no separate store of "things I know" to check an answer against.']] },
@@ -249,20 +274,35 @@ var GLOSSARY = {
     d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
     vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
          ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  /* Alias of mixture of experts: §6's scale slide says "sparse" in prose
+     and never spells the phrase out, so without this the word the slide
+     actually uses had no definition behind it. */
+  'sparse': { s: 6,
+    d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
+    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
+         ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
   /* The counterpart, and the one §3 needs: the formula's denominator is
      the ACTIVE size, which for everything in the room is just the file
      size. Section 3, not 6, because that is where the word first lands. */
   'dense': { s: 3,
-    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything you download tonight is dense.',
+    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything on the download slide is dense.',
     vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
   'autoregressive': { s: 7,
-    d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',
+    d: 'One token at a time, each conditioned on everything before it. How every model in this deck writes, and the reason decode is bandwidth-bound.',
     vs: [['Diffusion text models', 'They denoise a whole block of tokens in parallel over a few passes, which breaks the one-weight-read-per-token arithmetic entirely.']] },
   'diffusion': { s: 7,
     d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',
     vs: [['Gemini Diffusion', 'Google’s closed research demo from 2025. DiffusionGemma is the 2026 open-weights model — at least one source online conflates the two and mis-dates it.'],
          ['Image diffusion', 'Same idea, different medium. Nothing here generates pictures.']] },
+  /* Alias of diffusion: the verb is what §7's slide copy actually uses. */
+  'denoise': { s: 7,
+    d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',
+    vs: [['Gemini Diffusion', 'Google’s closed research demo from 2025. DiffusionGemma is the 2026 open-weights model — at least one source online conflates the two and mis-dates it.'],
+         ['Image diffusion', 'Same idea, different medium. Nothing here generates pictures.']] },
+  'ternary': { s: 7,
+    d: 'Weights that may only be −1, 0 or +1, so one weight costs about 1.58 bits instead of 16. Models are TRAINED this way from the start rather than rounded down to it afterwards.',
+    vs: [['2-bit quantization', 'That takes a finished 16-bit model and rounds it, which is the cliff §4 warns about. A ternary model never had the decimal places to lose, so the cliff does not apply to it.']] },
 
   'benchmark': { s: 6,
     d: 'A fixed test set used to score models. Useful for ranking, weak evidence for how a model will do on your particular job — and every published number was produced at a precision and context length that may not match yours.',
@@ -289,7 +329,7 @@ var GLOSSARY = {
     d: 'The fast working memory a running program lives in — measured in gigabytes, and emptied every time you shut down. A model has to be in it, in full, to run.',
     vs: [['Storage', 'Your SSD holds the file when nothing is running. It is roughly a hundred times slower, which is why "it fits on disk" says nothing about whether it will run.']] },
   'gpu': { s: 3, t: 2,
-    d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work tonight.',
+    d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work.',
     vs: [['The CPU', 'A handful of fast general-purpose cores. It can run a model — just several times slower, because it does far fewer sums at a time.']] },
   'cuda': { s: 3, t: 2,
     d: 'NVIDIA’s way of running general-purpose code on their graphics cards, and the backend most local inference uses on a PC.',
@@ -304,7 +344,7 @@ var GLOSSARY = {
     d: 'A way for one program to ask another for something, over the network or on your own machine. LM Studio and Ollama can both expose one, so other software can use your local model as if it were a cloud service.',
     vs: [['A cloud API key', 'Nothing here needs an account. A local API listens on your own machine and answers nobody else.']] },
   'endpoint': { s: 2, t: 2,
-    d: 'One specific address an API answers on. The distinction that matters tonight is the chat endpoint, which applies the model’s template for you, versus the raw completion endpoint, which hands your text over exactly as typed.' },
+    d: 'One specific address an API answers on. The distinction that matters here is the chat endpoint, which applies the model’s template for you, versus the raw completion endpoint, which hands your text over exactly as typed.' },
   'runtime': { s: 2, t: 2,
     d: 'The program that actually runs the model — llama.cpp or MLX here. LM Studio is the window around it, and the runtime is the part that has to understand a new format before you can open one.' },
   'metadata': { s: 2, t: 2,
@@ -312,6 +352,8 @@ var GLOSSARY = {
   'repo': { s: 2, t: 2,
     d: 'A repository: one folder of files published under an owner’s name, on Hugging Face or GitHub. A model page is a repo, not a product page, which is why two "same" models can differ file by file.' },
   'model card': { s: 2, t: 2,
+    d: 'The README on a model’s repo — what it was trained for, how to prompt it, what it must not be used for, and the licence. The one page worth reading before a multi-gigabyte download.' },
+  'model cards': { s: 2, t: 2,
     d: 'The README on a model’s repo — what it was trained for, how to prompt it, what it must not be used for, and the licence. The one page worth reading before a multi-gigabyte download.' },
   'license': { s: 0, t: 2,
     d: 'The terms the weights are published under: whether you may use them commercially, redistribute them, or train other models on their output. It is a property of the download, not of the app you run it in.',
@@ -322,9 +364,34 @@ var GLOSSARY = {
   'open source': { s: 0, t: 2,
     d: 'Software published with the source code anyone can read, change and redistribute. llama.cpp and LM Studio’s engine are open source; a model’s weights are a different thing under a different licence.',
     vs: [['Open weights', 'You get the finished numbers, not the recipe. The training data and the code that made them are usually private, which is why "open-source model" is nearly always the wrong phrase.']] },
+  /* §2's alternatives slide and §7's Bonsai slide both hand a beginner a
+     small pile of ordinary software vocabulary in one breath — server,
+     front end, self-host, fork, upstream. None of it is this deck's
+     subject, all of it is load-bearing for the sentence it sits in, and
+     it is exactly the sort of word people do not put their hand up
+     about. Tier 2, so none of it can take a slot from tier 1. */
+  'server': { s: 2, t: 2,
+    d: 'A program that sits waiting and answers requests. Ollama runs one on your own machine so other apps can ask it for text — nothing here involves a datacentre or a second computer.',
+    vs: [['A server in a rack', 'Same word, and the reason the sentence sounds bigger than it is. This one is a background process on your laptop.']] },
+  'front end': { s: 2, t: 2,
+    d: 'The part you look at and click, with the actual work happening in a separate program behind it. Open WebUI is a front end: it draws the chat window and asks a server elsewhere for the words.' },
+  'self-host': { s: 2, t: 2,
+    d: 'Run a piece of web software on your own machine instead of paying somebody to run it for you. It usually means installing a bit more than a single app, in exchange for owning the thing outright.' },
+  'toolchain': { s: 2, t: 2,
+    d: 'The stack of programs a piece of software needs in order to build and run — here, Python and its packages rather than a single installer. Worth knowing before you start, because it is the step that goes wrong.' },
+  'completion': { s: 2, t: 2,
+    d: 'The model’s original job: you give it text and it keeps writing from there. Chat is that same trick with a template wrapped around it, which is why a missing template makes a model finish your sentence instead of answering it.' },
+  'fork': { s: 7, t: 2,
+    d: 'A separate copy of an open-source project, changed by someone else and built separately. Useful, and not the same as the version your app ships — "it works in the fork" can mean you have to compile it yourself.' },
+  'upstream': { s: 7, t: 2,
+    d: 'Merged into the project everyone downloads, rather than living only in somebody’s private copy. It is the difference between "a build exists" and "your app can already open it".',
+    vs: [['A fork', 'A separate copy of the project with its own changes. Code in a fork works, for the people who build that fork — which is not the same as it reaching you.']] },
+  'mainline': { s: 7, t: 2,
+    d: 'Merged into the project everyone downloads, rather than living only in somebody’s private copy. It is the difference between "a build exists" and "your app can already open it".',
+    vs: [['A fork', 'A separate copy of the project with its own changes. Code in a fork works, for the people who build that fork — which is not the same as it reaching you.']] },
   'agent': { s: 6, t: 2,
     d: 'A model given tools and a loop — search, read a file, run a command — so it takes several steps on its own instead of answering once. Every step is another chance to be wrong, which is why long agent runs are where small models struggle most.',
-    vs: [['A chatbot', 'One turn, one answer, nothing done on your behalf. That is what tonight’s download is until you wire something up to it.']] }
+    vs: [['A chatbot', 'One turn, one answer, nothing done on your behalf. That is what your download is until you wire something up to it.']] }
 };
 
 var glossPanel = null;

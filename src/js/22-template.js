@@ -107,7 +107,7 @@ if (tpSlide) {
     none: {
       tag: 'NO TEMPLATE &middot; RAW COMPLETION',
       wire: [['txt', SYS + '\n' + ASK]],
-      meta: 'No roles, no markers &mdash; and crucially <b>no generation prompt</b>' +
+      meta: 'No roles, no markers, and <b>no generation prompt</b>' +
             '<span>Nothing in the string says &ldquo;your turn now&rdquo;, so it does what a language model does by default.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'And is anyone bringing the urn this time? Last month we ran out of hot ' +

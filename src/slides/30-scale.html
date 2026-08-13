@@ -41,7 +41,10 @@
             <div class="sc-num" id="scMax">4B</div>
             <div class="sc-sub" id="scRatio">&nbsp;</div>
           </div>
-          <p class="sc-say" id="scSay">We are going to build this chart from the bottom up,
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="sc-say" id="scSay" data-noglossary>We are going to build this chart from the bottom up,
             starting with the model on your laptop.</p>
           <div class="sc-legend">
             <span><i class="sw sw-local"></i>Runs on a laptop</span>
@@ -62,13 +65,13 @@
         to measure them from the outside disagree by roughly <em>six times</em>, which is
         why they are drawn as ranges. The lesson survives the uncertainty. Even the
         <em>floor</em> of the most conservative estimate is fifty times the largest model
-        a laptop can hold, and over a thousand times the one you downloaded tonight. Note
+        a laptop can hold, and over a thousand times the one you downloaded. Note
         too that the dot on each bar is what actually <em>runs</em> per token: a sparse
         model holds the whole total in memory but reads only that slice for each word.
         <strong>Memory is set by the big number, speed by the small one</strong> &mdash;
         which is the one place section 03&rsquo;s formula forks. Not
-        tonight&rsquo;s problem &mdash; everything on the download slide is dense, so
-        the two numbers are the same &mdash; but it is why a sparse model can feel
+        a problem here: everything on the download slide is dense, so the two numbers
+        are the same. But it is why a sparse model can feel
         faster than its file size says it has any right to.</p>
     </div>
   </section>
