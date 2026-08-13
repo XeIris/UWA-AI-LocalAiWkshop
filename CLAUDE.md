@@ -96,6 +96,30 @@ bit the same way, and both are handled in `glossRe`:
   three letters of a compound underlined, offering to explain what a binary digit is.
   A term must never match half a word, whichever dash is holding it together.
 
+**No slide copy names a time of day** (Aug 2026). The deck said "tonight" nineteen
+times and the session actually runs 4–6pm, so every instance is gone rather than
+re-worded to "this afternoon" — a deck that is also mailed round afterwards should not
+be telling a reader what time it is. Say "here", "today", or name the section.
+
+**An entry does not cover its own plural.** `glossRe` ends a term at a word boundary, so
+`quantization` never matched "quantizations" — which is the spelling §2's provenance
+slide actually uses, on a slide that had two spare marks in its budget. Plurals are
+explicit aliases sharing the definition verbatim, exactly as `token`/`tokens` already
+were. The same trick carries the words the slides use in plain English where the deck's
+own vocabulary is the acronym: `sparse` shares the mixture-of-experts definition,
+`retrieval` shares RAG's, `denoise` shares diffusion's. Sharing the *definition* is what
+matters, because "one mark per definition per slide" then stops both spellings marking.
+
+**A paragraph a module rewrites carries `data-noglossary`.** Six of them do
+(`cutPrompt`, `tpVerdict`, `dkText`, `scSay`, `csWhy`, `bnSay`), and two shipped real
+copy that the pass dutifully marked — §7's Bonsai row description spent three of that
+slide's six marks on `bits per weight`, `training` and `weights`, all of which
+`bnOut.say.innerHTML` destroys on the first press of Next. The underlines vanish
+mid-demo and the budget is already gone, so the words the slide exists to define
+(`ternary`, `fork`, `upstream`) never get a slot. This is the same rule as glossary
+sorting ahead of template, seen from the other end: dynamic text is not marked, so it
+must not be counted either.
+
 **Nothing is checked by eye.** `js/23-glossary-audit.js` runs the audit in the page,
 against the real DOM with the real selectors and the real regexes, and reports: **A**
 entries no slide contains, **B** terms in prose that lost the budget, **C** terms that
@@ -143,7 +167,7 @@ a laptop that is probably on battery. Each module now starts its loop from its o
 `deck:slide` handler and clears it otherwise, with a guard against double-starting —
 `deck:slide` arrives twice when the theme toggle fires. This does not weaken the
 timer-not-rAF argument in `17-chat.js`: that is about which *clock* to use, not about
-running one all evening.
+running one for the whole talk.
 
 **Pin every canvas to a resolved height.** A `<canvas>` is a replaced element, so if its
 height stays unresolved it falls back to its own `height` attribute — which `fitCanvas`
@@ -970,7 +994,7 @@ Hugging Face.
 
 **The closing beat:** *both* examples being un-runnable in LM Studio today is the point —
 "everything you learned about bytes-per-parameter is already being rewritten; come back
-in six months." Framed as inspiring horizon tech, explicitly **not** tonight's download.
+in six months." Framed as inspiring horizon tech, explicitly **not** today's download.
 
 ## Accuracy notes for whoever writes this content
 

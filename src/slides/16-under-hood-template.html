@@ -47,7 +47,10 @@
         </div>
       </div>
 
-      <p class="tp-v" id="tpVerdict">&nbsp;</p>
+      <!-- data-noglossary: this paragraph is rewritten by its module, so the
+           marking pass's underlines here would be wiped by the first press
+           while still having spent the slide's budget to get there. -->
+      <p class="tp-v" id="tpVerdict" data-noglossary>&nbsp;</p>
 
       <p class="caveat"><strong>Nothing here errors, and that is the whole problem.</strong>
         The template lives in the GGUF&rsquo;s metadata and LM Studio normally reads it,

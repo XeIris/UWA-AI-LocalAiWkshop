@@ -92,10 +92,14 @@ if (tpSlide) {
 
     mistral: {
       tag: 'MISTRAL &middot; PLAIN ASCII MARKERS',
-      wire: [['tok', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
+      /* <s> is Llama/Mistral's BOS. Gemma's is <bos>, so <s> is foreign
+         here and has to be red — it was green, which on the one slide
+         whose whole argument is the green/red split is the argument
+         itself getting the colour backwards. */
+      wire: [['bad', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
              ['bad', '[/INST]']],
       meta: '<b>[INST]</b> is ordinary ASCII &middot; it tokenizes cleanly and looks like text you typed' +
-            '<span>Nothing about it is special, so nothing about it is treated as special.</span>',
+            '<span>Nothing about it is special, so nothing about it is treated as special &mdash; and <b>&lt;s&gt;</b> is not this model&rsquo;s marker either: Gemma&rsquo;s is &lt;bos&gt;.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'I am not sure what [INST] refers to — is it a form you need to fill in? ' +
         'Before club night I would check the projector, the badges and the room ' +
@@ -107,7 +111,7 @@ if (tpSlide) {
     none: {
       tag: 'NO TEMPLATE &middot; RAW COMPLETION',
       wire: [['txt', SYS + '\n' + ASK]],
-      meta: 'No roles, no markers &mdash; and crucially <b>no generation prompt</b>' +
+      meta: 'No roles, no markers, and <b>no generation prompt</b>' +
             '<span>Nothing in the string says &ldquo;your turn now&rdquo;, so it does what a language model does by default.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'And is anyone bringing the urn this time? Last month we ran out of hot ' +

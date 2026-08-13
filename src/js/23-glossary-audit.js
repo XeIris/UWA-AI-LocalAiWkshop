@@ -55,18 +55,24 @@ var AUDIT = /(^|[?&])audit\b/.test(location.search);
    nothing until the word is actually on a slide, and then it costs one
    line of output until someone decides whether it needs defining. */
 var WATCH = [
-  'activation', 'agent', 'agentic', 'api', 'apache 2.0', 'attention',
-  'backend', 'batch', 'bit', 'byte', 'checkpoint', 'cli', 'compute',
-  'context length', 'cpu', 'dgpu', 'distillation', 'embedding',
-  'endpoint', 'epoch', 'fine-tuning', 'flops', 'fp16', 'gpu',
-  'greedy', 'guardrails', 'head', 'inference engine', 'instruct',
-  'latency', 'layer', 'license', 'lora', 'metadata', 'model card',
-  'multimodal', 'neural network', 'offload', 'offloading', 'open source',
+  'activation', 'active parameters', 'agent', 'agentic', 'api',
+  'apache 2.0', 'attention', 'backend', 'base model', 'batch', 'beta',
+  'bit', 'block', 'block scale', 'byte', 'checkpoint', 'cli',
+  'command line', 'completion', 'compute', 'context length', 'cpu',
+  'daemon', 'denoise', 'dgpu', 'distillation', 'distribution',
+  'embedding', 'endpoint', 'epoch', 'fine-tuning', 'flops', 'fork',
+  'fp16', 'front end', 'generation prompt', 'gpu', 'greedy',
+  'guardrails', 'head', 'headroom', 'inference engine', 'instruct',
+  'instruction-tuned', 'latency', 'layer', 'license', 'logits', 'lora',
+  'mainline', 'marker', 'mask', 'metadata', 'model card', 'multimodal',
+  'neural network', 'offload', 'offloading', 'open source', 'overhead',
   'parallel', 'pcie', 'precision', 'prompt', 'quantize', 'ram',
-  'reasoning', 'repo', 'runtime', 'soc', 'speculative decoding',
-  'streaming', 'throughput', 'time to first token', 'tool calling',
-  'training', 'transformer', 'unquantized', 'vector', 'vocabulary',
-  'wrapper'
+  'reasoning', 'repo', 'retrieval', 'runtime', 'self-host', 'server',
+  'sliding window', 'soc', 'softmax', 'sparse', 'speculative decoding',
+  'stop token', 'streaming', 'tensor', 'terminal', 'ternary',
+  'throughput', 'time to first token', 'tool calling', 'toolchain',
+  'training', 'transformer', 'unquantized', 'upstream', 'vector',
+  'vocabulary', 'wrapper'
 ];
 
 /* Not jargon, or not jargon a glossary can help with. Three kinds:
@@ -77,7 +83,7 @@ var WATCH = [
 var AUDIT_STOP = {
   ai: 1, pc: 1, usb: 1, pdf: 1, os: 1, uk: 1, us: 1, id: 1, ok: 1,
   qr: 1, url: 1, mit: 1, gb: 1, mb: 1, kb: 1, tb: 1, ms: 1, hz: 1,
-  no: 1, and: 1, the: 1, a: 1, i: 1,
+  no: 1, and: 1, the: 1, a: 1, i: 1, beta: 1,
   gpt: 1, h100: 1, m1: 1, m2: 1, m3: 1, m4: 1, m5: 1, a4b: 1, rtx: 1,
   ddr5: 1, mha: 1, mqa: 1, qwen: 1, gemma: 1, lfm2: 1, glm: 1,
   'q1_0.gguf': 1, 'q2_0.gguf': 1, 'q2_0_g64.gguf': 1, 'pq2_0.gguf': 1

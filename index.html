@@ -3569,7 +3569,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <div>
               <span class="dis-k">This ages fast</span>
               <p>Some of what follows is already out of date. Models, apps and hardware
-                all move faster than a slide deck. The shape of it holds. Treat tonight
+                all move faster than a slide deck. The shape of it holds. Treat this deck
                 as an entry point rather than a reference.</p>
             </div>
           </div>
@@ -3586,7 +3586,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
 
         <nav class="toc" aria-label="Workshop contents">
-          <div class="toc-k">Tonight &middot; 2 hours</div>
+          <div class="toc-k">Contents &middot; 2 hours</div>
           <button type="button" class="toc-item" data-goto="0">
             <span class="toc-n">00</span>
             <span class="toc-t">What it is &amp; why bother</span>
@@ -3691,7 +3691,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <span class="anat-n">02</span>
           <h3>The runner</h3>
           <p>An ordinary desktop app that loads that file into memory and does the
-            multiplication. LM Studio tonight; the engine underneath is llama.cpp.</p>
+            multiplication. LM Studio here; the engine underneath is llama.cpp.</p>
           <span class="anat-m">INSTALLS LIKE ANY OTHER APP</span>
         </div>
         <div class="anat-part">
@@ -3848,7 +3848,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         that runs <em>on top of</em> a model, and it can point at open models in the cloud
         as well as local ones, so it is not automatically offline the way this app is. It
         is not a newer version of this one; the two are meant to be installed side by
-        side. Tonight we want the app that downloads and runs the model.</p>
+        side. We want the app that downloads and runs the model.</p>
     </div>
   </section>
   <!-- ---- 1 · pick a model ---- -->
@@ -3933,11 +3933,11 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
 
       </div>
-      <p class="caveat"><strong>Take a 1B tonight.</strong> Under 750&nbsp;MB downloads in
+      <p class="caveat"><strong>Take a 1B now.</strong> Under 750&nbsp;MB downloads in
         minutes on shared wifi and leaves your laptop responsive; 2.5&nbsp;GB times thirty
         people does not. The larger two are here so you can see the trade&#8209;off, and to
         take home afterwards.
-        <strong>MLX is Apple&nbsp;silicon only</strong> &mdash; everyone else takes the GGUF.</p>
+        <strong>MLX is Apple&nbsp;silicon only.</strong> Everyone else takes the GGUF.</p>
     </div>
   </section>
 
@@ -4009,7 +4009,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat">These are famous because they are cheap to check, not because the
-        model is stupid &mdash; frontier models miss several of them too, and the first
+        model is stupid. Frontier models miss several of them too, and the first
         two are about how text is chopped up before the model ever sees it. That is
         exactly what the next section opens with.
         <button type="button" class="gloss-go" data-goto="2">Section 02</button></p>
@@ -4070,7 +4070,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="note lp-note">Two things worth watching. It re-reads <em>everything</em>
         each pass, which is what Section 05 turns into a memory bill. And a token is not
-        a word &mdash; watch <span class="mono">deeper</span> and
+        a word: watch <span class="mono">deeper</span> and
         <span class="mono">drained</span> arrive in two pieces. That is why it cannot
         count the letters in <span class="mono">strawberry</span>.</p>
     </div>
@@ -4105,7 +4105,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
     <div class="slide-inner">
       <div class="eyebrow">02 &mdash; Sampling</div>
       <h2>Two ways to cut the tail off</h2>
-      <p class="note" id="cutPrompt" style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
+      <!-- data-noglossary: this paragraph is rewritten by its module, so the
+           marking pass's underlines here would be wiped by the first press
+           while still having spent the slide's budget to get there. -->
+      <p class="note" id="cutPrompt" data-noglossary style="margin:-0.6rem 0 1.1rem">&nbsp;</p>
       <div class="stack two">
         <div class="samp">
           <div class="samp-head"><span>Top-p &middot; counts area</span><span class="hi" id="toppKept">4 kept</span></div>
@@ -4134,8 +4137,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
       <p class="note" style="margin-top:0.9rem">
-        Flip between the two and watch the right-hand panel. <strong>Min&#8209;p adapts</strong> &mdash;
-        when the model is sure of itself the floor rises and almost nothing else survives;
+        Flip between the two and watch the right-hand panel. <strong>Min&#8209;p adapts.</strong>
+        When the model is sure of itself the floor rises and almost nothing else survives;
         when it is torn the floor drops and the alternatives live. Top&#8209;p cannot tell the
         difference.</p>
     </div>
@@ -4178,7 +4181,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
       <p class="caveat">The name in the search box is not the whole story. One model
-        produces dozens of files at different quantizations &mdash; picking the right one
+        produces dozens of files at different quantizations, and picking the right one
         is the skill.</p>
     </div>
   </section>
@@ -4209,7 +4212,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
       <p class="note" style="margin-top:1.3rem">
-        Worth knowing because it means the app is not the magic &mdash; it is a face on
+        Worth knowing because it means the app is not the magic. It is a face on
         top of an engine, and you can change either one.</p>
     </div>
   </section>
@@ -4242,7 +4245,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <span class="chip lg fill"><svg><use href="#lg-unsloth"/></svg></span>
           <div class="body">
             <h3>Unsloth</h3>
-            <p>Runs your models like the others &mdash; and is also the tool people use to
+            <p>Runs your models like the others, and is also the tool people use to
                <em>train</em> one on their own data.</p>
             <span class="mono-note">RUNS AND TRAINS</span>
           </div>
@@ -4306,7 +4309,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         </div>
       </div>
 
-      <p class="tp-v" id="tpVerdict">&nbsp;</p>
+      <!-- data-noglossary: this paragraph is rewritten by its module, so the
+           marking pass's underlines here would be wiped by the first press
+           while still having spent the slide's budget to get there. -->
+      <p class="tp-v" id="tpVerdict" data-noglossary>&nbsp;</p>
 
       <p class="caveat"><strong>Nothing here errors, and that is the whole problem.</strong>
         The template lives in the GGUF&rsquo;s metadata and LM Studio normally reads it,
@@ -4368,9 +4374,9 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat">A Mac has modest compute but wide memory, so it writes quickly and
-        thinks slowly. A big discrete GPU is fast at both, right up until the model stops
-        fitting in its VRAM.
-        <strong>Everything you run tonight is dense</strong> &mdash; every weight is
+        thinks slowly. A big discrete GPU is fast at both, for as long as the model fits in
+        its VRAM.
+        <strong>Everything you run here is dense.</strong> Every weight is
         active for every token, so active size is simply file size. Section 06 has the
         models where those two part company.</p>
     </div>
@@ -4421,12 +4427,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <span>Live at this speed</span>
             <span class="dk-wpm" id="dkWpm">&nbsp;</span>
           </div>
-          <p class="dk-text" id="dkText"></p>
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="dk-text" id="dkText" data-noglossary></p>
         </div>
       </div>
 
       <p class="caveat"><strong>This assumes the model fits.</strong> Drag the size past
-        what the machine actually holds and the number above becomes a fantasy &mdash; that
+        what the machine actually holds and the number above becomes a fantasy. That
         is the next slide. Even when it does fit, this is a theoretical ceiling: attention,
         sampling and the KV cache all take a cut, and no chip sustains its paper bandwidth.</p>
     </div>
@@ -4638,7 +4647,12 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <div><dt>Levels available</dt><dd id="qzLevels">65,536</dd></div>
             <div><dt>Average error</dt><dd id="qzErr">&plusmn;0.0000</dd></div>
             <div><dt>Bits per weight</dt><dd id="qzBpw">16.00</dd></div>
-            <div><dt>A 30B model</dt><dd id="qzModel">60.0 GB</dd></div>
+            <!-- "this block", not "a 30B model": one shared 16-bit scale over
+                 24 weights is 4.67 bpw, and the next two slides both cost a
+                 4-bit 30B at Q4_K_M's real 4.83. An unqualified "A 30B model"
+                 here put 17.5 GB on screen one slide before the deck's own
+                 18.1 GB, which is the arithmetic disagreeing with itself. -->
+            <div><dt>A 30B, this block</dt><dd id="qzModel">60.0 GB</dd></div>
           </dl>
         </div>
       </div>
@@ -4651,8 +4665,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <p class="caveat">Note the shared scale. A quant does not store 24 tiny numbers &mdash; it
         stores 24 tiny <em>integers</em> plus one full-precision multiplier for the block. That
-        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight, and real
-        GGUF blocks carry more metadata than this one. Hold that thought for one slide.</p>
+        multiplier is why a &ldquo;4&#8209;bit&rdquo; file is never exactly 4 bits per weight. One
+        scale over 24 weights costs this block 4.67 bits each; a real Q4_K_M block is
+        larger, carries more metadata, and lands at 4.83 &mdash; which is why the 30B on the
+        next slide is 18.1&nbsp;GB and not the 17.5 above. Hold that thought for one slide.</p>
     </div>
   </section>
   <!-- ---- 4 · the napkin math, and what it leaves out ---- -->
@@ -4797,7 +4813,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <button type="button" class="qq-reset" id="qqReset">Ask again</button>
       </div>
 
-      <p class="caveat" id="qqCaveat">Click an option to reveal &mdash; ask for hands first.
+      <p class="caveat" id="qqCaveat">Click an option to reveal. Ask for hands first.
         The rule has a floor, and the floor is the next slide.</p>
     </div>
   </section>
@@ -4840,7 +4856,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat"><strong>Small models fall further.</strong> A 30B has parameters to
-        spare and shrugs off rounding; a 1B does not, which matters tonight because a 1B is
+        spare and shrugs off rounding; a 1B does not, which matters here because a 1B is
         what most of you downloaded. Below 4&#8209;bit the failure is <em>invisible</em> &mdash;
         no error, no warning, just quiet loops, contradictions and confident nonsense.
         Shape of the curve: real. Exact percentages: illustrative, and they move with every
@@ -4919,7 +4935,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
                columns of figures would bury the one number the section is
                about. The chart is where the comparison lives. -->
           <dl class="kv-stats">
-            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.13 GB</dd></div>
+            <div><dt>Per 1,000 tokens</dt><dd id="kvPerK">0.12 GB</dd></div>
             <div><dt>At 32k context</dt><dd id="kv32">4.0 GB</dd></div>
             <div><dt>Cache vs weights at 32k</dt><dd id="kvRatio">0.8&times;</dd></div>
           </dl>
@@ -5072,7 +5088,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <div class="sc-num" id="scMax">4B</div>
             <div class="sc-sub" id="scRatio">&nbsp;</div>
           </div>
-          <p class="sc-say" id="scSay">We are going to build this chart from the bottom up,
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="sc-say" id="scSay" data-noglossary>We are going to build this chart from the bottom up,
             starting with the model on your laptop.</p>
           <div class="sc-legend">
             <span><i class="sw sw-local"></i>Runs on a laptop</span>
@@ -5093,13 +5112,13 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         to measure them from the outside disagree by roughly <em>six times</em>, which is
         why they are drawn as ranges. The lesson survives the uncertainty. Even the
         <em>floor</em> of the most conservative estimate is fifty times the largest model
-        a laptop can hold, and over a thousand times the one you downloaded tonight. Note
+        a laptop can hold, and over a thousand times the one you downloaded. Note
         too that the dot on each bar is what actually <em>runs</em> per token: a sparse
         model holds the whole total in memory but reads only that slice for each word.
         <strong>Memory is set by the big number, speed by the small one</strong> &mdash;
         which is the one place section 03&rsquo;s formula forks. Not
-        tonight&rsquo;s problem &mdash; everything on the download slide is dense, so
-        the two numbers are the same &mdash; but it is why a sparse model can feel
+        a problem here: everything on the download slide is dense, so the two numbers
+        are the same. But it is why a sparse model can feel
         faster than its file size says it has any right to.</p>
     </div>
   </section>
@@ -5140,7 +5159,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <div class="cs">
         <div class="cs-lanes" id="csLanes"></div>
-        <p class="cs-why" id="csWhy">&nbsp;</p>
+        <!-- data-noglossary: this paragraph is rewritten by its module, so the
+             marking pass's underlines here would be wiped by the first press
+             while still having spent the slide's budget to get there. -->
+        <p class="cs-why" id="csWhy" data-noglossary>&nbsp;</p>
       </div>
 
       <p class="caveat"><strong>The pattern is one line: bring the knowledge to the
@@ -5160,7 +5182,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="num">07</div>
       <div class="eyebrow">Section 07</div>
       <h2>The horizon</h2>
-      <p class="lede">One thing you can download tonight, and two that want more machine
+      <p class="lede">One thing you can download today, and two that want more machine
         than anyone here brought. Everything you just learned about
         bytes&#8209;per&#8209;parameter is already being rewritten, which is the reason
         to look at them rather than a reason to be wary of them.</p>
@@ -5168,7 +5190,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
   </section>
   <!-- ---- 7 · the catch-up ---- -->
   <!-- The one slide in §7 that is about something already downloadable.
-       Everything after it is horizon tech that will not load tonight, so
+       Everything after it is horizon tech that will not load on anything in the room, so
        this has to land the "behind, not standing still" point first.
        Scores are Artificial Analysis Intelligence Index, read Jul 2026. -->
   <section class="slide" data-section="7" id="s-catch">
@@ -5209,8 +5231,8 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="cu-name">Qwen3.6 <span>27B</span></div>
           <div class="cu-by">Alibaba &mdash; reasoning on, the one from the scale slide</div>
           <div class="cu-score">
-            <span class="cu-n" data-score="37">37</span>
-            <span class="cu-bar"><i style="--w:68%"></i></span>
+            <span class="cu-n" data-score="38">38</span>
+            <span class="cu-bar"><i style="--w:70%"></i></span>
           </div>
           <dl class="cu-specs">
             <div><dt>Parameters</dt><dd>27.8&nbsp;B, dense</dd></div>
@@ -5222,11 +5244,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <div class="cu-line">
-        <!-- Both scores re-read from Artificial Analysis and confirmed Aug 2026:
-             GPT-5 (high) 35, Qwen3.6 27B (Reasoning) 37. Read them from ONE
-             snapshot if you refresh them — AA rebases the index between
-             versions, so two numbers taken months apart are not comparable,
-             which is the exact mistake the caveat warns the room about. -->
+        <!-- Both scores re-read from Artificial Analysis model pages, Aug 2026:
+             GPT-5 (high) 35, Qwen3.6 27B (Reasoning) 38. The 27B was 37 at the
+             previous check and drifted a point on a rebase, which is the whole
+             argument for reading both from ONE snapshot on ONE day.
+
+             A live example of the trap: an AA post is circulating with 46 for
+             this same model. It is not a contradiction — it is a differently
+             scoped leaderboard. Never mix a figure from a post with one from a
+             model page, which is the exact mistake the caveat warns about. -->
         <span class="cu-line-k">Artificial Analysis Intelligence Index &middot; one snapshot, verified Aug 2026</span>
         <span class="cu-line-t">Last year&rsquo;s frontier model, matched by something that
           fits on a laptop, carrying <b>one sixty&#8209;fifth</b> of the parameters of the
@@ -5281,7 +5307,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.3 GB</span></div>
           </div>
         </div>
 
@@ -5295,7 +5321,10 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
             <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
             <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
           </dl>
-          <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="bn-say" id="bnSay" data-noglossary>Sixteen bits per weight, exactly as the training run
             left it. Nothing on this slide is smarter than this row &mdash; it is only
             bigger.</p>
           <!-- Order matters: the headroom figures live in the JS and are
@@ -5311,16 +5340,18 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
-        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is which build you
-        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
-        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
-        own docs say it still needs their fork and that Ollama cannot load it, while their
-        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
-        is already in mainline. Check the machine you are presenting from, on the night.
-        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
-        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
+        8&nbsp;B in 2.3&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. 1.58&nbsp;bits in principle, 2.25 shipped,
+        because every group of 64 weights carries a 16&#8209;bit scale &mdash;
+        §4&rsquo;s block cost again.
+        <strong>The catch is which file you grab.</strong> 1&#8209;bit
+        (<span class="mono">*-Q1_0.gguf</span>) and group&#8209;64 ternary
+        (<span class="mono">*-Q2_0_g64.gguf</span>) both run on mainline llama.cpp, CPU,
+        Metal, Vulkan and CUDA all merged upstream; the older group&#8209;128
+        <span class="mono">*-Q2_0.gguf</span> still needs PrismML&rsquo;s fork. Check your
+        file against your build, on the night. The decode figure is §3&rsquo;s formula on
+        published bandwidth, so it is a <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on
+        an M4&nbsp;Pro against the 119 here.</p>
     </div>
   </section>
   <!-- ---- 7 · a different shape of generation ---- -->
@@ -5342,7 +5373,11 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
           <div class="df-head">
             <div>
               <span class="df-name">Autoregressive</span>
-              <span class="df-sub">Every model you ran tonight</span>
+              <!-- "The shape every model you ran today has", not "every model
+                   you ran today": 250 tok/s is the datacentre baseline Google's
+                   4x is measured against, and nothing in this room is close to
+                   it — the deck's own fastest machine is 186 on a 5090. -->
+              <span class="df-sub">The shape yours has &middot; same H100</span>
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
@@ -5375,21 +5410,21 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         <span class="df-v-k">Where the bottleneck went</span>
         <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
           <b>per token</b>. Diffusion reads them once <b>per denoising pass</b>, and one
-          pass moves all 256 tokens forward &mdash; sixteen passes, not 256 &mdash; so the
-          memory bus stops being the wall, and arithmetic becomes it instead.</span>
+          pass moves all 256 tokens forward &mdash; a handful of passes, not 256 &mdash; so
+          the memory bus stops being the wall, and arithmetic becomes it instead.</span>
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
-        <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
+        <em>tok/s &asymp; bandwidth &divide; model size</em> held all the way through because one pass
         produced one token. Denoise a block instead and one pass advances 256 of them, so
-        the same read of the weights buys sixteen tokens rather than one &mdash;
+        the same read of the weights buys many tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch is the hardware.</strong>
+        compute more. Google publish the 256 per pass and the 4&times;, but not how many
+        passes a block takes; the animation picks sixteen to have something to draw. <strong>The catch is the hardware.</strong>
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
         26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
         Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
-        graphics card. That is a desk, not a lap, and well past what anything in this
-        room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served
+        graphics card. That is a desk, not a lap, and well past anything downloaded here today. Apache 2.0, weights on Hugging Face, and it is served
         on Vertex AI if you want to try it without the card. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>
@@ -5450,7 +5485,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="note" style="margin-top:1.4rem">Any of the five will take you back to the
-        section it came from &mdash; and the index along the bottom edge goes anywhere.</p>
+        section it came from. The index along the bottom edge goes anywhere.</p>
     </div>
   </section>
   <!-- ---- close 2 · where to go next ----
@@ -5491,7 +5526,7 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
               Real speedups, heavy concepts.
               <a class="ref-src" href="https://arxiv.org/abs/2211.17192"
                  target="_blank" rel="noopener noreferrer">arxiv.org/abs/2211.17192</a></li>
-            <li><b>Embeddings and a proper RAG stack</b> &mdash; what tonight&rsquo;s
+            <li><b>Embeddings and a proper RAG stack</b> &mdash; what today&rsquo;s
               &ldquo;chat with your files&rdquo; is doing underneath.
               <a class="ref-src" href="https://arxiv.org/abs/2005.11401"
                  target="_blank" rel="noopener noreferrer">arxiv.org/abs/2005.11401</a></li>
@@ -6071,7 +6106,7 @@ if (dkSlide) {
      whole demonstration and the room needs time to get uncomfortable
      watching it; at the fast end it has to still be running when the
      presenter finishes the sentence about it. Roughly 300 words, which
-     is about eight seconds at 41 tok/s and about two minutes at 3. */
+     is about ten seconds at 41 tok/s and about three minutes at 3. */
   var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
     'No request leaves the building, no key is billed, and nothing stops working ' +
     'when the wifi does. The speed you are watching right now is not a benchmark ' +
@@ -6189,7 +6224,12 @@ if (dkSlide) {
 
     if (holding > 0) { holding -= dt * 1000; if (holding <= 0) { restart(); render(); } return; }
 
-    acc += rate() * dt;
+    /* WORDS, not tokens: PASSAGE is split on spaces, so revealing one
+       element per token ran the demo at tok/s WORDS per second — a third
+       faster than the words/min figure printed directly above it. The
+       readout and the thing it describes have to agree; this is the
+       slide that teaches the formula. */
+    acc += rate() * WORDS_PER_TOKEN * dt;
     if (acc >= 1) {
       var add = Math.floor(acc);
       acc -= add;
@@ -7809,7 +7849,7 @@ if (scSlide) {
      act:  active params per token for a sparse (MoE) model            */
   var SC_MODELS = [
     { n: 'Gemma 3 1B',       p: 1,     kind: 'local',
-      say: 'Tonight&rsquo;s download. One billion parameters, about 700&nbsp;MB on ' +
+      say: 'The one you downloaded. One billion parameters, about 700&nbsp;MB on ' +
            'disk, and it answered you in a second.' },
     { n: 'Qwen3 4B',         p: 4,     kind: 'local',
       say: 'The one worth taking home. Four times the parameters, still ' +
@@ -7817,15 +7857,21 @@ if (scSlide) {
     { n: 'Qwen3.6 27B',      p: 27.8,  kind: 'local',
       say: 'About the ceiling for a good laptop &mdash; roughly 17&nbsp;GB at ' +
            '4&#8209;bit. Hold this one in mind; it comes back in the next section.' },
+    /* 175B is GPT-3's published figure. OpenAI never gave one for GPT-3.5,
+       so the bar is "the last number they published, on the generation
+       that made the noise" — not a disclosed 3.5 size. The slide's own
+       caveat says OpenAI's last real number was GPT-3's, and this copy
+       used to contradict it two elements away. */
     { n: 'GPT&#8209;3.5',    p: 175,   kind: 'closed',
-      say: 'The model that started the fuss, in 2022. The last OpenAI flagship ' +
-           'whose size we actually know &mdash; and six times bigger than your ' +
-           'laptop&rsquo;s ceiling today.' },
+      say: 'The model that started the fuss, in 2022. The 175&nbsp;billion is ' +
+           'GPT&#8209;3&rsquo;s published figure &mdash; the last one OpenAI ever gave, ' +
+           'and carried over here because they never published a size for 3.5. ' +
+           'Six times bigger than your laptop&rsquo;s ceiling today.' },
     { n: 'DeepSeek V4 Flash', p: 284,  act: 13, kind: 'open',
       say: 'Open weights, and the small one of its family. 284&nbsp;B total, but ' +
            'only 13&nbsp;B fire per token &mdash; that is what sparse means.' },
     { n: 'GLM&#8209;5.2',    p: 753,   act: 40, kind: 'open',
-      say: 'MIT licensed. You could legally download this tonight. You would need ' +
+      say: 'MIT licensed. You could legally download this today. You would need ' +
            'about 400&nbsp;GB of memory to run it.' },
     { n: 'MiMo V2.5 Pro',    p: 1020,  act: 42, kind: 'open',
       say: 'A trillion parameters, published openly, by a phone manufacturer. ' +
@@ -7915,9 +7961,16 @@ if (scSlide) {
     }
     var mx = scTargetMax();
     scMaxEl.textContent = scFmt(mx);
+    /* A model drawn as a RANGE has no single multiple, and reporting its
+       top as one made the readout state the ceiling of a disputed band as
+       fact — while the caveat beneath it correctly leads with the floor.
+       Report the band. */
+    var lastLo = last && last.lo ? last : null;
     scRatio.innerHTML = shownN < 2 ? '&nbsp;'
-      : Math.round(mx / SC_MODELS[0].p).toLocaleString() +
-        '&times; tonight&rsquo;s download';
+      : lastLo
+        ? Math.round(lastLo.lo / SC_MODELS[0].p).toLocaleString() + '&ndash;' +
+          Math.round(lastLo.hi / SC_MODELS[0].p).toLocaleString() + '&times; your download'
+        : Math.round(mx / SC_MODELS[0].p).toLocaleString() + '&times; your download';
     if (last) scSay.innerHTML = last.say;
   }
 
@@ -8160,8 +8213,23 @@ if (scSlide) {
    on the same bus.
 
    Sizes: fp16 is 8.19B x 2 bytes; Q4_K_M and Q2_K are the usual GGUF
-   effective bit-widths; Ternary Bonsai 8B is PrismML's published 1.75 GB
-   (their GGUF build is 2.03 GiB). Verified Jul 2026.
+   effective bit-widths; Ternary Bonsai 8B is the file a presenter can
+   actually run — *-Q2_0_g64.gguf, the group-64 build PrismML call the
+   official llama.cpp format, at ~2.25 bpw and so 2.3 GB. Three values is
+   1.58 bits in principle; the format packs 64 weights into 18 bytes (16
+   of codes plus a 16-bit scale).
+
+   TWO corrections live in that sentence, both found the hard way:
+     - the 1.75 GB this used to show is PrismML's headline, not a file.
+       Quoting it put the bar, the readout and the decode ceiling on a
+       download nobody can get, on the slide arguing the arithmetic holds.
+       Same failure as the old 2.8 GB Q2_K row.
+     - the replacement was first set to 2.2 GB, which is the group-128
+       Q2_0 file. That one is fork-only AND being deprecated, so it is
+       the wrong file to cost. Checking the vendor's docs page and model
+       card alone is what caused this: both describe g128 and never
+       mention g64. The demo repo README is the page that does.
+   Verified Aug 2026 against all three.
    ========================================================== */
 var bnSlide = document.getElementById('s-bonsai');
 if (bnSlide) {
@@ -8183,7 +8251,7 @@ if (bnSlide) {
       qual: 'Falls apart', cliff: true,
       say: 'And here is the cliff again. Smaller, yes, and quietly broken &mdash; ' +
            'loops, contradictions, confident nonsense. This is the floor.' },
-    { gb: 1.75, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
+    { gb: 2.3, name: 'Ternary Bonsai 8B', alpha: '&minus;1, 0, +1',
       qual: '75.5 benchmark avg.',
       say: 'Below the floor, and fine. It was never squashed: every weight was ' +
            'one of three values throughout training, so there was nothing to round away.' }
@@ -8194,12 +8262,14 @@ if (bnSlide) {
     { need: 6.5 },  /* 8 GB laptop  */
     { need: 3 }     /* a phone      */
   ];
-  /* No efficiency fudge. A single constant cannot reproduce both published
-     measurements — PrismML's 82 tok/s on an M4 Pro is about half of that
-     machine's ceiling, their 27 on an iPhone is about four fifths of its
-     one — and a readout that contradicts the measurement quoted in the
-     caveat beneath it is worse than no readout. So this is §3's formula
-     unmodified, labelled as the ceiling it is, exactly as §3 taught it. */
+  /* No efficiency fudge: §3's formula unmodified, labelled as the ceiling
+     it is. PrismML's 82 tok/s on an M4 Pro lands at about two thirds of
+     the 124 this computes, which is the normal ratio and is what the
+     caveat quotes. Their iPhone figure is deliberately NOT quoted there:
+     against the real 2.2 GB file and an estimated 60 GB/s it works out at
+     essentially 100% of theoretical, which no real inference achieves, so
+     one of the two inputs is wrong and Apple publishes neither. The phone
+     button stays as a bandwidth control; the measurement does not. */
 
   var bnRows  = Array.prototype.slice.call(bnSlide.querySelectorAll('.bn-row'));
   var bnStep  = document.getElementById('bnStep');
@@ -8274,7 +8344,11 @@ var dfSlide = document.getElementById('s-diff');
 if (dfSlide) {
   var DF_N      = 512;    /* tokens generated in both lanes   */
   var DF_BLOCK  = 256;    /* diffusion tokens per forward pass */
-  var DF_STEPS  = 16;     /* denoising steps per block         */
+  /* Google publish 256 tokens per forward pass and the 4x, but NOT the
+     number of denoising steps a block takes. Sixteen is this animation's
+     choice, not a figure from the model card — the caveat says so, and
+     the verdict copy says "a handful of passes" rather than naming it. */
+  var DF_STEPS  = 16;     /* denoising steps per block — ours, not theirs */
   var DF_SLOWMO = 2.5;
   var DF_AR_RATE = 250;   /* tok/s, autoregressive baseline    */
   var DF_DF_RATE = 1000;  /* tok/s, diffusion                  */
@@ -9420,7 +9494,7 @@ var GLOSSARY = {
     vs: [['Open source', 'The training data and the code that produced the weights usually stay private, and the license can still restrict commercial use or outputs. Read the model card.']] },
 
   'inference': { s: 0,
-    d: 'Running a trained model to get an answer out of it — the only half of the job your laptop is doing tonight.',
+    d: 'Running a trained model to get an answer out of it — the only half of the job your laptop is doing here.',
     vs: [['Training', 'Making the weights in the first place: thousands of GPUs, weeks, and millions of dollars. Nothing you do in LM Studio changes a weight.']] },
 
   'parameters': { s: 4,
@@ -9472,7 +9546,7 @@ var GLOSSARY = {
   'mlx': { s: 2,
     d: 'Apple’s array framework, built around unified memory. Meaningfully faster than llama.cpp on Apple silicon, and useless anywhere else — it has its own model format, so you download a different file.' },
   'lm studio': { s: 1,
-    d: 'The desktop app used tonight: it finds models, downloads them, and runs them through llama.cpp or MLX behind a chat window.',
+    d: 'The desktop app used in this workshop: it finds models, downloads them, and runs them through llama.cpp or MLX behind a chat window.',
     vs: [['LM Studio Bionic', 'A separate app from the same team — a local coding and document agent. It is not a newer LM Studio and does not replace the model manager. The name invites exactly the wrong guess.']] },
   'ollama': { s: 2,
     d: 'A command-line-first model runner, also built on llama.cpp. Popular for serving a model to other programs rather than chatting with it yourself.',
@@ -9484,23 +9558,47 @@ var GLOSSARY = {
          ['Zipping the file', 'A quantized model is smaller in memory while it runs, which is the whole point. A zip has to be unpacked back to full size first.']] },
   'quantized': { s: 4,
     d: 'Stored at reduced precision: fewer bits per weight, a smaller file, and a small loss of quality that is negligible at 4 bits and severe at 2.' },
+  /* Plurals as aliases, for the same reason "tokens" is one. The regex
+     ends a term at a word boundary, so the entry does NOT cover its own
+     plural — and the deck writes "dozens of files at different
+     quantizations", which is where a beginner actually meets the word.
+     Until these existed that sentence went unmarked on a slide with two
+     spare slots in its budget. */
+  'quantizations': { s: 4,
+    d: 'Storing each weight in fewer bits — 16 down to 8, 4 or 2 — so the file shrinks and the whole model can be read from memory faster. The model gets a little worse in a way that is nearly free down to about 4 bits, and expensive below it.',
+    vs: [['Distillation', 'Training a smaller model to imitate a bigger one. That makes a NEW model; quantization keeps the same one and rounds it.'],
+         ['Zipping the file', 'A quantized model is smaller in memory while it runs, which is the whole point. A zip has to be unpacked back to full size first.']] },
   'quant': { s: 4,
+    d: 'One quantized build of a model, named for its scheme — Q4_K_M, Q8_0, IQ4_XS. One model produces dozens of them, and picking the right one is the skill.' },
+  'quants': { s: 4,
     d: 'One quantized build of a model, named for its scheme — Q4_K_M, Q8_0, IQ4_XS. One model produces dozens of them, and picking the right one is the skill.' },
   'q4_k_m': { s: 4,
     d: 'The usual 4-bit build, and the default recommendation. "K" is the block-scale scheme, "M" the medium variant that keeps a few sensitive tensors at higher precision.',
     vs: [['Exactly 4 bits', 'It averages about 4.83 bits per weight once the per-block scales are counted — which is why the download is bigger than the napkin says.']] },
   'bits per weight': { s: 4,
     d: 'The real average storage cost of one weight, block scales and metadata included — the honest version of "4-bit", and the number that makes a download page agree with your arithmetic.' },
+  /* The deck uses "block" in two unrelated senses, four sections apart,
+     and a definition that picked one would be wrong on the other slide.
+     Naming both is the honest version, and the collision is exactly what
+     the "not the same as" half of an entry is for. */
+  'block': { s: 4,
+    d: 'A small run of weights — 32 or 256 of them — that share one full-precision multiplier inside a quantized file. Those shared scales are the whole reason a "4-bit" model is really 4.83 bits per weight.',
+    vs: [['A block of tokens', 'Section 07’s diffusion models denoise a block of 256 TOKENS at once. Same word, different thing entirely: one is a chunk of the file, the other a chunk of the answer.']] },
 
+  /* "Typically 5–10x", not a single figure: the honest range. The two
+     machines in §3 happen to be 1792 against 96, which is nearer 19x,
+     but that is one desktop pairing — a laptop dGPU against fast DDR5
+     can be five, and quoting either end as THE number would make the
+     glossary contradict whichever machine is in the room. */
   'vram': { s: 3,
-    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, at roughly a tenth of the speed.',
+    d: 'The memory soldered to a discrete graphics card. Very fast, and a hard ceiling: what does not fit has to be read from system RAM instead, typically five to ten times slower.',
     vs: [['System RAM', 'Plentiful and cheap, and far slower. Spilling from one to the other is the cliff you can watch on the two-machines slide.'],
          ['Unified memory', 'On a Mac there is only one pool, shared by CPU and GPU. Large capacity, no copying, and no cliff — until the pool itself is full.']] },
   'unified memory': { s: 3,
     d: 'One pool of RAM shared by CPU and GPU, as on Apple silicon and AMD APUs. Capacity a graphics card cannot match, at bandwidth a plain PC cannot match — which is why Macs punch above their weight at generation.',
     vs: [['VRAM', 'A separate pool that has to be filled by copying across the PCIe bus, and that runs out sooner.']] },
   'dram': { s: 3,
-    d: 'Ordinary system RAM. Plentiful, cheap, and roughly ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
+    d: 'Ordinary system RAM. Plentiful, cheap, and typically five to ten times slower than a graphics card’s memory — which is exactly what a model spilling out of VRAM feels like.' },
 
   'memory bandwidth': { s: 3,
     d: 'How many gigabytes per second the machine can read from memory. Because every weight is read once per token, this number divided by the size of the model is the speed ceiling for generation — the one formula the whole workshop hangs off.',
@@ -9549,6 +9647,12 @@ var GLOSSARY = {
     d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
     vs: [['Fine-tuning', 'Fine-tuning teaches style and format by changing weights. RAG changes nothing and supplies facts at question time — for "what do my files say", RAG is almost always the right answer.'],
          ['A bigger context window', 'Pasting everything in works until it does not: the cache cost is linear and attention quality falls off long before the limit does.']] },
+  /* Alias of RAG: §6 makes the argument in plain English ("retrieval
+     over your own files") and only ever writes the acronym elsewhere. */
+  'retrieval': { s: 6,
+    d: 'Retrieval-augmented generation: search your own files for the passages that match the question, then hand those passages to the model along with it. This is why a 1B model can answer questions about your documents far better than its size suggests.',
+    vs: [['Fine-tuning', 'Fine-tuning teaches style and format by changing weights. RAG changes nothing and supplies facts at question time — for "what do my files say", RAG is almost always the right answer.'],
+         ['A bigger context window', 'Pasting everything in works until it does not: the cache cost is linear and attention quality falls off long before the limit does.']] },
   'hallucination': { s: 6,
     d: 'A fluent, confident answer that is simply wrong. The failure mode of asking a model for facts it was never given, and small models reach it sooner because they were given less.',
     vs: [['Lying', 'There is no intent and no awareness. The model has no separate store of "things I know" to check an answer against.']] },
@@ -9589,20 +9693,40 @@ var GLOSSARY = {
     d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
     vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
          ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
+  /* Alias of mixture of experts: §6's scale slide says "sparse" in prose
+     and never spells the phrase out, so without this the word the slide
+     actually uses had no definition behind it. */
+  'sparse': { s: 6,
+    d: 'A model split into many sub-networks where a router runs only a few per token. Enormous total parameter counts with modest work per token — but every expert still has to be in memory, so it buys speed, not space.',
+    vs: [['A dense model', 'Every weight runs for every token. Same memory rules, more compute per token.'],
+         ['The active count', 'A 1T model with 40B active needs memory for the trillion and runs at roughly the speed of the forty billion. Both numbers matter, for different reasons.']] },
   /* The counterpart, and the one §3 needs: the formula's denominator is
      the ACTIVE size, which for everything in the room is just the file
      size. Section 3, not 6, because that is where the word first lands. */
   'dense': { s: 3,
-    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything you download tonight is dense.',
+    d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything on the download slide is dense.',
     vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
+  /* "every model you ran today", not "every model in this deck": §7's
+     DiffusionGemma is in the deck and is the one thing here that does
+     NOT write this way, which is the entry's own "not the same as" line
+     two lines below. Everything anyone actually downloaded is
+     autoregressive, so scope the claim to that. */
   'autoregressive': { s: 7,
-    d: 'One token at a time, each conditioned on everything before it. How every model you ran tonight writes, and the reason decode is bandwidth-bound.',
+    d: 'One token at a time, each conditioned on everything before it. How every model you ran today writes, and the reason decode is bandwidth-bound.',
     vs: [['Diffusion text models', 'They denoise a whole block of tokens in parallel over a few passes, which breaks the one-weight-read-per-token arithmetic entirely.']] },
   'diffusion': { s: 7,
     d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',
     vs: [['Gemini Diffusion', 'Google’s closed research demo from 2025. DiffusionGemma is the 2026 open-weights model — at least one source online conflates the two and mis-dates it.'],
          ['Image diffusion', 'Same idea, different medium. Nothing here generates pictures.']] },
+  /* Alias of diffusion: the verb is what §7's slide copy actually uses. */
+  'denoise': { s: 7,
+    d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',
+    vs: [['Gemini Diffusion', 'Google’s closed research demo from 2025. DiffusionGemma is the 2026 open-weights model — at least one source online conflates the two and mis-dates it.'],
+         ['Image diffusion', 'Same idea, different medium. Nothing here generates pictures.']] },
+  'ternary': { s: 7,
+    d: 'Weights that may only be −1, 0 or +1, so one weight costs about 1.58 bits instead of 16. Models are TRAINED this way from the start rather than rounded down to it afterwards.',
+    vs: [['2-bit quantization', 'That takes a finished 16-bit model and rounds it, which is the cliff §4 warns about. A ternary model never had the decimal places to lose, so the cliff does not apply to it.']] },
 
   'benchmark': { s: 6,
     d: 'A fixed test set used to score models. Useful for ranking, weak evidence for how a model will do on your particular job — and every published number was produced at a precision and context length that may not match yours.',
@@ -9629,8 +9753,14 @@ var GLOSSARY = {
     d: 'The fast working memory a running program lives in — measured in gigabytes, and emptied every time you shut down. A model has to be in it, in full, to run.',
     vs: [['Storage', 'Your SSD holds the file when nothing is running. It is roughly a hundred times slower, which is why "it fits on disk" says nothing about whether it will run.']] },
   'gpu': { s: 3, t: 2,
-    d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work tonight.',
+    d: 'The graphics chip. It does thousands of simple sums at once, which is exactly the shape of the arithmetic a model is made of, so it is the part doing nearly all the work.',
     vs: [['The CPU', 'A handful of fast general-purpose cores. It can run a model — just several times slower, because it does far fewer sums at a time.']] },
+  /* Defined because §7's Bonsai catch now names a backend list — "CPU and
+     Metal only" — and the audit was right that a room told the GPU does
+     the work has never been told what the other one is. */
+  'cpu': { s: 3, t: 2,
+    d: 'The general-purpose processor every computer has. A handful of fast cores that do one thing after another, as against a GPU’s thousands doing one thing at once.',
+    vs: [['The GPU', 'A model will run on the CPU alone, several times slower, because decode wants many simple sums at once rather than a few complicated ones in a row.']] },
   'cuda': { s: 3, t: 2,
     d: 'NVIDIA’s way of running general-purpose code on their graphics cards, and the backend most local inference uses on a PC.',
     vs: [['Metal / Vulkan / ROCm', 'The same job on Apple, cross-vendor and AMD hardware. A build that says "CUDA only" is saying "NVIDIA only".']] },
@@ -9644,7 +9774,7 @@ var GLOSSARY = {
     d: 'A way for one program to ask another for something, over the network or on your own machine. LM Studio and Ollama can both expose one, so other software can use your local model as if it were a cloud service.',
     vs: [['A cloud API key', 'Nothing here needs an account. A local API listens on your own machine and answers nobody else.']] },
   'endpoint': { s: 2, t: 2,
-    d: 'One specific address an API answers on. The distinction that matters tonight is the chat endpoint, which applies the model’s template for you, versus the raw completion endpoint, which hands your text over exactly as typed.' },
+    d: 'One specific address an API answers on. The distinction that matters here is the chat endpoint, which applies the model’s template for you, versus the raw completion endpoint, which hands your text over exactly as typed.' },
   'runtime': { s: 2, t: 2,
     d: 'The program that actually runs the model — llama.cpp or MLX here. LM Studio is the window around it, and the runtime is the part that has to understand a new format before you can open one.' },
   'metadata': { s: 2, t: 2,
@@ -9652,6 +9782,8 @@ var GLOSSARY = {
   'repo': { s: 2, t: 2,
     d: 'A repository: one folder of files published under an owner’s name, on Hugging Face or GitHub. A model page is a repo, not a product page, which is why two "same" models can differ file by file.' },
   'model card': { s: 2, t: 2,
+    d: 'The README on a model’s repo — what it was trained for, how to prompt it, what it must not be used for, and the licence. The one page worth reading before a multi-gigabyte download.' },
+  'model cards': { s: 2, t: 2,
     d: 'The README on a model’s repo — what it was trained for, how to prompt it, what it must not be used for, and the licence. The one page worth reading before a multi-gigabyte download.' },
   'license': { s: 0, t: 2,
     d: 'The terms the weights are published under: whether you may use them commercially, redistribute them, or train other models on their output. It is a property of the download, not of the app you run it in.',
@@ -9662,9 +9794,34 @@ var GLOSSARY = {
   'open source': { s: 0, t: 2,
     d: 'Software published with the source code anyone can read, change and redistribute. llama.cpp and LM Studio’s engine are open source; a model’s weights are a different thing under a different licence.',
     vs: [['Open weights', 'You get the finished numbers, not the recipe. The training data and the code that made them are usually private, which is why "open-source model" is nearly always the wrong phrase.']] },
+  /* §2's alternatives slide and §7's Bonsai slide both hand a beginner a
+     small pile of ordinary software vocabulary in one breath — server,
+     front end, self-host, fork, upstream. None of it is this deck's
+     subject, all of it is load-bearing for the sentence it sits in, and
+     it is exactly the sort of word people do not put their hand up
+     about. Tier 2, so none of it can take a slot from tier 1. */
+  'server': { s: 2, t: 2,
+    d: 'A program that sits waiting and answers requests. Ollama runs one on your own machine so other apps can ask it for text — nothing here involves a datacentre or a second computer.',
+    vs: [['A server in a rack', 'Same word, and the reason the sentence sounds bigger than it is. This one is a background process on your laptop.']] },
+  'front end': { s: 2, t: 2,
+    d: 'The part you look at and click, with the actual work happening in a separate program behind it. Open WebUI is a front end: it draws the chat window and asks a server elsewhere for the words.' },
+  'self-host': { s: 2, t: 2,
+    d: 'Run a piece of web software on your own machine instead of paying somebody to run it for you. It usually means installing a bit more than a single app, in exchange for owning the thing outright.' },
+  'toolchain': { s: 2, t: 2,
+    d: 'The stack of programs a piece of software needs in order to build and run — here, Python and its packages rather than a single installer. Worth knowing before you start, because it is the step that goes wrong.' },
+  'completion': { s: 2, t: 2,
+    d: 'The model’s original job: you give it text and it keeps writing from there. Chat is that same trick with a template wrapped around it, which is why a missing template makes a model finish your sentence instead of answering it.' },
+  'fork': { s: 7, t: 2,
+    d: 'A separate copy of an open-source project, changed by someone else and built separately. Useful, and not the same as the version your app ships — "it works in the fork" can mean you have to compile it yourself.' },
+  'upstream': { s: 7, t: 2,
+    d: 'Merged into the project everyone downloads, rather than living only in somebody’s private copy. It is the difference between "a build exists" and "your app can already open it".',
+    vs: [['A fork', 'A separate copy of the project with its own changes. Code in a fork works, for the people who build that fork — which is not the same as it reaching you.']] },
+  'mainline': { s: 7, t: 2,
+    d: 'Merged into the project everyone downloads, rather than living only in somebody’s private copy. It is the difference between "a build exists" and "your app can already open it".',
+    vs: [['A fork', 'A separate copy of the project with its own changes. Code in a fork works, for the people who build that fork — which is not the same as it reaching you.']] },
   'agent': { s: 6, t: 2,
     d: 'A model given tools and a loop — search, read a file, run a command — so it takes several steps on its own instead of answering once. Every step is another chance to be wrong, which is why long agent runs are where small models struggle most.',
-    vs: [['A chatbot', 'One turn, one answer, nothing done on your behalf. That is what tonight’s download is until you wire something up to it.']] }
+    vs: [['A chatbot', 'One turn, one answer, nothing done on your behalf. That is what your download is until you wire something up to it.']] }
 };
 
 var glossPanel = null;
@@ -10033,10 +10190,14 @@ if (tpSlide) {
 
     mistral: {
       tag: 'MISTRAL &middot; PLAIN ASCII MARKERS',
-      wire: [['tok', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
+      /* <s> is Llama/Mistral's BOS. Gemma's is <bos>, so <s> is foreign
+         here and has to be red — it was green, which on the one slide
+         whose whole argument is the green/red split is the argument
+         itself getting the colour backwards. */
+      wire: [['bad', '<s>'], ['bad', '[INST]'], ['txt', ' ' + SYS + '\n\n' + ASK + ' '],
              ['bad', '[/INST]']],
       meta: '<b>[INST]</b> is ordinary ASCII &middot; it tokenizes cleanly and looks like text you typed' +
-            '<span>Nothing about it is special, so nothing about it is treated as special.</span>',
+            '<span>Nothing about it is special, so nothing about it is treated as special &mdash; and <b>&lt;s&gt;</b> is not this model&rsquo;s marker either: Gemma&rsquo;s is &lt;bos&gt;.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'I am not sure what [INST] refers to — is it a form you need to fill in? ' +
         'Before club night I would check the projector, the badges and the room ' +
@@ -10048,7 +10209,7 @@ if (tpSlide) {
     none: {
       tag: 'NO TEMPLATE &middot; RAW COMPLETION',
       wire: [['txt', SYS + '\n' + ASK]],
-      meta: 'No roles, no markers &mdash; and crucially <b>no generation prompt</b>' +
+      meta: 'No roles, no markers, and <b>no generation prompt</b>' +
             '<span>Nothing in the string says &ldquo;your turn now&rdquo;, so it does what a language model does by default.</span>',
       out: [{ t: 0.5, m: 'ai', text:
         'And is anyone bringing the urn this time? Last month we ran out of hot ' +
@@ -10270,18 +10431,24 @@ var AUDIT = /(^|[?&])audit\b/.test(location.search);
    nothing until the word is actually on a slide, and then it costs one
    line of output until someone decides whether it needs defining. */
 var WATCH = [
-  'activation', 'agent', 'agentic', 'api', 'apache 2.0', 'attention',
-  'backend', 'batch', 'bit', 'byte', 'checkpoint', 'cli', 'compute',
-  'context length', 'cpu', 'dgpu', 'distillation', 'embedding',
-  'endpoint', 'epoch', 'fine-tuning', 'flops', 'fp16', 'gpu',
-  'greedy', 'guardrails', 'head', 'inference engine', 'instruct',
-  'latency', 'layer', 'license', 'lora', 'metadata', 'model card',
-  'multimodal', 'neural network', 'offload', 'offloading', 'open source',
+  'activation', 'active parameters', 'agent', 'agentic', 'api',
+  'apache 2.0', 'attention', 'backend', 'base model', 'batch', 'beta',
+  'bit', 'block', 'block scale', 'byte', 'checkpoint', 'cli',
+  'command line', 'completion', 'compute', 'context length', 'cpu',
+  'daemon', 'denoise', 'dgpu', 'distillation', 'distribution',
+  'embedding', 'endpoint', 'epoch', 'fine-tuning', 'flops', 'fork',
+  'fp16', 'front end', 'generation prompt', 'gpu', 'greedy',
+  'guardrails', 'head', 'headroom', 'inference engine', 'instruct',
+  'instruction-tuned', 'latency', 'layer', 'license', 'logits', 'lora',
+  'mainline', 'marker', 'mask', 'metadata', 'model card', 'multimodal',
+  'neural network', 'offload', 'offloading', 'open source', 'overhead',
   'parallel', 'pcie', 'precision', 'prompt', 'quantize', 'ram',
-  'reasoning', 'repo', 'runtime', 'soc', 'speculative decoding',
-  'streaming', 'throughput', 'time to first token', 'tool calling',
-  'training', 'transformer', 'unquantized', 'vector', 'vocabulary',
-  'wrapper'
+  'reasoning', 'repo', 'retrieval', 'runtime', 'self-host', 'server',
+  'sliding window', 'soc', 'softmax', 'sparse', 'speculative decoding',
+  'stop token', 'streaming', 'tensor', 'terminal', 'ternary',
+  'throughput', 'time to first token', 'tool calling', 'toolchain',
+  'training', 'transformer', 'unquantized', 'upstream', 'vector',
+  'vocabulary', 'wrapper'
 ];
 
 /* Not jargon, or not jargon a glossary can help with. Three kinds:
@@ -10292,7 +10459,7 @@ var WATCH = [
 var AUDIT_STOP = {
   ai: 1, pc: 1, usb: 1, pdf: 1, os: 1, uk: 1, us: 1, id: 1, ok: 1,
   qr: 1, url: 1, mit: 1, gb: 1, mb: 1, kb: 1, tb: 1, ms: 1, hz: 1,
-  no: 1, and: 1, the: 1, a: 1, i: 1,
+  no: 1, and: 1, the: 1, a: 1, i: 1, beta: 1,
   gpt: 1, h100: 1, m1: 1, m2: 1, m3: 1, m4: 1, m5: 1, a4b: 1, rtx: 1,
   ddr5: 1, mha: 1, mqa: 1, qwen: 1, gemma: 1, lfm2: 1, glm: 1,
   'q1_0.gguf': 1, 'q2_0.gguf': 1, 'q2_0_g64.gguf': 1, 'pq2_0.gguf': 1

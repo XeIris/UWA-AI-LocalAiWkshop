@@ -17,7 +17,11 @@
           <div class="df-head">
             <div>
               <span class="df-name">Autoregressive</span>
-              <span class="df-sub">Every model you ran tonight</span>
+              <!-- "The shape every model you ran today has", not "every model
+                   you ran today": 250 tok/s is the datacentre baseline Google's
+                   4x is measured against, and nothing in this room is close to
+                   it — the deck's own fastest machine is 186 on a 5090. -->
+              <span class="df-sub">The shape yours has &middot; same H100</span>
             </div>
             <div class="df-clock"><span id="df-el-ar">0.00</span><i>s</i></div>
           </div>
@@ -50,21 +54,21 @@
         <span class="df-v-k">Where the bottleneck went</span>
         <span class="df-v-t" id="dfVerdict">Autoregressive decode reads every weight once
           <b>per token</b>. Diffusion reads them once <b>per denoising pass</b>, and one
-          pass moves all 256 tokens forward &mdash; sixteen passes, not 256 &mdash; so the
-          memory bus stops being the wall, and arithmetic becomes it instead.</span>
+          pass moves all 256 tokens forward &mdash; a handful of passes, not 256 &mdash; so
+          the memory bus stops being the wall, and arithmetic becomes it instead.</span>
       </div>
 
       <p class="caveat"><strong>This is the formula from §3 breaking.</strong>
-        <em>tok/s &asymp; bandwidth &divide; model size</em> held all evening because one pass
+        <em>tok/s &asymp; bandwidth &divide; model size</em> held all the way through because one pass
         produced one token. Denoise a block instead and one pass advances 256 of them, so
-        the same read of the weights buys sixteen tokens rather than one &mdash;
+        the same read of the weights buys many tokens rather than one &mdash;
         which is why a Mac&rsquo;s bandwidth advantage would matter less here, and raw
-        compute more. <strong>The catch is the hardware.</strong>
+        compute more. Google publish the 256 per pass and the 4&times;, but not how many
+        passes a block takes; the animation picks sixteen to have something to draw. <strong>The catch is the hardware.</strong>
         DiffusionGemma (<span class="mono">google/diffusiongemma-26B-A4B-it</span>) is a
         26&nbsp;B mixture of experts with 3.8&nbsp;B active, and
         Google put the quantized weights inside 24&nbsp;GB of VRAM: a 4090&#8209;class
-        graphics card. That is a desk, not a lap, and well past what anything in this
-        room downloaded tonight. Apache 2.0, weights on Hugging Face, and it is served
+        graphics card. That is a desk, not a lap, and well past anything downloaded here today. Apache 2.0, weights on Hugging Face, and it is served
         on Vertex AI if you want to try it without the card. Rates are Google&rsquo;s
         figures on a single H100, not on anything in this room.</p>
     </div>

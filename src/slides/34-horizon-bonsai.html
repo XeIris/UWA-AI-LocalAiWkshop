@@ -37,7 +37,7 @@
           </div>
           <div class="bn-row" data-i="3">
             <div class="bn-lab"><b>Ternary</b><span>trained this way</span></div>
-            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">1.75 GB</span></div>
+            <div class="bn-track"><i class="bn-fill"></i><span class="bn-val">2.3 GB</span></div>
           </div>
         </div>
 
@@ -51,7 +51,10 @@
             <div><dt>Quality</dt><dd id="bnQual">Reference</dd></div>
             <div><dt>Decode ceiling, here</dt><dd id="bnRate">&asymp;17 tok/s</dd></div>
           </dl>
-          <p class="bn-say" id="bnSay">Sixteen bits per weight, exactly as the training run
+          <!-- data-noglossary: this paragraph is rewritten by its module, so the
+               marking pass's underlines here would be wiped by the first press
+               while still having spent the slide's budget to get there. -->
+          <p class="bn-say" id="bnSay" data-noglossary>Sixteen bits per weight, exactly as the training run
             left it. Nothing on this slide is smarter than this row &mdash; it is only
             bigger.</p>
           <!-- Order matters: the headroom figures live in the JS and are
@@ -67,15 +70,17 @@
       <p class="caveat"><strong>Bonsai (PrismML, Apache 2.0) is trained with
         &#123;&minus;1,&nbsp;0,&nbsp;+1&#125; weights from the start</strong> &mdash; never a
         16&#8209;bit model that got rounded, so there is nothing to lose on the way down:
-        8&nbsp;B in 1.75&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
-        1&#8209;bit version that had no zero. <strong>The catch is which build you
-        grab.</strong> The 1&#8209;bit files (<span class="mono">*-Q1_0.gguf</span>) are
-        merged upstream and run on any recent llama.cpp. Ternary is unsettled: PrismML&rsquo;s
-        own docs say it still needs their fork and that Ollama cannot load it, while their
-        demo repo says the group&#8209;64 build (<span class="mono">*-Q2_0_g64.gguf</span>)
-        is already in mainline. Check the machine you are presenting from, on the night.
-        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro and 27 on an
-        iPhone&nbsp;17 Pro&nbsp;Max, roughly half to four fifths of it.</p>
+        8&nbsp;B in 2.3&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
+        1&#8209;bit version that had no zero. 1.58&nbsp;bits in principle, 2.25 shipped,
+        because every group of 64 weights carries a 16&#8209;bit scale &mdash;
+        §4&rsquo;s block cost again.
+        <strong>The catch is which file you grab.</strong> 1&#8209;bit
+        (<span class="mono">*-Q1_0.gguf</span>) and group&#8209;64 ternary
+        (<span class="mono">*-Q2_0_g64.gguf</span>) both run on mainline llama.cpp, CPU,
+        Metal, Vulkan and CUDA all merged upstream; the older group&#8209;128
+        <span class="mono">*-Q2_0.gguf</span> still needs PrismML&rsquo;s fork. Check your
+        file against your build, on the night. The decode figure is §3&rsquo;s formula on
+        published bandwidth, so it is a <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on
+        an M4&nbsp;Pro against the 119 here.</p>
     </div>
   </section>

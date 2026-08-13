@@ -24,7 +24,7 @@ if (dkSlide) {
      whole demonstration and the room needs time to get uncomfortable
      watching it; at the fast end it has to still be running when the
      presenter finishes the sentence about it. Roughly 300 words, which
-     is about eight seconds at 41 tok/s and about two minutes at 3. */
+     is about ten seconds at 41 tok/s and about three minutes at 3. */
   var PASSAGE = ('A local model runs entirely on the machine in front of you. ' +
     'No request leaves the building, no key is billed, and nothing stops working ' +
     'when the wifi does. The speed you are watching right now is not a benchmark ' +
@@ -142,7 +142,12 @@ if (dkSlide) {
 
     if (holding > 0) { holding -= dt * 1000; if (holding <= 0) { restart(); render(); } return; }
 
-    acc += rate() * dt;
+    /* WORDS, not tokens: PASSAGE is split on spaces, so revealing one
+       element per token ran the demo at tok/s WORDS per second — a third
+       faster than the words/min figure printed directly above it. The
+       readout and the thing it describes have to agree; this is the
+       slide that teaches the formula. */
+    acc += rate() * WORDS_PER_TOKEN * dt;
     if (acc >= 1) {
       var add = Math.floor(acc);
       acc -= add;
