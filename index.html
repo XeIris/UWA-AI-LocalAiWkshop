@@ -5343,16 +5343,16 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
         8&nbsp;B in 2.2&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
         1&#8209;bit version that had no zero. Three values is 1.58&nbsp;bits in principle;
         the shipped format spends 2.125, because every group of 128 weights carries a
-        16&#8209;bit scale &mdash; the same block cost as &sect;4, one section later.
+        16&#8209;bit scale &mdash; §4&rsquo;s block cost again.
         <strong>The catch is which build you grab.</strong> The 1&#8209;bit files
         (<span class="mono">*-Q1_0.gguf</span>) are merged upstream and run on any recent
-        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it still needs
-        PrismML&rsquo;s own fork, and that fork is <strong>CPU and Metal only</strong> &mdash;
-        no CUDA, no Vulkan &mdash; with the upstream patch still pending. This has moved
-        three times in a year; check the machine you are presenting from, on the night.
-        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro against the 124
-        this slide predicts, which is the usual two thirds.</p>
+        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it needs
+        PrismML&rsquo;s own fork, and even there the ternary kernels are <strong>CPU and
+        Metal only</strong> &mdash; a CUDA build of the fork has nothing to run on the
+        card. This has moved three times in a year; check your exact file against your
+        own build, on the night. The decode figure is §3&rsquo;s formula on a published
+        bandwidth, so it is a <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an
+        M4&nbsp;Pro against the 124 here, the usual two thirds.</p>
     </div>
   </section>
   <!-- ---- 7 · a different shape of generation ---- -->
@@ -9698,8 +9698,13 @@ var GLOSSARY = {
     d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything on the download slide is dense.',
     vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
+  /* "every model you ran today", not "every model in this deck": §7's
+     DiffusionGemma is in the deck and is the one thing here that does
+     NOT write this way, which is the entry's own "not the same as" line
+     two lines below. Everything anyone actually downloaded is
+     autoregressive, so scope the claim to that. */
   'autoregressive': { s: 7,
-    d: 'One token at a time, each conditioned on everything before it. How every model in this deck writes, and the reason decode is bandwidth-bound.',
+    d: 'One token at a time, each conditioned on everything before it. How every model you ran today writes, and the reason decode is bandwidth-bound.',
     vs: [['Diffusion text models', 'They denoise a whole block of tokens in parallel over a few passes, which breaks the one-weight-read-per-token arithmetic entirely.']] },
   'diffusion': { s: 7,
     d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',

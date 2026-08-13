@@ -293,8 +293,13 @@ var GLOSSARY = {
     d: 'Every weight in the model runs for every token, so the active size and the file size are the same number and bandwidth ÷ size is the whole story. Everything on the download slide is dense.',
     vs: [['Sparse / mixture of experts', 'There the two come apart: the whole file still has to fit in memory, but only a slice of it is read per token. Same capacity cost, much better speed.']] },
 
+  /* "every model you ran today", not "every model in this deck": §7's
+     DiffusionGemma is in the deck and is the one thing here that does
+     NOT write this way, which is the entry's own "not the same as" line
+     two lines below. Everything anyone actually downloaded is
+     autoregressive, so scope the claim to that. */
   'autoregressive': { s: 7,
-    d: 'One token at a time, each conditioned on everything before it. How every model in this deck writes, and the reason decode is bandwidth-bound.',
+    d: 'One token at a time, each conditioned on everything before it. How every model you ran today writes, and the reason decode is bandwidth-bound.',
     vs: [['Diffusion text models', 'They denoise a whole block of tokens in parallel over a few passes, which breaks the one-weight-read-per-token arithmetic entirely.']] },
   'diffusion': { s: 7,
     d: 'Generating text by denoising a whole block of masked tokens in parallel over a handful of steps, instead of left to right one at a time.',

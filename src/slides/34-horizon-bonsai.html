@@ -73,15 +73,15 @@
         8&nbsp;B in 2.2&nbsp;GB, benchmark average 75.5 against 70.5 for the earlier
         1&#8209;bit version that had no zero. Three values is 1.58&nbsp;bits in principle;
         the shipped format spends 2.125, because every group of 128 weights carries a
-        16&#8209;bit scale &mdash; the same block cost as &sect;4, one section later.
+        16&#8209;bit scale &mdash; §4&rsquo;s block cost again.
         <strong>The catch is which build you grab.</strong> The 1&#8209;bit files
         (<span class="mono">*-Q1_0.gguf</span>) are merged upstream and run on any recent
-        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it still needs
-        PrismML&rsquo;s own fork, and that fork is <strong>CPU and Metal only</strong> &mdash;
-        no CUDA, no Vulkan &mdash; with the upstream patch still pending. This has moved
-        three times in a year; check the machine you are presenting from, on the night.
-        The decode figure is §3&rsquo;s formula on a published bandwidth, so it is a
-        <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an M4&nbsp;Pro against the 124
-        this slide predicts, which is the usual two thirds.</p>
+        llama.cpp. Ternary (<span class="mono">*-Q2_0.gguf</span>) does not: it needs
+        PrismML&rsquo;s own fork, and even there the ternary kernels are <strong>CPU and
+        Metal only</strong> &mdash; a CUDA build of the fork has nothing to run on the
+        card. This has moved three times in a year; check your exact file against your
+        own build, on the night. The decode figure is §3&rsquo;s formula on a published
+        bandwidth, so it is a <em>ceiling</em>: PrismML measure 82&nbsp;tok/s on an
+        M4&nbsp;Pro against the 124 here, the usual two thirds.</p>
     </div>
   </section>
