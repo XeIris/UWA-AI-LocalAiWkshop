@@ -1,7 +1,17 @@
 /* --- the context ceiling -------------------------------------- */
-.bg-controls { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
+.bg-controls {
+  display: flex; align-items: center; flex-wrap: wrap;
+  column-gap: 2rem; row-gap: 0.35rem; margin: 1rem 0 0.4rem;
+}
 .bg-controls .ctrl { margin-top: 0; flex: 0 1 20rem; }
 .bg-controls .ctrl:last-child { flex: none; }
+/* A six-button segment does not compress to the sliders' 20rem basis
+   without wrapping its own labels. */
+.bg-controls .ctrl.bg-quant { flex: none; }
+/* The architecture behind the per-token figure, so the number is
+   derived on screen rather than arriving from nowhere. Recessive: it is
+   the working, not the result. */
+.bg-arch { font-style: normal; color: var(--ink-dim); }
 
 .bg-ctx { display: flex; align-items: center; gap: 1rem; margin: 0.6rem 0 1rem; }
 .bg-ctx-k {

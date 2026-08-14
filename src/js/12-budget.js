@@ -9,21 +9,65 @@ var bgSlide = document.getElementById('s-budget');
 if (bgSlide) {
   var BG_CTX = [1024, 2048, 4096, 8192, 16384, 32768,
                 65536, 131072, 262144, 524288, 1048576];
-  /* 30B-class with GQA, matching the previous slide: 2 × 48 layers ×
-     8 KV heads × 128 head dim = 96 KB per token per byte of precision. */
-  var BG_PER_TOKEN_FP16 = 2 * 48 * 8 * 128 * 2;
   var BG_OVERHEAD = 2;                     /* OS + runtime, GB */
   var GIB = 1073741824;
 
+  /* ---- what a parameter count implies -----------------------------
+     Both halves of the bar come off the parameter slider, and they are
+     NOT the same function of it. The weights are params × bpw ÷ 8 and
+     the quant buttons move them. The cache is 2 × layers × KV width ×
+     bytes and the quant buttons do not touch it at all — that is the
+     distinction the slide is for, and it is why the cache has a
+     precision control of its own.
+
+     Layers and KV width are interpolated in log(params) between real
+     released models. The anchors are chosen so the three model classes
+     on the previous slide land on exactly their published figures —
+     1B → 26 KB/token, 8B → 128, 30B → 192 — and 70B closes the top end
+     at Llama 3.3's 320. In between it is an estimate and the slide says
+     so: the KV width of a 4B is a design choice, not a consequence of
+     its size, and two 4B models can differ by half again.
+
+     KV width is the total across the KV heads (8 heads × 128 head dim =
+     1024, which is remarkably constant from about 2B upward). Only the
+     small end genuinely runs narrow: Gemma 3 1B keeps one KV head. */
+  var BG_ARCH = [
+    { p: 1,  l: 26, kw: 256 },             /* Gemma 3 1B */
+    { p: 2,  l: 28, kw: 1024 },            /* Qwen3 1.7B */
+    { p: 8,  l: 32, kw: 1024 },            /* Llama 3.1 8B */
+    { p: 30, l: 48, kw: 1024 },            /* the deck's 30B-class */
+    { p: 70, l: 80, kw: 1024 }             /* Llama 3.3 70B */
+  ];
+
+  /* Rounded to things a config.json could actually say: a whole number
+     of layers, and a KV width that is a multiple of one 128-wide head. */
+  function bgArch(P) {
+    var a = BG_ARCH[0], b = BG_ARCH[BG_ARCH.length - 1], i;
+    if (P <= a.p) return { l: a.l, kw: a.kw };
+    if (P >= b.p) return { l: b.l, kw: b.kw };
+    for (i = 0; i < BG_ARCH.length - 1; i++) {
+      if (P <= BG_ARCH[i + 1].p) { a = BG_ARCH[i]; b = BG_ARCH[i + 1]; break; }
+    }
+    var t = Math.log(P / a.p) / Math.log(b.p / a.p);
+    return {
+      l: Math.round(a.l + (b.l - a.l) * t),
+      kw: Math.round((a.kw + (b.kw - a.kw) * t) / 128) * 128
+    };
+  }
+
+  var bgParams = document.getElementById('bgParams');
   var bgMem = document.getElementById('bgMem');
-  var bgW   = document.getElementById('bgWeights');
   var bgCtx = document.getElementById('bgCtx');
   var bgBytes = 2;
+  var bgBpw = 4.83;
 
   var bgEl = {
     memOut: document.getElementById('bgMemOut'),
+    pOut:   document.getElementById('bgParamsOut'),
     wOut:   document.getElementById('bgWeightsOut'),
     ctxOut: document.getElementById('bgCtxOut'),
+    perTok: document.getElementById('bgPerTok'),
+    arch:   document.getElementById('bgArch'),
     bar:    document.querySelector('.bg-bar'),
     segW:   document.getElementById('bgSegW'),
     segK:   document.getElementById('bgSegK'),
@@ -65,16 +109,26 @@ if (bgSlide) {
   }
 
   function bgDraw() {
+    var P = bgParams.value / 10;             /* billions of parameters */
     var mem = parseFloat(bgMem.value);
-    var weights = parseFloat(bgW.value);
+    var weights = P * bgBpw / 8;
     var ctxLen = BG_CTX[parseInt(bgCtx.value, 10)];
-    var perTok = BG_PER_TOKEN_FP16 * (bgBytes / 2);
+    var arch = bgArch(P);
+    /* 2 (one key, one value) × layers × KV width × bytes — the previous
+       slide's equation, with the KV heads and the head dim collapsed
+       into the one width they multiply out to. */
+    var perTok = 2 * arch.l * arch.kw * bgBytes;
     var kv = ctxLen * perTok / GIB;
     var total = weights + kv + BG_OVERHEAD;
 
     bgEl.memOut.textContent = mem;
-    bgEl.wOut.textContent = weights;
+    bgEl.pOut.textContent = P.toFixed(1);
+    bgEl.wOut.textContent = weights.toFixed(1);
     bgEl.ctxOut.textContent = fmtTokens(ctxLen);
+    /* A 1B at 8-bit KV is 13 KB per token and a 70B at FP16 is 320 —
+       three figures apart, so round rather than truncate to whole KB. */
+    bgEl.perTok.textContent = Math.round(perTok / 1024) + ' KB';
+    bgEl.arch.textContent = arch.l + ' layers × ' + arch.kw + ' KV width';
 
     var scale = Math.max(total, mem) * 1.03;
     /* Read once, before anything writes a width. */
@@ -118,8 +172,10 @@ if (bgSlide) {
 
   var bgPrecSeg = segGroup('#bgPrec', function (b) { bgBytes = +b.dataset.bytes; bgDraw(); });
   bgBytes = +bgPrecSeg.current().dataset.bytes;
+  var bgQuantSeg = segGroup('#bgQuant', function (b) { bgBpw = +b.dataset.bpw; bgDraw(); });
+  bgBpw = +bgQuantSeg.current().dataset.bpw;
 
-  [bgMem, bgW, bgCtx].forEach(function (el) {
+  [bgParams, bgMem, bgCtx].forEach(function (el) {
     el.addEventListener('input', bgDraw);
   });
   /* The bar is CSS, but whether a label fits inside its own fill is a

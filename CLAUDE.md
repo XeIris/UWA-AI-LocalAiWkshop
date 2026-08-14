@@ -852,6 +852,35 @@ is wrong. The selected button is filled with its own line's colour, so the contr
 the legend — and each line is captioned on the plot as well, because a projector can eat
 the difference between three colours but not between three words.
 
+**The ceiling slide is sized in parameters and bits, not in gigabytes** (Aug 2026). It
+used to carry a free `1–120 GB` weights slider while its per-token cost was a hardcoded
+30B-class constant, so dragging weights moved the flat block and left the slope untouched
+— a 1 GB model and a 120 GB one filled the cache at the same rate, which is the one thing
+§5 exists to disprove. It now carries **§4's two controls verbatim**: the same
+`0.5–70B` parameter slider and the same six quant schemes with the same `data-bpw`, so the
+slide reads as that calculator with the conversation added on top. Keep the two in sync;
+if §4's bpw figures move, these move with them.
+
+The distinction that makes the slide worth having, and it is the one beginners arrive
+with backwards: **the two halves of the bar are different functions of the same slider.**
+Weights are `params × bpw ÷ 8` and the quant buttons move them. The cache is
+`2 × layers × KV width × bytes` and the quant buttons **do not touch it at all** — drop a
+model to 4-bit and the file quarters while the cache does not budge. That is why the cache
+has a precision control of its own, and it is worth saying out loud rather than leaving
+for someone to notice.
+
+Layers and KV width come from `BG_ARCH`, interpolated in `log(params)` between real
+released models. The anchors are chosen so **the previous slide's three classes land on
+exactly their published figures** — 1B → 26 KB/token, 8B → 128, 30B → 192 — with 70B
+closing the top end at Llama 3.3's 320. In between it is an estimate, and the slide says
+so on its face: KV width is a design choice rather than a consequence of size, and two 4B
+models can differ by half again. Expect a visible step between 1B and 2B; that step is
+real (Gemma 3 1B keeps one KV head where almost everything above ~2B runs 8 × 128 = 1024).
+
+The derived `N layers × N KV width` prints in the legend beside the per-token figure, so
+the number is shown being worked out rather than arriving from nowhere — and because a bar
+can show a quantity but cannot show a *rate* changing.
+
 **The equation and the three stats stay bound to one model**, named in `.kv-eq-for`: the
 last one you switched on. Three columns of arithmetic would bury the one number the
 section is about. The chart is where the comparison lives.

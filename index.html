@@ -1525,9 +1525,19 @@ h3 { font-size: 1.28rem; margin: 0 0 0.5rem; font-weight: 620; letter-spacing: -
   .kv-eq-for { position: static; flex: 0 0 100%; }
 }
 /* --- the context ceiling -------------------------------------- */
-.bg-controls { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 1.2rem 0 0.4rem; }
+.bg-controls {
+  display: flex; align-items: center; flex-wrap: wrap;
+  column-gap: 2rem; row-gap: 0.35rem; margin: 1rem 0 0.4rem;
+}
 .bg-controls .ctrl { margin-top: 0; flex: 0 1 20rem; }
 .bg-controls .ctrl:last-child { flex: none; }
+/* A six-button segment does not compress to the sliders' 20rem basis
+   without wrapping its own labels. */
+.bg-controls .ctrl.bg-quant { flex: none; }
+/* The architecture behind the per-token figure, so the number is
+   derived on screen rather than arriving from nowhere. Recessive: it is
+   the working, not the result. */
+.bg-arch { font-style: normal; color: var(--ink-dim); }
 
 .bg-ctx { display: flex; align-items: center; gap: 1rem; margin: 0.6rem 0 1rem; }
 .bg-ctx-k {
@@ -4968,17 +4978,41 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       <div class="eyebrow">05 &mdash; The ceiling</div>
       <h2>What a long conversation costs you in memory</h2>
 
+      <!-- §4's two controls, verbatim: the same 0.5–70B slider and the same
+           six quant schemes, so this slide reads as that calculator with the
+           conversation added on top. Both terms of the bar hang off them —
+           the flat block is params × bpw ÷ 8, the slope is the architecture
+           those params imply. A slider that set the weights in GB directly
+           moved only the block and left the slope alone, which said a 1 GB
+           model and a 120 GB one fill the cache at the same rate: the one
+           claim this section exists to disprove. -->
       <div class="bg-controls">
+        <div class="ctrl">
+          <label for="bgParams">Parameters</label>
+          <input type="range" id="bgParams" min="5" max="700" step="5" value="300">
+          <output id="bgParamsOut">30.0</output>
+          <span class="ctrl-unit">B</span>
+        </div>
+        <!-- data-bpw is what llama.cpp actually achieves for the scheme,
+             block metadata included — the same figures §4's calculator
+             uses, and they must not drift apart. -->
+        <div class="ctrl bg-quant">
+          <span class="ctrl-label" id="bgQuantLabel">Quant</span>
+          <div class="seg" id="bgQuant" role="group" aria-labelledby="bgQuantLabel">
+            <button type="button" data-bpw="16"   aria-pressed="false">FP16</button>
+            <button type="button" data-bpw="8.5"  aria-pressed="false">Q8_0</button>
+            <button type="button" data-bpw="6.56" aria-pressed="false">Q6_K</button>
+            <button type="button" data-bpw="4.83" class="on" aria-pressed="true">Q4_K_M</button>
+            <button type="button" data-bpw="3.91" aria-pressed="false">Q3_K_M</button>
+            <button type="button" data-bpw="3.35" aria-pressed="false">Q2_K</button>
+          </div>
+          <output id="bgWeightsOut">18.1</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
         <div class="ctrl">
           <label for="bgMem">Machine</label>
           <input type="range" id="bgMem" min="8" max="192" step="8" value="64">
           <output id="bgMemOut">64</output>
-          <span class="ctrl-unit">GB</span>
-        </div>
-        <div class="ctrl">
-          <label for="bgWeights">Weights</label>
-          <input type="range" id="bgWeights" min="1" max="120" step="1" value="32">
-          <output id="bgWeightsOut">32</output>
           <span class="ctrl-unit">GB</span>
         </div>
         <div class="ctrl">
@@ -4998,27 +5032,31 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
 
       <div class="bg-bar">
         <div class="bg-track" id="bgTrack">
-          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">32.0 GB</span></div>
+          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">18.1 GB</span></div>
           <div class="bg-seg bg-k" id="bgSegK"><span id="bgLabK">6.0 GB</span></div>
           <div class="bg-seg bg-o" id="bgSegO"></div>
           <div class="bg-cap" id="bgCap"><span id="bgCapLab">64 GB installed</span></div>
         </div>
         <div class="bg-legend">
           <span class="lg-item"><i class="sw sw-fast"></i>Weights &mdash; fixed</span>
-          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; grows with every token</span>
+          <!-- The slope, as a number, with the two architecture terms it
+               came from. A bar can show a quantity; it cannot show a rate
+               changing, and the rate is what the parameter slider moves. -->
+          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; <span id="bgPerTok">192 KB</span> per token
+            <i class="bg-arch">&asymp; <span id="bgArch">48 layers &times; 1024 KV width</span></i></span>
           <span class="lg-item"><i class="sw sw-none"></i>OS and runtime</span>
         </div>
       </div>
 
       <div class="bg-out">
         <div class="bg-cell">
-          <div class="bg-num" id="bgTotal">40.0</div>
-          <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
+          <div class="bg-num" id="bgTotal">26.1</div>
+          <div class="bg-lab">GB needed &middot; <span id="bgPct">41%</span> of the machine</div>
         </div>
         <div class="bg-cell">
           <!-- Must match what bgDraw computes at the defaults above:
-               (64 − 32 − 2) GiB of headroom ÷ 192 KB per token = 160K. -->
-          <div class="bg-num" id="bgMax">160K</div>
+               (64 − 18.1 − 2) GiB of headroom ÷ 192 KB per token = 234K. -->
+          <div class="bg-num" id="bgMax">234K</div>
           <div class="bg-lab">longest context that fits</div>
         </div>
         <div class="bg-cell bg-verdict" id="bgVerdict">
@@ -5028,11 +5066,15 @@ ol.next-list li::before { content: counter(n, decimal-leading-zero); color: var(
       </div>
 
       <p class="caveat"><strong>This is why a million tokens is a hardware problem, not a
-        setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
-        no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
-        quantization, sliding windows and racks of accelerators. On your laptop, the honest
-        move is to set the context you actually need. LM Studio hands you that slider,
-        and now you know what it costs.</p>
+        setting.</strong> Drag to the far right: at every size on this slider the cache
+        dwarfs the weights it belongs to, and past about a billion parameters no consumer
+        machine holds it. Frontier providers cope with paged caches, KV quantization,
+        sliding windows and racks of accelerators; on your laptop the honest move is to set
+        the context you actually need, and LM Studio hands you that slider.
+        <em>Quantization is the one lever that does not help here:</em> dropping the weights
+        to 4&#8209;bit quarters the file and leaves the cache untouched &mdash; that is what
+        the separate cache control is for. The per&#8209;token figure is an estimate, read
+        off released models of each size; two models the same size can differ by half again.</p>
     </div>
   </section>
   <!-- ============ §6 ============ -->
@@ -7563,21 +7605,65 @@ var bgSlide = document.getElementById('s-budget');
 if (bgSlide) {
   var BG_CTX = [1024, 2048, 4096, 8192, 16384, 32768,
                 65536, 131072, 262144, 524288, 1048576];
-  /* 30B-class with GQA, matching the previous slide: 2 × 48 layers ×
-     8 KV heads × 128 head dim = 96 KB per token per byte of precision. */
-  var BG_PER_TOKEN_FP16 = 2 * 48 * 8 * 128 * 2;
   var BG_OVERHEAD = 2;                     /* OS + runtime, GB */
   var GIB = 1073741824;
 
+  /* ---- what a parameter count implies -----------------------------
+     Both halves of the bar come off the parameter slider, and they are
+     NOT the same function of it. The weights are params × bpw ÷ 8 and
+     the quant buttons move them. The cache is 2 × layers × KV width ×
+     bytes and the quant buttons do not touch it at all — that is the
+     distinction the slide is for, and it is why the cache has a
+     precision control of its own.
+
+     Layers and KV width are interpolated in log(params) between real
+     released models. The anchors are chosen so the three model classes
+     on the previous slide land on exactly their published figures —
+     1B → 26 KB/token, 8B → 128, 30B → 192 — and 70B closes the top end
+     at Llama 3.3's 320. In between it is an estimate and the slide says
+     so: the KV width of a 4B is a design choice, not a consequence of
+     its size, and two 4B models can differ by half again.
+
+     KV width is the total across the KV heads (8 heads × 128 head dim =
+     1024, which is remarkably constant from about 2B upward). Only the
+     small end genuinely runs narrow: Gemma 3 1B keeps one KV head. */
+  var BG_ARCH = [
+    { p: 1,  l: 26, kw: 256 },             /* Gemma 3 1B */
+    { p: 2,  l: 28, kw: 1024 },            /* Qwen3 1.7B */
+    { p: 8,  l: 32, kw: 1024 },            /* Llama 3.1 8B */
+    { p: 30, l: 48, kw: 1024 },            /* the deck's 30B-class */
+    { p: 70, l: 80, kw: 1024 }             /* Llama 3.3 70B */
+  ];
+
+  /* Rounded to things a config.json could actually say: a whole number
+     of layers, and a KV width that is a multiple of one 128-wide head. */
+  function bgArch(P) {
+    var a = BG_ARCH[0], b = BG_ARCH[BG_ARCH.length - 1], i;
+    if (P <= a.p) return { l: a.l, kw: a.kw };
+    if (P >= b.p) return { l: b.l, kw: b.kw };
+    for (i = 0; i < BG_ARCH.length - 1; i++) {
+      if (P <= BG_ARCH[i + 1].p) { a = BG_ARCH[i]; b = BG_ARCH[i + 1]; break; }
+    }
+    var t = Math.log(P / a.p) / Math.log(b.p / a.p);
+    return {
+      l: Math.round(a.l + (b.l - a.l) * t),
+      kw: Math.round((a.kw + (b.kw - a.kw) * t) / 128) * 128
+    };
+  }
+
+  var bgParams = document.getElementById('bgParams');
   var bgMem = document.getElementById('bgMem');
-  var bgW   = document.getElementById('bgWeights');
   var bgCtx = document.getElementById('bgCtx');
   var bgBytes = 2;
+  var bgBpw = 4.83;
 
   var bgEl = {
     memOut: document.getElementById('bgMemOut'),
+    pOut:   document.getElementById('bgParamsOut'),
     wOut:   document.getElementById('bgWeightsOut'),
     ctxOut: document.getElementById('bgCtxOut'),
+    perTok: document.getElementById('bgPerTok'),
+    arch:   document.getElementById('bgArch'),
     bar:    document.querySelector('.bg-bar'),
     segW:   document.getElementById('bgSegW'),
     segK:   document.getElementById('bgSegK'),
@@ -7619,16 +7705,26 @@ if (bgSlide) {
   }
 
   function bgDraw() {
+    var P = bgParams.value / 10;             /* billions of parameters */
     var mem = parseFloat(bgMem.value);
-    var weights = parseFloat(bgW.value);
+    var weights = P * bgBpw / 8;
     var ctxLen = BG_CTX[parseInt(bgCtx.value, 10)];
-    var perTok = BG_PER_TOKEN_FP16 * (bgBytes / 2);
+    var arch = bgArch(P);
+    /* 2 (one key, one value) × layers × KV width × bytes — the previous
+       slide's equation, with the KV heads and the head dim collapsed
+       into the one width they multiply out to. */
+    var perTok = 2 * arch.l * arch.kw * bgBytes;
     var kv = ctxLen * perTok / GIB;
     var total = weights + kv + BG_OVERHEAD;
 
     bgEl.memOut.textContent = mem;
-    bgEl.wOut.textContent = weights;
+    bgEl.pOut.textContent = P.toFixed(1);
+    bgEl.wOut.textContent = weights.toFixed(1);
     bgEl.ctxOut.textContent = fmtTokens(ctxLen);
+    /* A 1B at 8-bit KV is 13 KB per token and a 70B at FP16 is 320 —
+       three figures apart, so round rather than truncate to whole KB. */
+    bgEl.perTok.textContent = Math.round(perTok / 1024) + ' KB';
+    bgEl.arch.textContent = arch.l + ' layers × ' + arch.kw + ' KV width';
 
     var scale = Math.max(total, mem) * 1.03;
     /* Read once, before anything writes a width. */
@@ -7672,8 +7768,10 @@ if (bgSlide) {
 
   var bgPrecSeg = segGroup('#bgPrec', function (b) { bgBytes = +b.dataset.bytes; bgDraw(); });
   bgBytes = +bgPrecSeg.current().dataset.bytes;
+  var bgQuantSeg = segGroup('#bgQuant', function (b) { bgBpw = +b.dataset.bpw; bgDraw(); });
+  bgBpw = +bgQuantSeg.current().dataset.bpw;
 
-  [bgMem, bgW, bgCtx].forEach(function (el) {
+  [bgParams, bgMem, bgCtx].forEach(function (el) {
     el.addEventListener('input', bgDraw);
   });
   /* The bar is CSS, but whether a label fits inside its own fill is a

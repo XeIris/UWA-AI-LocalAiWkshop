@@ -6,17 +6,41 @@
       <div class="eyebrow">05 &mdash; The ceiling</div>
       <h2>What a long conversation costs you in memory</h2>
 
+      <!-- §4's two controls, verbatim: the same 0.5–70B slider and the same
+           six quant schemes, so this slide reads as that calculator with the
+           conversation added on top. Both terms of the bar hang off them —
+           the flat block is params × bpw ÷ 8, the slope is the architecture
+           those params imply. A slider that set the weights in GB directly
+           moved only the block and left the slope alone, which said a 1 GB
+           model and a 120 GB one fill the cache at the same rate: the one
+           claim this section exists to disprove. -->
       <div class="bg-controls">
+        <div class="ctrl">
+          <label for="bgParams">Parameters</label>
+          <input type="range" id="bgParams" min="5" max="700" step="5" value="300">
+          <output id="bgParamsOut">30.0</output>
+          <span class="ctrl-unit">B</span>
+        </div>
+        <!-- data-bpw is what llama.cpp actually achieves for the scheme,
+             block metadata included — the same figures §4's calculator
+             uses, and they must not drift apart. -->
+        <div class="ctrl bg-quant">
+          <span class="ctrl-label" id="bgQuantLabel">Quant</span>
+          <div class="seg" id="bgQuant" role="group" aria-labelledby="bgQuantLabel">
+            <button type="button" data-bpw="16"   aria-pressed="false">FP16</button>
+            <button type="button" data-bpw="8.5"  aria-pressed="false">Q8_0</button>
+            <button type="button" data-bpw="6.56" aria-pressed="false">Q6_K</button>
+            <button type="button" data-bpw="4.83" class="on" aria-pressed="true">Q4_K_M</button>
+            <button type="button" data-bpw="3.91" aria-pressed="false">Q3_K_M</button>
+            <button type="button" data-bpw="3.35" aria-pressed="false">Q2_K</button>
+          </div>
+          <output id="bgWeightsOut">18.1</output>
+          <span class="ctrl-unit">GB</span>
+        </div>
         <div class="ctrl">
           <label for="bgMem">Machine</label>
           <input type="range" id="bgMem" min="8" max="192" step="8" value="64">
           <output id="bgMemOut">64</output>
-          <span class="ctrl-unit">GB</span>
-        </div>
-        <div class="ctrl">
-          <label for="bgWeights">Weights</label>
-          <input type="range" id="bgWeights" min="1" max="120" step="1" value="32">
-          <output id="bgWeightsOut">32</output>
           <span class="ctrl-unit">GB</span>
         </div>
         <div class="ctrl">
@@ -36,27 +60,31 @@
 
       <div class="bg-bar">
         <div class="bg-track" id="bgTrack">
-          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">32.0 GB</span></div>
+          <div class="bg-seg bg-w" id="bgSegW"><span id="bgLabW">18.1 GB</span></div>
           <div class="bg-seg bg-k" id="bgSegK"><span id="bgLabK">6.0 GB</span></div>
           <div class="bg-seg bg-o" id="bgSegO"></div>
           <div class="bg-cap" id="bgCap"><span id="bgCapLab">64 GB installed</span></div>
         </div>
         <div class="bg-legend">
           <span class="lg-item"><i class="sw sw-fast"></i>Weights &mdash; fixed</span>
-          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; grows with every token</span>
+          <!-- The slope, as a number, with the two architecture terms it
+               came from. A bar can show a quantity; it cannot show a rate
+               changing, and the rate is what the parameter slider moves. -->
+          <span class="lg-item"><i class="sw sw-kv"></i>KV cache &mdash; <span id="bgPerTok">192 KB</span> per token
+            <i class="bg-arch">&asymp; <span id="bgArch">48 layers &times; 1024 KV width</span></i></span>
           <span class="lg-item"><i class="sw sw-none"></i>OS and runtime</span>
         </div>
       </div>
 
       <div class="bg-out">
         <div class="bg-cell">
-          <div class="bg-num" id="bgTotal">40.0</div>
-          <div class="bg-lab">GB needed &middot; <span id="bgPct">63%</span> of the machine</div>
+          <div class="bg-num" id="bgTotal">26.1</div>
+          <div class="bg-lab">GB needed &middot; <span id="bgPct">41%</span> of the machine</div>
         </div>
         <div class="bg-cell">
           <!-- Must match what bgDraw computes at the defaults above:
-               (64 − 32 − 2) GiB of headroom ÷ 192 KB per token = 160K. -->
-          <div class="bg-num" id="bgMax">160K</div>
+               (64 − 18.1 − 2) GiB of headroom ÷ 192 KB per token = 234K. -->
+          <div class="bg-num" id="bgMax">234K</div>
           <div class="bg-lab">longest context that fits</div>
         </div>
         <div class="bg-cell bg-verdict" id="bgVerdict">
@@ -66,10 +94,14 @@
       </div>
 
       <p class="caveat"><strong>This is why a million tokens is a hardware problem, not a
-        setting.</strong> Drag to the far right: the cache dwarfs the model it belongs to, and
-        no consumer machine holds it. Frontier providers do it with paged caches, aggressive KV
-        quantization, sliding windows and racks of accelerators. On your laptop, the honest
-        move is to set the context you actually need. LM Studio hands you that slider,
-        and now you know what it costs.</p>
+        setting.</strong> Drag to the far right: at every size on this slider the cache
+        dwarfs the weights it belongs to, and past about a billion parameters no consumer
+        machine holds it. Frontier providers cope with paged caches, KV quantization,
+        sliding windows and racks of accelerators; on your laptop the honest move is to set
+        the context you actually need, and LM Studio hands you that slider.
+        <em>Quantization is the one lever that does not help here:</em> dropping the weights
+        to 4&#8209;bit quarters the file and leaves the cache untouched &mdash; that is what
+        the separate cache control is for. The per&#8209;token figure is an estimate, read
+        off released models of each size; two models the same size can differ by half again.</p>
     </div>
   </section>
