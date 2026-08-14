@@ -95,8 +95,9 @@
 
       <p class="caveat"><strong>This is why a million tokens is a hardware problem, not a
         setting.</strong> Drag to the far right: at every size on this slider the cache
-        dwarfs the weights it belongs to, and past about a billion parameters no consumer
-        machine holds it. Frontier providers cope with paged caches, KV quantization,
+        dwarfs the weights it belongs to, and past a couple of billion parameters it runs
+        beyond 100 GB. Set the machine to your own and watch what happens to the bar.
+        Frontier providers cope with paged caches, KV quantization,
         sliding windows and racks of accelerators; on your laptop the honest move is to set
         the context you actually need, and LM Studio hands you that slider.
         <em>Quantization is the one lever that does not help here:</em> dropping the weights

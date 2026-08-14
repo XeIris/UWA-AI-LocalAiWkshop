@@ -30,8 +30,22 @@ if (bgSlide) {
 
      KV width is the total across the KV heads (8 heads × 128 head dim =
      1024, which is remarkably constant from about 2B upward). Only the
-     small end genuinely runs narrow: Gemma 3 1B keeps one KV head. */
+     small end genuinely runs narrow: Gemma 3 1B keeps one KV head, and
+     Qwen2.5 0.5B two 64-wide ones.
+
+     The table starts at 0.5B because the slider does. It used to start
+     at 1B and clamp below it, which left the bottom tenth of the slider
+     travel doing nothing at all — a control position that changes no
+     number on screen is worse than no control.
+
+     A caution for anyone extending this downward: the sub-1B range is
+     where the "KV width is a design choice" caveat bites hardest. Qwen3
+     0.6B runs the full 8 × 128 and costs 112 KB per token, more than
+     four times Gemma 3 1B despite being smaller. Anchoring on it would
+     make the slider run 112 → 26 → 112 KB across its first three stops,
+     which reads as a broken control rather than as real variance. */
   var BG_ARCH = [
+    { p: 0.5, l: 24, kw: 128 },            /* Qwen2.5 0.5B — 2 KV × 64 */
     { p: 1,  l: 26, kw: 256 },             /* Gemma 3 1B */
     { p: 2,  l: 28, kw: 1024 },            /* Qwen3 1.7B */
     { p: 8,  l: 32, kw: 1024 },            /* Llama 3.1 8B */
